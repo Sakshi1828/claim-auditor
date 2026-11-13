@@ -1,0 +1,8 @@
+outputs/
+__pycache__/
+*.pyc
+.venv/
+# never commit raw TCGA files or secrets
+*.tsv
+*.tsv.gz
+.env

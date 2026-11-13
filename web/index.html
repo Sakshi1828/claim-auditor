@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research Claim Auditor</title>
+<style>
+:root{
+  --bg:#f6f5f1;--panel:#fff;--ink:#14202b;--muted:#5b6670;--line:#dedbd2;--accent:#1f5f8b;
+  --ok:#1d6b3a;--ok-bg:#e3f2e8;--bad:#a12a2a;--bad-bg:#fbe5e3;--unk:#8a5a00;--unk-bg:#fdf0d5;--na:#5b6670;--na-bg:#ecebe6;
+  --focus:#2463eb;--code:#f1f0ec;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#12171c;--panel:#1b2229;--ink:#e8ecef;--muted:#9aa6b0;--line:#2e3943;--accent:#6fb1e0;
+  --ok:#7fd49c;--ok-bg:#183626;--bad:#ff9b92;--bad-bg:#40201e;--unk:#f3c46b;--unk-bg:#3a2f15;--na:#9aa6b0;--na-bg:#262e36;--code:#141a20;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+header{padding:14px 20px;border-bottom:1px solid var(--line);background:var(--panel);display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+header h1{font-size:19px;margin:0}
+.safety{font-size:13px;color:var(--muted)}
+.safety b{color:var(--ink)}
+main{max-width:1280px;margin:0 auto;padding:16px}
+section.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+h3{font-size:14px;margin:14px 0 6px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button,select,input,textarea{font:inherit;color:inherit}
+button{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:7px 12px;cursor:pointer}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+@media (prefers-color-scheme:dark){button.primary{color:#0d1418}}
+button[aria-pressed=true]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+button:disabled{opacity:.5;cursor:not-allowed}
+input,select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:7px 9px}
+textarea{width:100%;min-height:130px;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:16px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.badge{display:inline-flex;gap:5px;align-items:center;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600;white-space:nowrap}
+.v-supported{background:var(--ok-bg);color:var(--ok)}
+.v-contradicted{background:var(--bad-bg);color:var(--bad)}
+.v-insufficient_evidence{background:var(--unk-bg);color:var(--unk)}
+.v-not_a_claim{background:var(--na-bg);color:var(--na)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:120px}
+.chip .n{font-size:24px;font-weight:700;line-height:1}
+.report p{margin:0 0 8px}
+.sent{cursor:pointer;border-radius:4px;padding:1px 2px;border-bottom:2px solid transparent}
+.sent.v-supported{border-bottom-color:var(--ok)}
+.sent.v-contradicted{border-bottom-color:var(--bad)}
+.sent.v-insufficient_evidence{border-bottom-color:var(--unk)}
+.sent.v-not_a_claim{background:none;color:var(--muted)}
+.sent.sel{outline:2px solid var(--accent)}
+.tag{font-size:11px;font-weight:700;vertical-align:super;margin-left:2px}
+.queue{list-style:none;margin:0;padding:0}
+.queue li button{width:100%;text-align:left;display:flex;gap:10px;align-items:flex-start;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:10px 6px;background:none}
+.queue li button.sel{background:var(--bg)}
+.queue .txt{flex:1;font-size:14px}
+.rv{font-size:12px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
+th{color:var(--muted);font-weight:600}
+pre{background:var(--code);border:1px solid var(--line);border-radius:7px;padding:10px;overflow:auto;font-size:12.5px}
+.callout{border-left:4px solid var(--accent);background:var(--bg);padding:8px 12px;border-radius:0 7px 7px 0;margin:8px 0}
+.callout.bad{border-color:var(--bad)} .callout.unk{border-color:var(--unk)} .callout.ok{border-color:var(--ok)}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.hidden{display:none!important}
+details summary{cursor:pointer;color:var(--accent)}
+label{font-size:13px;color:var(--muted);display:block;margin-bottom:3px}
+.field{margin-bottom:8px}
+#status{min-height:1.5em}
+</style>
+</head>
+<body>
+<header>
+  <h1>Research Claim Auditor</h1>
+  <div class="safety"><b>Research use only.</b> Checks claims about the TCGA-BRCA release. Not a clinical tool: no diagnosis,
+    treatment advice or risk scores. <b>Every verdict needs a person to confirm it.</b></div>
+</header>
+<main>
+
+<section class="card" aria-labelledby="s1">
+  <h2 id="s1">1 · Load a report</h2>
+  <div class="row" style="margin-bottom:10px">
+    <button id="btnPractice">Use the practice report</button>
+    <label class="hidden" for="file">Upload</label>
+    <input type="file" id="file" accept=".md,.txt,.markdown" aria-label="Upload a report (.md or .txt)">
+    <span class="muted small">or paste below</span>
+  </div>
+  <details style="margin-bottom:10px"><summary>Open a sealed envelope (judging)</summary>
+    <div class="row" style="margin-top:8px">
+      <div class="field"><label for="envNum">Envelope number</label><input id="envNum" size="9" placeholder="07 or practice"></div>
+      <div class="field"><label for="envWords">Four-word code</label><input id="envWords" size="30" placeholder="amber falcon river quartz"></div>
+      <button id="btnUnseal">Unseal and load</button>
+    </div>
+    <pre id="unsealLog" class="hidden"></pre>
+  </details>
+  <label for="report">Report text (Markdown)</label>
+  <textarea id="report" placeholder="Paste a report here…"></textarea>
+  <div class="row" style="margin-top:8px">
+    <div class="field" style="flex:1;min-width:260px"><label for="releaseDir">Release folder</label><input id="releaseDir" style="width:100%"></div>
+    <div class="field"><label for="reviewer">Your name</label><input id="reviewer" placeholder="e.g. A. Reviewer"></div>
+    <div class="field"><label for="role">Your role</label>
+      <select id="role"><option>Data-use reviewer</option><option>Researcher</option><option>Data engineer</option><option>Program leader</option></select></div>
+    <button class="primary" id="btnRun">Check claims</button>
+  </div>
+  <div id="status" role="status" aria-live="polite" class="muted small"></div>
+</section>
+
+<section class="card hidden" id="results" aria-labelledby="s2">
+  <div class="row" style="justify-content:space-between">
+    <h2 id="s2">2 · Review the claims</h2>
+    <div class="row" role="group" aria-label="Detail level">
+      <span class="muted small">Show detail for:</span>
+      <button data-view="lead" aria-pressed="false">Program lead</button>
+      <button data-view="reviewer" aria-pressed="true">Reviewer</button>
+      <button data-view="researcher" aria-pressed="false">Researcher</button>
+    </div>
+  </div>
+  <div class="chips" id="chips" style="margin:8px 0 12px"></div>
+  <div id="leadView" class="callout hidden"></div>
+  <div class="grid">
+    <div>
+      <h3>The report, marked up</h3>
+      <div class="report" id="reportView"></div>
+      <h3>Audit queue</h3>
+      <ul class="queue" id="queue"></ul>
+    </div>
+    <div id="detail" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="card hidden" id="decide" aria-labelledby="s3">
+  <h2 id="s3">3 · Decide and record</h2>
+  <div id="suggest" class="callout"></div>
+  <div class="row">
+    <div class="field"><label for="decision">Decision</label>
+      <select id="decision"><option>Proceed</option><option>Fix a problem</option><option>Narrow the question</option><option>Stop</option></select></div>
+    <div class="field" style="flex:1;min-width:240px"><label for="decReason">Why (required)</label><input id="decReason" style="width:100%"></div>
+    <div class="field"><label for="alsoReview">Also needs review by</label><input id="alsoReview" value="Study PI and a biostatistician"></div>
+    <div class="field"><label for="team">Team name</label><input id="team" value="Cache us if u can"></div>
+  </div>
+  <div class="row"><button class="primary" id="btnExport">Export audit.json + decision record</button>
+    <span id="reviewCount" class="muted small"></span></div>
+  <pre id="exportOut" class="hidden"></pre>
+</section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const LABEL = {supported:"Supported", contradicted:"Contradicted", insufficient_evidence:"Insufficient evidence", not_a_claim:"Not a claim"};
+const ICON = {supported:"✓", contradicted:"✗", insufficient_evidence:"?", not_a_claim:"–"};
+let cfg = {}, audit = null, sel = null, view = "reviewer";
+
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const badge = v => `<span class="badge v-${v}"><span aria-hidden="true">${ICON[v]}</span>${LABEL[v]}</span>`;
+const finalV = it => (it.review && it.review.verdict) || it.tool_verdict;
+const status = t => $("#status").textContent = t;
+
+async function api(path, body){
+  const r = await fetch(path, body ? {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)} : {});
+  const j = await r.json(); if (j.error) throw new Error(j.error); return j;
+}
+
+async function init(){
+  cfg = await api("/api/config");
+  $("#releaseDir").value = cfg.release_dir;
+  try { $("#reviewer").value = localStorage.getItem("ca_reviewer") || ""; } catch(e){}
+}
+$("#btnPractice").onclick = () => { $("#report").value = cfg.practice_report; status("Practice report loaded. Press “Check claims”."); };
+$("#file").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { $("#report").value = t; status(`Loaded ${f.name}.`); }); };
+$("#btnUnseal").onclick = async () => {
+  status("Unsealing… (10–20 seconds)");
+  try {
+    const j = await api("/api/unseal", {number: $("#envNum").value, words: $("#envWords").value});
+    $("#unsealLog").textContent = j.log; $("#unsealLog").classList.remove("hidden");
+    if (j.ok) { $("#report").value = j.report_text; status("Envelope opened. Checking claims…"); run(); }
+    else status("Could not open that envelope. Check the number and the four words.");
+  } catch(e){ status("Error: " + e.message); }
+};
+$("#btnRun").onclick = () => run();
+
+async function run(){
+  const text = $("#report").value.trim();
+  if (!text) { status("Load or paste a report first."); return; }
+  try { localStorage.setItem("ca_reviewer", $("#reviewer").value); } catch(e){}
+  status("Checking each claim against the data…");
+  try {
+    audit = await api("/api/audit", {report_text: text, release_dir: $("#releaseDir").value});
+    const first = audit.items.find(i => i.tool_verdict !== "not_a_claim");
+    sel = first ? first.id : null;
+    status(`Checked ${audit.items.length} sentences in ${audit.seconds}s against release ${audit.release.name}.`);
+    $("#results").classList.remove("hidden"); $("#decide").classList.remove("hidden");
+    render();
+  } catch(e){ status("Error: " + e.message); }
+}
+
+document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => {
+  view = b.dataset.view;
+  document.querySelectorAll("[data-view]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  render();
+});
+
+function counts(){
+  const c = {supported:0, contradicted:0, insufficient_evidence:0, not_a_claim:0};
+  audit.items.forEach(i => c[finalV(i)]++); return c;
+}
+function claims(){ return audit.items.filter(i => i.tool_verdict !== "not_a_claim" || i.review); }
+
+function render(){
+  const c = counts(), cl = claims(), reviewed = cl.filter(i => i.review).length;
+  $("#chips").innerHTML = ["supported","contradicted","insufficient_evidence","not_a_claim"].map(v =>
+    `<div class="chip"><div class="n">${c[v]}</div>${badge(v)}</div>`).join("") +
+    `<div class="chip"><div class="n">${reviewed}/${cl.length}</div><span class="small">confirmed by a person</span></div>`;
+
+  // program-lead one-liner
+  const sug = suggest();
+  $("#leadView").classList.toggle("hidden", view !== "lead");
+  $("#leadView").innerHTML = `<b>In one line:</b> of ${cl.length} checkable claims: ${c.supported} supported, ${c.contradicted} wrong,
+    ${c.insufficient_evidence} can't be checked with this data. <b>Suggested next step: ${sug.decision}.</b> ${esc(sug.reason)}
+    <br><span class="small muted">${reviewed} of ${cl.length} verdicts confirmed by a person so far.</span>`;
+
+  $("#reportView").innerHTML = audit.items.map(it => {
+    const v = finalV(it);
+    return `<span class="sent v-${v} ${it.id === sel ? "sel" : ""}" tabindex="0" role="button" data-id="${it.id}"
+      aria-label="${LABEL[v]}: ${esc(it.claim_text)}">${esc(it.claim_text)}<span class="tag" aria-hidden="true">[${ICON[v]}]</span></span> `;
+  }).join("");
+  document.querySelectorAll(".sent").forEach(el => {
+    el.onclick = () => { sel = el.dataset.id; render(); };
+    el.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); sel = el.dataset.id; render(); } };
+  });
+
+  $("#queue").innerHTML = cl.map(it => `<li><button class="${it.id === sel ? "sel" : ""}" data-id="${it.id}">
+      <span>${badge(finalV(it))}</span><span class="txt"><b>${it.id}</b> ${esc(it.claim_text)}
+      <div class="rv">${it.review ? (it.review.decision === "override" ? "Overridden by " : "Confirmed by ") + esc(it.review.reviewer || "reviewer")
+        : "⚠ Needs a person to confirm"}</div></span></button></li>`).join("");
+  document.querySelectorAll(".queue button").forEach(b => b.onclick = () => { sel = b.dataset.id; render(); });
+
+  renderDetail();
+  $("#suggest").innerHTML = `<b>Suggested:</b> ${sug.decision}. ${esc(sug.reason)} <span class="muted small">(You decide.)</span>`;
+  if (!$("#decision").dataset.touched) $("#decision").value = sug.decision;
+  $("#reviewCount").textContent = reviewed < cl.length ? `${cl.length - reviewed} claim(s) still need confirming. Unconfirmed ones are exported flagged for human review.` : "All claims confirmed.";
+}
+
+function suggest(){
+  const v = claims().map(finalV).filter(x => x !== "not_a_claim");
+  if (!v.length) return {decision:"Stop", reason:"No checkable claims found."};
+  const n = k => v.filter(x => x === k).length;
+  if (n("contradicted")) return {decision:"Fix a problem", reason:`${n("contradicted")} claim(s) contradict the data and must be corrected.`};
+  if (n("insufficient_evidence")) return {decision:"Narrow the question", reason:`${n("insufficient_evidence")} claim(s) go beyond what this data can show; reword or remove them.`};
+  return {decision:"Proceed", reason:"Every checked claim is supported by the data."};
+}
+
+function renderDetail(){
+  const it = audit.items.find(i => i.id === sel);
+  if (!it) { $("#detail").innerHTML = `<p class="muted">Select a claim.</p>`; return; }
+  const r = it.result, v = finalV(it), tv = it.tool_verdict;
+  const cls = {contradicted:"bad", insufficient_evidence:"unk", supported:"ok"}[tv] || "";
+  const judged = r.subchecks.filter(s => s.ok !== null), context = r.subchecks.filter(s => s.ok === null);
+  let h = `<h3>Claim ${it.id}</h3><p style="font-size:16px">“${esc(it.claim_text)}”</p>
+    <div class="row">${badge(tv)} <span class="muted small">tool verdict · confidence ${r.confidence}</span>
+    ${it.review ? `<span class="muted small">→ final:</span> ${badge(v)}` : ""}</div>
+    <div class="callout ${cls}">${esc(r.summary)}</div>`;
+  if (r.correct_value) h += `<div class="callout bad"><b>What the data shows instead:</b> ${esc(r.correct_value)}</div>`;
+  if (r.needed) h += `<div class="callout unk"><b>What data would be needed:</b> ${esc(r.needed)}</div>`;
+  if (judged.length && view !== "lead") h += `<h3>Claim vs data</h3><table><thead><tr><th>Measured</th><th>Report says</th><th>Data says</th><th>Result</th></tr></thead><tbody>` +
+      judged.map(s => `<tr><td>${esc(s.label)}<div class="small muted">${esc(s.rule)}</div></td><td>${esc(s.claimed)}</td><td><b>${esc(s.observed)}</b></td>
+        <td>${s.ok ? badge("supported").replace("Supported","Matches") : badge("contradicted").replace("Contradicted","Doesn't match")}</td></tr>`).join("") + `</tbody></table>`;
+  if (context.length && view !== "lead") h += `<h3>Context from the data</h3><table><tbody>` +
+      context.map(s => `<tr><td>${esc(s.label)}</td><td>${esc(s.observed)}<div class="small muted">${esc(s.rule)}</div></td></tr>`).join("") + `</tbody></table>`;
+  if (r.limitation) h += `<h3>Where the evidence stops</h3><p>${esc(r.limitation)}</p>`;
+  if (r.alternatives.length && view !== "lead") h += `<h3>Same question, other reasonable definitions</h3><table><thead><tr><th>Definition</th><th>Result</th></tr></thead><tbody>` +
+      r.alternatives.map(a => `<tr><td>${esc((a.subtype ? a.subtype + ": " : "") + a.definition)}</td><td>${esc(a.value)}</td></tr>`).join("") + `</tbody></table>`;
+  if (view !== "lead") h += `<h3>Source</h3><table><tbody>
+      <tr><th>Release</th><td>${esc(audit.release.name)} <span class="small muted">${esc(audit.release.dir)}</span></td></tr>
+      <tr><th>Files</th><td>${r.files.map(f => { const x = audit.release.files.find(z => z.file === f);
+          return `${esc(f)}${x ? `<div class="small muted">sha256 ${x.sha256.slice(0,16)}…</div>` : ""}`; }).join("") || "—"}</td></tr>
+      <tr><th>Fields</th><td>${r.fields.map(esc).join(", ") || "—"}</td></tr>
+      <tr><th>Population</th><td>${esc(r.population)}${r.n != null ? ` (n = ${Number(r.n).toLocaleString()})` : ""}</td></tr>
+      <tr><th>Checker</th><td>${esc(r.check)}</td></tr></tbody></table>`;
+  if (view === "researcher") {
+    if (r.code) h += `<h3>Reproduce it (pandas)</h3><pre>${esc(r.code)}</pre>`;
+    if (r.n_sample_ids) h += `<details><summary>Sample IDs used (${r.n_sample_ids.toLocaleString()}, first ${r.sample_ids.length} shown)</summary><pre>${esc(r.sample_ids.join("\n"))}</pre></details>`;
+  }
+  h += `<h3>Your review</h3>
+    <div class="row"><button class="primary" id="accept">Confirm: ${LABEL[tv]}</button><button id="ovr">Override…</button>
+      ${it.review ? `<button id="clear">Undo review</button>` : ""}</div>
+    <div id="ovrBox" class="hidden" style="margin-top:8px">
+      <div class="row"><div class="field"><label for="ovrV">Verdict</label><select id="ovrV">
+        ${["supported","contradicted","insufficient_evidence","not_a_claim"].filter(x => x !== tv).map(x => `<option value="${x}">${LABEL[x]}</option>`).join("")}</select></div>
+      <div class="field" style="flex:1"><label for="ovrR">Reason (required, kept with the tool's original verdict)</label><input id="ovrR" style="width:100%"></div>
+      <button id="ovrSave">Save override</button></div></div>
+    ${it.review ? `<p class="small muted">${it.review.decision === "override" ? "Overridden" : "Confirmed"} by ${esc(it.review.reviewer)} (${esc(it.review.reviewer_role)}) at ${esc(it.review.at)}${it.review.reason ? ": " + esc(it.review.reason) : ""}. Tool verdict kept: ${LABEL[tv]}.</p>` : ""}`;
+  $("#detail").innerHTML = h;
+  const who = () => ({reviewer: $("#reviewer").value || "unnamed reviewer", reviewer_role: $("#role").value, at: new Date().toISOString().slice(0,16).replace("T"," ")});
+  $("#accept").onclick = () => { it.review = {decision:"accept", verdict: tv, ...who()}; next(); };
+  $("#ovr").onclick = () => $("#ovrBox").classList.toggle("hidden");
+  if ($("#clear")) $("#clear").onclick = () => { it.review = null; render(); };
+  $("#ovrSave").onclick = () => {
+    const reason = $("#ovrR").value.trim(); if (!reason) { $("#ovrR").focus(); status("An override needs a reason."); return; }
+    it.review = {decision:"override", verdict: $("#ovrV").value, reason, ...who()}; next();
+  };
+}
+function next(){
+  const cl = claims(), i = cl.findIndex(x => x.id === sel);
+  const nxt = cl.slice(i + 1).find(x => !x.review) || cl.find(x => !x.review);
+  if (nxt) sel = nxt.id; render();
+}
+$("#decision").onchange = e => e.target.dataset.touched = "1";
+$("#btnExport").onclick = async () => {
+  const reason = $("#decReason").value.trim();
+  if (!reason) { $("#decReason").focus(); status("Write why you chose this decision before exporting."); return; }
+  const decision = {decision: $("#decision").value, reason, reviewer: $("#reviewer").value || "unnamed reviewer",
+    reviewer_role: $("#role").value, also_review: $("#alsoReview").value, at: new Date().toISOString(),
+    claims_confirmed: claims().filter(i => i.review).length, claims_total: claims().length};
+  try {
+    const j = await api("/api/export", {audit, decision, team: $("#team").value});
+    $("#exportOut").textContent = `Saved:\n  ${j.paths.join("\n  ")}\n\nValidator: ${j.validator}`;
+    $("#exportOut").classList.remove("hidden");
+    status("Exported. audit.json is in the outputs folder.");
+  } catch(e){ status("Export failed: " + e.message); }
+};
+init();
+</script>
+</body>
+</html>

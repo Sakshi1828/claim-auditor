@@ -11,8 +11,8 @@
   --accent:#9b2f63; --accent-2:#f8e6ee; --rose:#d9739f; --cell:rgba(155,47,99,.07);
   --ok:#1f7a45; --ok-bg:#e4f3ea; --ok-band:rgba(31,122,69,.16);
   --bad:#b3332b; --bad-bg:#fbe8e5;
-  --unk:#9a6400; --unk-bg:#fcf1d8;
-  --na:#7b858e; --na-bg:#eeece6;
+  --unk:#865700; --unk-bg:#fcf1d8;
+  --na:#5f6870; --na-bg:#eeece6;
   --focus:#2563eb; --code:#f2efe7; --shadow:0 1px 2px rgba(22,32,42,.05),0 4px 16px rgba(22,32,42,.06);
   --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
@@ -127,6 +127,31 @@ pre{background:var(--code);border:1px solid var(--line);border-radius:9px;paddin
 .meter{flex:0 0 180px;height:6px;background:var(--line-2);border-radius:999px;overflow:hidden}
 .meter div{height:100%;background:var(--accent);transition:width .3s}
 
+/* ---------- guide strip: always says what to do now ---------- */
+.guide{position:sticky;top:57px;z-index:15;background:var(--accent-2);border-bottom:1px solid color-mix(in srgb,var(--accent) 30%,transparent)}
+.guide-in{max-width:1320px;margin:0 auto;padding:9px 20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:14.5px}
+.guide .st{font:700 12px var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
+.guide .tx{flex:1;min-width:240px;color:var(--ink)}
+.guide button{padding:6px 12px;font-size:13.5px}
+.guide.done{background:var(--ok-bg)} .guide.done .st{color:var(--ok)}
+.skip{position:absolute;left:-9999px;top:0;z-index:50;background:var(--paper);padding:8px 12px;border-radius:8px}
+.skip:focus{left:12px;top:8px}
+.brand h1{font-size:16px;letter-spacing:-.01em;margin:0;font-weight:700}
+
+/* ---------- where each statement comes from ---------- */
+.src{display:inline-block;font:700 10.5px var(--sans);letter-spacing:.06em;text-transform:uppercase;border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+.src.d{background:var(--ok-bg);color:var(--ok)}
+.src.i{background:var(--accent-2);color:var(--accent)}
+.src.r{background:var(--na-bg);color:var(--na)}
+.srckey{font-size:12.5px;color:var(--muted);margin:-4px 0 12px}
+.plainline{border-radius:11px;padding:10px 14px;margin-top:12px;font-size:14.5px;background:var(--bg);border:1px solid var(--line)}
+.backlink{font-size:13px}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
 /* ---------- plain words ---------- */
 .plain{margin-top:14px;padding:20px 24px}
 .plain .k{font:700 12px var(--sans);color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
@@ -174,7 +199,8 @@ pre{background:var(--code);border:1px solid var(--line);border-radius:9px;paddin
 .sent .meta .ok{color:var(--ok);font-weight:600}
 .sent .meta .warn{color:var(--unk);font-weight:600}
 .sent .txt b{font-weight:600}
-.detail{position:sticky;top:76px;max-height:calc(100vh - 92px);overflow:auto;padding:22px 24px}
+.detail{position:sticky;top:var(--stick,76px);max-height:calc(100vh - var(--stick,76px) - 16px);overflow:auto;padding:22px 24px}
+section,#storyWrap,#plain{scroll-margin-top:var(--stick,120px)}
 .d-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .d-head .id{font:700 12px var(--mono);color:var(--muted)}
 .quote{font:500 19px/1.4 var(--serif);margin:12px 0 4px;padding-left:14px;border-left:3px solid var(--line)}
@@ -280,13 +306,14 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to main content</a>
 <header class="top">
   <div class="top-in">
     <div class="brand">
       <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true">
         <rect width="36" height="36" rx="10" fill="var(--accent)"/>
         <path d="M18 7.5c-3.2 0-5.4 2.4-5.4 5.3 0 2.5 1.6 4.8 3.3 7.2L10 29.5h4.4l3.6-5.7 3.6 5.7H26l-5.9-9.5c1.7-2.4 3.3-4.7 3.3-7.2 0-2.9-2.2-5.3-5.4-5.3Zm0 3.2c1.3 0 2.3 1 2.3 2.2 0 1.3-1 3.1-2.3 5.1-1.3-2-2.3-3.8-2.3-5.1 0-1.2 1-2.2 2.3-2.2Z" fill="#fff"/></svg>
-      <div><b>Research Claim Auditor</b><span>Breast cancer research claims, checked against TCGA-BRCA data.</span></div>
+      <div><h1>Research Claim Auditor</h1><span>Breast cancer research claims, checked against TCGA-BRCA data.</span></div>
     </div>
     <nav aria-label="Steps"><ol class="steps-nav">
       <li><a href="#s1" id="nav1" class="on"><span class="dot">1</span>Load</a></li>
@@ -296,8 +323,12 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
     <div class="safety"><b>Research use only.</b> Not a clinical tool: no diagnosis, treatment advice or risk scores. A person confirms every verdict.</div>
   </div>
 </header>
+<div class="guide" id="guide" role="region" aria-label="What to do now">
+  <div class="guide-in"><span class="st" id="guideStep">Step 1 of 3</span><span class="tx" id="guideText" aria-live="polite"></span>
+    <button id="guideBtn" class="primary"></button></div>
+</div>
 
-<main>
+<main id="main" tabindex="-1">
 <!-- ============ 1. LOAD ============ -->
 <section id="s1" aria-labelledby="h1">
   <div class="sec-h" style="margin-top:6px"><span class="k">Step 1</span><h2 id="h1">Load a report</h2><p>Paste it, upload it, or open a sealed envelope.</p></div>
@@ -343,7 +374,11 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
 
 <!-- ============ 2. REVIEW ============ -->
 <section id="s2" class="hidden" aria-labelledby="h2">
-  <div class="sec-h"><span class="k">Step 2</span><h2 id="h2">Review each claim</h2><p>Click a sentence. Confirm or override what the tool found.</p></div>
+  <div class="sec-h"><span class="k">Step 2</span><h2 id="h2">Review each claim</h2><p>Click a sentence. Confirm or override what the tool found.</p>
+    <button class="ghost backlink" onclick="go('#storyWrap','#storyHead')">↑ Back to summary</button></div>
+  <p class="srckey"><span class="src d" style="margin:0">From the data</span> measured in the release files ·
+    <span class="src i">Interpretation</span> the tool's reasoning: check it ·
+    <span class="src r">From the report</span> quoted from the report · Keyboard: <kbd>j</kbd>/<kbd>k</kbd> next/previous claim</p>
   <div class="toolbar">
     <div class="seg" role="group" aria-label="Show">
       <button data-filter="all" aria-pressed="true">All sentences</button>
@@ -358,24 +393,25 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
   </div>
   <div class="review">
     <div class="card reader"><p class="title" id="readerTitle">The report</p><div class="sents" id="sents"></div></div>
-    <div class="card detail" id="detail" aria-live="polite"></div>
+    <div class="card detail" id="detail" role="region" aria-label="Selected claim"></div>
   </div>
 </section>
 
 <!-- ============ 3. DECIDE ============ -->
 <section id="s3" class="hidden" aria-labelledby="h3">
-  <div class="sec-h"><span class="k">Step 3</span><h2 id="h3">What happens next</h2><p>The tool's plan, its limits, and your decision.</p></div>
+  <div class="sec-h"><span class="k">Step 3</span><h2 id="h3">What happens next</h2><p>The tool's plan, its limits, and your decision.</p>
+    <button class="ghost backlink" onclick="go('#storyWrap','#storyHead')">↑ Back to summary</button></div>
   <div id="rec" class="rec na"></div>
   <div class="decide">
     <div class="card pad">
-      <h3 style="margin-top:0">Do this, in order</h3>
+      <h3 style="margin-top:0">Do this, in order <span class="src i">Interpretation</span></h3>
       <ol class="tl" id="steps"></ol>
       <details id="corrBox" style="margin-top:8px"><summary>Suggested corrected report, for the author</summary>
         <div class="corr" id="corr" style="margin-top:12px"></div>
         <button id="btnCorr" style="margin-top:8px">Download corrected_report.md</button></details>
     </div>
     <div class="card pad">
-      <h3 style="margin-top:0">What this audit can't tell you</h3>
+      <h3 style="margin-top:0">What this audit can't tell you <span class="src i">Interpretation</span></h3>
       <ul class="cant" id="cant" style="padding-left:18px;margin:0"></ul>
     </div>
   </div>
@@ -424,14 +460,51 @@ async function api(path, body){
   const j = await r.json(); if (j.error) throw new Error(j.error); return j;
 }
 
+// ---------------------------------------------------------------- guide: one sentence that always says what to do now
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const go = (sel, focus) => { const el = $(sel); if (!el) return; el.scrollIntoView({behavior: REDUCED ? "auto" : "smooth", block: "start"});
+  const f = focus && $(focus); if (f) setTimeout(() => f.focus({preventScroll: true}), REDUCED ? 0 : 350); };
+const srcTag = k => ({d: `<span class="src d" title="Measured in the data files">From the data</span>`,
+  r: `<span class="src r" title="Quoted from the report">From the report</span>`,
+  i: `<span class="src i" title="The tool's reasoning, not a measurement: check it">Interpretation</span>`})[k];
+function layout(){
+  const h = $(".top").offsetHeight; $("#guide").style.top = h + "px";
+  document.documentElement.style.setProperty("--stick", (h + $("#guide").offsetHeight + 12) + "px");
+}
+addEventListener("resize", layout);
+function updateGuide(){
+  const g = $("#guide"), set = (stepTxt, text, btn, fn, done) => {
+    $("#guideStep").textContent = stepTxt; $("#guideText").textContent = text; g.classList.toggle("done", !!done);
+    $("#guideBtn").textContent = btn; $("#guideBtn").classList.toggle("hidden", !btn); $("#guideBtn").onclick = fn; layout();
+  };
+  if (!audit) {
+    const has = $("#report").value.trim();
+    return has ? set("Step 1 of 3 · Load", "A report is loaded. Press “Check every claim” to check each statement against the data.",
+                     "Check every claim →", () => { run(false); })
+               : set("Step 1 of 3 · Load", "Start by loading a report: use the practice report, upload a file, paste text, or open a sealed envelope.",
+                     "Use the practice report", () => { $("#btnPractice").click(); });
+  }
+  const cl = claims(), left = cl.filter(i => !i.review);
+  if ($("#exportOut").dataset.ok)
+    return set("Done ✓", "The audit is exported and the organizers' validator says it is valid. Load another report to start again.",
+               "Load another report", () => go("#s1", "#report"), true);
+  if (left.length)
+    return set("Step 2 of 3 · Review", `${left.length} of ${cl.length} ${plural(cl.length, "claim needs", "claims need")} a person: open it, read what the data shows, then press Confirm or Override. (You can also decide now; unconfirmed claims are exported as needing review.)`,
+               `Review ${left[0].id} →`, () => { sel = left[0].id; renderReader(); renderDetail(); go("#s2", "#accept"); });
+  return set("Step 3 of 3 · Decide", `Every claim is confirmed. Pick a decision${plan ? ` (the tool suggests “${plan.decision}”)` : ""}, write why, then export.`,
+             "Go to the decision →", () => go("#s3", "#decReason"));
+}
+
 // ---------------------------------------------------------------- load
 async function init(){
+  layout(); updateGuide();
+  $("#report").addEventListener("input", () => { if (!audit) updateGuide(); });
   cfg = await api("/api/config");
   $("#releaseDir").value = cfg.release_dir;
   try { $("#reviewer").value = localStorage.getItem("ca_reviewer") || ""; } catch(e){}
 }
-$("#btnPractice").onclick = () => { $("#report").value = cfg.practice_report; status("Practice report loaded. Press “Check every claim”."); $("#btnRun").focus(); };
-$("#file").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { $("#report").value = t; status(`Loaded ${f.name}.`); }); };
+$("#btnPractice").onclick = () => { $("#report").value = cfg.practice_report; status("Practice report loaded. Press “Check every claim”."); $("#btnRun").focus(); updateGuide(); };
+$("#file").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { $("#report").value = t; status(`Loaded ${f.name}.`); updateGuide(); }); };
 $("#btnUnseal").onclick = async () => {
   status("Unsealing the envelope (10–20 seconds)…", true);
   try {
@@ -466,7 +539,7 @@ async function run(compare){
     ["#nav2", "#nav3"].forEach(s => $(s).removeAttribute("aria-disabled"));
     $("#btnExport").disabled = false; $("#btnCorr").disabled = false;
     render();
-    $("#storyWrap").scrollIntoView({behavior: "smooth", block: "start"});
+    go("#storyWrap", "#storyHead");
   } catch(e){ clearResults(); status("Error: " + e.message + " — no results shown and nothing can be exported. Fix this and check again."); }
 }
 
@@ -476,6 +549,8 @@ function clearResults(){
   ["#nav2", "#nav3"].forEach(s => $(s).setAttribute("aria-disabled", "true"));
   $("#btnExport").disabled = true; $("#btnCorr").disabled = true;
   $("#exportOut").className = "hidden"; $("#exportOut").dataset.ok = "";
+  ["#nav2", "#nav3"].forEach(s => $(s).tabIndex = -1);
+  updateGuide();
 }
 
 // ---------------------------------------------------------------- helpers
@@ -497,6 +572,8 @@ $$("[data-filter]").forEach(b => b.onclick = () => {
 function render(){ renderStory(); renderReader(); renderDetail(); renderNav(); schedulePlan(); }
 
 function renderNav(){
+  updateGuide();
+  ["#nav2", "#nav3"].forEach(s => $(s).tabIndex = $(s).getAttribute("aria-disabled") === "true" ? -1 : 0);
   const cl = claims(), done = cl.filter(i => i.review).length;
   $("#nav1").className = "done";
   $("#nav2").className = done === cl.length && cl.length ? "done" : "on";
@@ -563,7 +640,7 @@ function renderStory(){
     <div class="kicker">${esc(audit.title)} · ${sc.explicit_claims ? sc.explicit_claims + " labelled claims" : total + " sentences"} · ${otherData()
       ? "checked against the report's own numbers" : "checked against release " + esc(audit.release.name)} in ${audit.seconds}s</div>
     ${scopeBox}
-    <h2 class="headline">${headline(c, n)}</h2>
+    <h2 class="headline" id="storyHead" tabindex="-1">${headline(c, n)}</h2>
     <p class="dek">${plan ? `<b>Suggested next step: ${esc(plan.decision)}.</b> ${esc(plan.why.replace(/^[^.]*\.\s*/, ""))}` : ""}</p>
     <div class="vbar" role="img" aria-label="${c.supported} supported, ${c.contradicted} contradicted, ${c.insufficient_evidence} insufficient evidence, ${c.not_a_claim} not claims">
       ${seg("contradicted")}${seg("insufficient_evidence")}${seg("supported")}${seg("not_a_claim")}</div>
@@ -575,7 +652,7 @@ function renderStory(){
     ${labelled}
     <div class="progress"><div class="meter"><div style="width:${n ? 100 * done / n : 0}%"></div></div>
       <span><b class="num">${done} of ${n}</b> verdicts confirmed by a person${done < n ? " · each one waits for you in step 2" : " · ready to decide"}</span></div>`;
-  $$("[data-go]").forEach(b => b.onclick = () => { sel = b.dataset.go; renderReader(); renderDetail(); $("#s2").scrollIntoView({behavior:"smooth"}); });
+  $$("[data-go]").forEach(b => b.onclick = () => { sel = b.dataset.go; renderReader(); renderDetail(); go("#s2", "#accept"); });
   if ($("#btnCompare")) $("#btnCompare").onclick = () => run(true);
   if ($("#btnUncompare")) $("#btnUncompare").onclick = () => run(false);
   renderPlain();
@@ -588,7 +665,7 @@ function renderPlain(){
   const pts = p.points.filter(x => x.text), probs = pts.filter(x => x.mark !== "ok"), ok = pts.filter(x => x.mark === "ok");
   const li = x => `<li class="m-${x.mark}"><span class="tag">${esc(x.label)} · ${esc(x.id)}</span><span>${esc(x.text)}</span></li>`;
   $("#plain").innerHTML = `
-    <div class="k">In plain words</div>
+    <div class="k">In plain words ${srcTag("i")}</div>
     <div class="bl">${esc(p.bottom_line)}</div>
     <p>${esc(p.what_we_did)} ${esc(p.tally)}</p>
     ${probs.length ? `<ul>${probs.map(li).join("")}</ul>` : ""}
@@ -664,7 +741,7 @@ function alternatives(r, it){
     return `<div class="alt ${match ? "match" : ""}"><span>${esc(def)}${match ? ` <b style="color:var(--unk)">← matches the report</b>` : ""}</span>
       <div class="bar">${v != null && /%/.test(a.value) ? `<div style="width:${Math.min(100, v)}%"></div>` : ""}</div><span class="val num">${esc(a.value)}</span></div>`;
   }).join("");
-  return `<h3>Same question, other reasonable definitions</h3><p class="small muted" style="margin:-4px 0 8px">If the answer moves a lot here, the report must say which definition it used.</p><div class="alts">${rows}</div>`;
+  return `<h3>Same question, other reasonable definitions ${srcTag("d")}</h3><p class="small muted" style="margin:-4px 0 8px">If the answer moves a lot here, the report must say which definition it used.</p><div class="alts">${rows}</div>`;
 }
 
 // ---------------------------------------------------------------- detail
@@ -675,26 +752,29 @@ function renderDetail(){
   const judged = r.subchecks.filter(s => s.ok !== null), context = r.subchecks.filter(s => s.ok === null);
   const cv = (it.review && it.review.correct_value) || r.correct_value;
   const imp = (plan && plan.impacts && plan.impacts[it.id]) || it.impact;
+  const pp = (plan && plan.plain) || audit.plain, pt = pp && pp.points.find(x => x.id === (it.label || it.id));
   let h = `<div class="d-head">${badge(v)}<span class="id">${it.id}${it.label ? ` · report's ${esc(it.label)}` : ""}</span>
-      <span class="small muted">confidence ${esc(r.confidence)}${it.review && v !== tv ? ` · tool said ${LABEL[tv]}` : ""}</span></div>
+      <span class="small muted">confidence ${esc(r.confidence)}${it.review && v !== tv ? ` · tool said ${LABEL[tv]}` : ""}</span>
+      <button class="ghost backlink" id="backSum" style="margin-left:auto">↑ Back to summary</button></div>
     ${it.title ? `<div class="small muted" style="margin-top:6px">The report's own label: ${esc(it.title)} <span class="tiny">(not used to decide the verdict)</span></div>` : ""}
     <p class="quote">${esc(it.claim_text)}</p>
-    ${it.evidence_cited ? `<div class="callout"><b class="h" style="color:var(--accent)">Evidence the report cites</b>${esc(it.evidence_cited)}</div>` : ""}
-    <p class="summary">${esc(r.summary)}</p>`;
+    ${pt && pt.text && v !== "not_a_claim" ? `<div class="plainline"><b>In plain words:</b> ${esc(pt.text.replace(/^“[^”]*”\s*/, "").replace(/^(goes|isn't|is |matches|doesn't)/, m => "This " + m))}${srcTag("i")}</div>` : ""}
+    ${it.evidence_cited ? `<div class="callout"><b class="h" style="color:var(--accent)">Evidence the report cites ${srcTag("r")}</b>${esc(it.evidence_cited)}</div>` : ""}
+    <p class="summary">${esc(r.summary)} ${srcTag(judged.length ? "d" : "i")}</p>`;
   if (v === "not_a_claim") {
     h += `<div class="callout"><b class="h">Not scored</b>${esc(r.limitation || "Nothing in this sentence can be measured in the data.")}</div>`;
   } else {
-    if (judged.length && view !== "lead") h += `<h3>${otherData() ? "The claim vs the report's own numbers" : "What the report says vs what the data says"}</h3>` + judged.map(compare).join("");
-    if (v === "contradicted" && cv) h += `<div class="callout bad"><b class="h">${otherData() ? "What the report's own numbers give" : "What the data shows instead"}</b><span class="big-val num">${esc(cv)}</span></div>`;
-    if (r.needed) h += `<div class="callout unk"><b class="h">Data that would be needed</b>${esc(r.needed)}</div>`;
+    if (judged.length && view !== "lead") h += `<h3>${otherData() ? "The claim vs the report's own numbers" : "What the report says vs what the data says"} ${srcTag("d")}</h3>` + judged.map(compare).join("");
+    if (v === "contradicted" && cv) h += `<div class="callout bad"><b class="h">${otherData() ? "What the report's own numbers give" : "What the data shows instead"} ${srcTag("d")}</b><span class="big-val num">${esc(cv)}</span></div>`;
+    if (r.needed) h += `<div class="callout unk"><b class="h">Data that would be needed ${srcTag("i")}</b>${esc(r.needed)}</div>`;
     if (imp) {
       h += `<div class="after">
-        <div class="aft"><span class="ic">${SVG.why}</span><h4>Why it matters</h4><p>${esc(imp.why_it_matters)}</p></div>
-        <div class="aft"><span class="ic">${SVG.next}</span><h4>What to do next</h4><p>${esc(imp.next_step)}</p>
+        <div class="aft"><span class="ic">${SVG.why}</span><h4>Why it matters ${srcTag("i")}</h4><p>${esc(imp.why_it_matters)}</p></div>
+        <div class="aft"><span class="ic">${SVG.next}</span><h4>What to do next ${srcTag("i")}</h4><p>${esc(imp.next_step)}</p>
           ${imp.suggested_text ? `<span class="sugg">${esc(imp.suggested_text)}</span>
             <div class="sugg-row"><button class="ghost small" id="copySugg">Copy suggested wording</button></div>` : ""}
           ${imp.ask_author && v !== "supported" ? `<p class="small" style="margin-top:6px"><b>Ask the author:</b> ${esc(imp.ask_author)}</p>` : ""}</div>
-        <div class="aft"><span class="ic">${SVG.cant}</span><h4>What the tool can't tell you</h4><ul>${imp.cant_tell.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
+        <div class="aft"><span class="ic">${SVG.cant}</span><h4>What the tool can't tell you ${srcTag("i")}</h4><ul>${imp.cant_tell.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
       </div>`;
     }
     if (view !== "lead") h += alternatives(r, it);
@@ -726,6 +806,7 @@ function renderDetail(){
     ${it.review ? `<p class="rev-note">${it.review.decision === "override" ? "Overridden" : "Confirmed"} by <b>${esc(it.review.reviewer)}</b> (${esc(it.review.reviewer_role)}) at ${esc(it.review.at)}${it.review.reason ? ": “" + esc(it.review.reason) + "”" : ""}. Tool verdict kept: ${LABEL[tv]}.</p>` : ""}</div>`;
   $("#detail").innerHTML = h;
   $("#detail").scrollTop = 0;
+  $("#backSum").onclick = () => go("#storyWrap", "#storyHead");
   const who = () => ({reviewer: $("#reviewer").value || "unnamed reviewer", reviewer_role: $("#role").value, at: new Date().toISOString().slice(0, 16).replace("T", " ")});
   $("#accept").onclick = () => { it.review = {decision:"accept", verdict: tv, ...who()}; next(); };
   $("#ovr").onclick = () => { $("#ovrBox").classList.toggle("hidden"); $("#ovrR").focus(); };
@@ -777,7 +858,7 @@ function renderPlan(){
   const tone = {"Fix a problem": "bad", "Narrow the question": "unk", "Proceed": "ok"}[plan.decision] || "na";
   const ic = {bad: SVG.contradicted, unk: SVG.insufficient_evidence, ok: SVG.supported, na: SVG.not_a_claim}[tone];
   $("#rec").className = "rec " + tone;
-  $("#rec").innerHTML = `<span class="ic">${ic}</span><div><span class="small muted">The tool suggests</span><b>${esc(plan.decision)}</b>
+  $("#rec").innerHTML = `<span class="ic">${ic}</span><div><span class="small muted">The tool suggests ${srcTag("i")} · you decide below</span><b>${esc(plan.decision)}</b>
     <span class="small" style="color:var(--ink-2)">${esc(plan.why)}</span></div>`;
   $("#steps").innerHTML = plan.steps.length ? plan.steps.map(s => `<li><b>${esc(s.do)}<span class="pill">${esc(s.id)}</span></b><p>${esc(s.detail)}</p>
       ${s.suggested_text ? `<span class="sugg">${esc(s.suggested_text)}</span>` : ""}</li>`).join("")

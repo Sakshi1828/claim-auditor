@@ -430,13 +430,15 @@ async function run(compare){
   if (!text) { status("Load or paste a report first."); $("#report").focus(); return; }
   try { localStorage.setItem("ca_reviewer", $("#reviewer").value); } catch(e){}
   status("Checking each claim…", true);
+  clearResults();   // never show or export an earlier report's results while this one runs or if it fails
   try {
-    audit = await api("/api/audit", {report_text: text, release_dir: $("#releaseDir").value, compare: compare === true});
+    const fresh = await api("/api/audit", {report_text: text, release_dir: $("#releaseDir").value, compare: compare === true});
+    audit = fresh;
     plan = null; planKey = ""; decisionTouched = false; filter = "all";
     $("#exportOut").className = "hidden"; $("#exportOut").dataset.ok = ""; $("#decReason").value = "";
     $$("[data-filter]").forEach(x => x.setAttribute("aria-pressed", x.dataset.filter === "all"));
-    const t = text.match(/^#\s+(.+)$/m), first = (text.split(/\n/).find(l => l.trim()) || "").trim();
-    audit.title = t ? t[1].replace(/[*_`]/g, "").trim() : (first && first.length <= 90 ? first : "Untitled report");
+    const t = text.match(/^#\s+(.+)$/m), firstLine = (text.split(/\n/).find(l => l.trim()) || "").trim();
+    audit.title = t ? t[1].replace(/[*_`]/g, "").trim() : (firstLine && firstLine.length <= 90 ? firstLine : "Untitled report");
     const first = claims().find(i => finalV(i) === "contradicted") || claims()[0];
     sel = first ? first.id : null;
     const n = claims().length;
@@ -444,9 +446,18 @@ async function run(compare){
       ? "against the report's own numbers (it describes a different dataset)." : `against release ${audit.release.name}.`));
     ["#storyWrap", "#s2", "#s3"].forEach(s => $(s).classList.remove("hidden"));
     ["#nav2", "#nav3"].forEach(s => $(s).removeAttribute("aria-disabled"));
+    $("#btnExport").disabled = false; $("#btnCorr").disabled = false;
     render();
     $("#storyWrap").scrollIntoView({behavior: "smooth", block: "start"});
-  } catch(e){ status("Error: " + e.message); }
+  } catch(e){ clearResults(); status("Error: " + e.message + " — no results shown and nothing can be exported. Fix this and check again."); }
+}
+
+function clearResults(){
+  audit = null; plan = null; sel = null; decision = null; decisionTouched = false;
+  ["#storyWrap", "#s2", "#s3"].forEach(s => $(s).classList.add("hidden"));
+  ["#nav2", "#nav3"].forEach(s => $(s).setAttribute("aria-disabled", "true"));
+  $("#btnExport").disabled = true; $("#btnCorr").disabled = true;
+  $("#exportOut").className = "hidden"; $("#exportOut").dataset.ok = "";
 }
 
 // ---------------------------------------------------------------- helpers
@@ -751,12 +762,13 @@ function renderPlan(){
   renderNav();
 }
 $("#btnCorr").onclick = () => {
-  if (!plan) return;
+  if (!audit || !plan) return;
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([plan.corrected_markdown], {type: "text/markdown"}));
   a.download = "corrected_report.md"; a.click(); URL.revokeObjectURL(a.href);
 };
 $("#btnExport").onclick = async () => {
+  if (!audit) { status("Nothing to export: run a successful check first."); return; }
   const reason = $("#decReason").value.trim(), rp = reasonProblem(reason, 4);
   if (rp) { $("#decReason").focus(); $("#decReason").value = ""; $("#decReason").placeholder = rp;
     $("#exportOut").className = "export-ok export-bad"; $("#exportOut").textContent = "Not exported: " + rp; return; }

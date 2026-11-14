@@ -146,15 +146,20 @@ Rules:
 
 
 # ------------------------------------------------------------------ catalog context
-@functools.lru_cache(maxsize=4)
-def _catalog_for(release_dir: str, slide_manifest: str | None):
+@functools.lru_cache(maxsize=8)
+def _catalog_for(release_dir: str, slide_manifest: str | None, fp: str):
+    from .adapt import activate
     rel = Release(release_dir, slide_manifest)
+    activate(rel)
     prof = profile_release(rel)
     return rel, prof, capabilities(prof, rel)
 
 
 def catalog(rel: Release):
-    return _catalog_for(str(rel.dir), str(rel.slide_manifest_path) if rel.slide_manifest_path else None)
+    """Catalog of the ACTIVE release, keyed by its file fingerprint (never reused for different contents)."""
+    from .adapt import fingerprint
+    return _catalog_for(str(rel.dir), str(rel.slide_manifest_path) if rel.slide_manifest_path else None,
+                        fingerprint(rel.dir))
 
 
 def catalog_context(rel: Release, max_values: int = 10) -> str:

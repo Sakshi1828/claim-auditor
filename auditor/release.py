@@ -63,6 +63,7 @@ class Release:
         else:
             self.sample_manifest_path, self.own_sample_manifest = (sm if sm and sm.exists() else None), False
         self.membership_note = ""
+        self.adaptation = None     # set by auditor.adapt.activate(): renamed/recoded fields
 
     # ---------- files ----------
     def path(self, layer: str) -> pathlib.Path:
@@ -78,7 +79,11 @@ class Release:
     # ---------- tables (loaded lazily, cached) ----------
     @cached_property
     def clinical(self) -> pd.DataFrame:
-        return pd.read_csv(self.path("clinical"), sep="\t", low_memory=False)
+        df = pd.read_csv(self.path("clinical"), sep="\t", low_memory=False)
+        if self.adaptation is not None:
+            from .adapt import translate_clinical
+            df = translate_clinical(df, self.adaptation.plan)
+        return df
 
     @cached_property
     def clinical_primary(self) -> pd.DataFrame:
@@ -87,7 +92,10 @@ class Release:
 
     @cached_property
     def survival(self) -> pd.DataFrame:
-        return pd.read_csv(self.path("survival"), sep="\t")
+        df = pd.read_csv(self.path("survival"), sep="\t")
+        if self.adaptation is not None and self.adaptation.survival_plan["renamed"]:
+            df = df.rename(columns={v: k for k, v in self.adaptation.survival_plan["renamed"].items()})
+        return df
 
     @cached_property
     def mutation(self) -> pd.DataFrame:

@@ -7,6 +7,7 @@ import json
 
 from .checks import Result, SubCheck, check_sentence
 from .claims import Sentence, find_numbers, split_sentences
+from .adapt import activate
 from .impact import action_plan, explain
 from .plain import plain_summary
 from .release import Release
@@ -55,6 +56,8 @@ def run_audit(report_text: str, release: Release, compare: bool | None = None) -
 
     compare=None decides from the report: a report about another dataset (e.g. a synthetic fixture) is never
     compared with the release. compare=True forces the comparison (the reviewer asked for it)."""
+    ctx = activate(release)          # profile + map THIS release before anything is read or computed
+    rename = {k: v["to"] for k, v in ctx.plan["renamed"].items()}
     m = release.membership
     totals = {"primary": int((m.type_code == "01").sum()), "samples": len(m), "patients": int(m.patient_id.nunique())}
     scope = detect_scope(report_text, totals)
@@ -87,6 +90,13 @@ def run_audit(report_text: str, release: Release, compare: bool | None = None) -
                          summary="The report labels this as a claim, but the tool has no automatic check for it. "
                                  "A reviewer must check it by hand.", needed=needed_for(s.text),
                          limitation="Unchecked by the tool: this is not a judgement that the data can't answer it.")
+        # release-specific notes: renamed fields that were used, and data this release lacks
+        used = [f for f in res.fields if f in rename]
+        if used:
+            res.limitation = ("In this release " + "; ".join(f"`{f}` is stored as `{rename[f]}`" for f in used)
+                              + " (matched on its values, then validated). " + res.limitation)
+        if res.verdict == "insufficient_evidence" and res.check in ("unrecognised", "engine") and ctx.missing_note():
+            res.limitation = (res.limitation + " " + ctx.missing_note()).strip()
         n_claims = len([i for i in items if i["tool_verdict"] != "not_a_claim"])
         items.append({
             "id": f"C{n_claims + 1:02d}" if res.verdict != "not_a_claim" else f"S{s.index + 1:02d}",
@@ -103,7 +113,8 @@ def run_audit(report_text: str, release: Release, compare: bool | None = None) -
         items[-1]["impact"] = explain(items[-1], res.verdict, release.name, scope)
     return {
         "created": dt.datetime.now().isoformat(timespec="seconds"),
-        "release": {"name": release.name, "dir": str(release.dir), "files": release.checksums},
+        "release": {"name": release.name, "dir": str(release.dir), "files": release.checksums,
+                    "fingerprint": ctx.fingerprint, "adaptation": ctx.report() if ctx.changed else None},
         "scope": scope,
         "items": items,
     }

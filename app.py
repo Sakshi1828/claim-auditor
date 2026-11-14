@@ -25,6 +25,7 @@ from auditor.audit import final_verdict, plan_for, run_audit, suggested_decision
 from auditor.impact import corrected_markdown, explain  # noqa: E402
 from auditor.plain import plain_markdown, plain_summary  # noqa: E402
 from auditor.envelope import opened_dir, unseal  # noqa: E402
+from auditor.adapt import fingerprint  # noqa: E402
 from auditor.release import Release  # noqa: E402
 
 CHALLENGE = HERE.parent / "oncosys-hackathon-challenge"
@@ -35,10 +36,11 @@ _lock = threading.Lock()
 
 def get_release(path: str | None) -> Release:
     p = str(pathlib.Path(path).resolve()) if path else str((CHALLENGE / "data/tcga-brca/raw").resolve())
+    key = (p, fingerprint(p) if pathlib.Path(p).is_dir() else "")   # re-opened envelope = new contents = new release
     with _lock:
-        if p not in _releases:
-            _releases[p] = Release(p, CHALLENGE / "data/tcga-brca/slide_manifest.csv")
-        return _releases[p]
+        if key not in _releases:
+            _releases[key] = Release(p, CHALLENGE / "data/tcga-brca/slide_manifest.csv")
+        return _releases[key]
 
 
 def opened_envelopes() -> list[dict]:

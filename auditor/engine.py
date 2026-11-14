@@ -55,6 +55,9 @@ class Data:
         """Primary tumors, every column as the file's text (labels exactly as written)."""
         if self._c is None:
             c = pd.read_csv(self.rel.path("clinical"), sep="\t", dtype=str, keep_default_na=False)
+            if getattr(self.rel, "adaptation", None) is not None:
+                from .adapt import translate_clinical
+                c = translate_clinical(c, self.rel.adaptation.plan, as_text=True)
             self._c = c[c.sampleID.map(is_primary)].set_index("sampleID")
         return self._c
 
@@ -81,9 +84,13 @@ _DATA: dict[str, Data] = {}
 
 
 def data_for(rel: Release) -> Data:
-    if str(rel.dir) not in _DATA:
-        _DATA[str(rel.dir)] = Data(rel)
-    return _DATA[str(rel.dir)]
+    """One reader per release CONTENTS: a rewritten release in the same folder gets a fresh reader."""
+    from .adapt import activate
+    ctx = activate(rel)
+    key = (str(rel.dir), ctx.fingerprint)
+    if key not in _DATA:
+        _DATA[key] = Data(rel)
+    return _DATA[key]
 
 
 # ------------------------------------------------------------------ resolving a field reference into a series
@@ -174,6 +181,11 @@ def predicate(series: pd.Series, kind: str, value, field: str) -> tuple[pd.Serie
     else:
         hit = [c for c in cats if _norm(c) == _norm(v)]
     if not hit:
+        # a category the schema knows but no tumor has in this release is a real answer: 0%
+        from .adapt import norm, reference
+        known = (reference().get(field.split(".", 1)[-1]) or {}).get("values", [])
+        if any(norm(k) == norm(v) for k in known):
+            return (series != series).where(series.notna()).astype("object"), f"== {v!r} (no tumor has it here)"
         raise Stop("1 variables", f"{field} has no value {v!r} (values: {', '.join(map(str, sorted(cats)[:8]))})")
     return series.isin(hit).where(series.notna()), f"in {hit}"
 

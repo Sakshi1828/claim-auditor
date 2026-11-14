@@ -201,6 +201,9 @@ def _matrix_profile(df: pd.DataFrame, layer: str) -> dict:
 def profile_release(rel: Release) -> dict:
     # read as text so category labels are exactly what the file says ("2", not "2.0")
     c = pd.read_csv(rel.path("clinical"), sep="\t", dtype=str, keep_default_na=False)
+    if getattr(rel, "adaptation", None) is not None:      # the ACTIVE release, in reference names
+        from .adapt import translate_clinical
+        c = translate_clinical(c, rel.adaptation.plan, as_text=True)
     sid = c.sampleID.astype(str)
     patient = sid.str[:12]
     primary = sid.map(is_primary)

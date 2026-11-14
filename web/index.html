@@ -475,8 +475,64 @@ ol.tl li::after{background:linear-gradient(var(--accent),var(--line))}
 .cant li::before{content:"";position:absolute;left:0;top:3px;width:18px;height:18px;background:var(--unk);-webkit-mask:var(--info-mask) center/contain no-repeat;mask:var(--info-mask) center/contain no-repeat}
 :root{--info-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v6'/%3E%3Ccircle cx='12' cy='7.5' r='.6' fill='black'/%3E%3C/svg%3E")}
 
+/* ================= PHASE 5: view-only interactions (hover, focus, tips, drill-down, toggles) ================= */
+/* subtle transitions, 150-300 ms */
+button,.card,.fcard,.sent,.lg,.dtab,.tip,.vbar div,.gd-mean,.gd-med,.pt,details > summary{transition:background-color .18s,border-color .18s,box-shadow .22s,color .18s,opacity .2s,transform .2s}
+/* hover and keyboard focus look the same everywhere */
+.card:hover{box-shadow:var(--shadow-lg)}
+.fcard:hover,.fcard:focus-visible{transform:translateY(-2px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.sent:focus-visible,.lg:focus-visible,.vbar div:focus-visible,.pt:focus-visible,.gd-mean:focus-visible,.gd-med:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.vbar div:hover,.vbar div:focus-visible{filter:brightness(1.08)}
+.pt:hover,.pt:focus-visible,.gd-mean:hover,.gd-mean:focus-visible,.gd-med:hover,.gd-med:focus-visible{transform:scale(1.25)}
+.alt:hover{background:var(--bg);border-radius:8px}
+/* legend: click to dim a result in the bar, hover to highlight it */
+.legend .lg{display:flex;gap:7px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-md);padding:6px 12px;font-weight:400;font-size:13.5px;color:var(--ink)}
+.legend .lg b{font-size:20px}
+.legend .lg:hover{border-color:var(--accent)}
+.legend .lg[aria-pressed=false]{opacity:.55;text-decoration:line-through}
+.vbar div.faded{opacity:.3}
+.vbar div.dimmed{opacity:.12}
+/* "?" tips: a small round button; the explanation shows on hover or keyboard focus */
+.tipwrap{position:relative;display:inline-block;vertical-align:middle}
+.tip{width:18px;height:18px;padding:0;border-radius:50%;font:700 11px/16px var(--sans);color:var(--accent);background:var(--accent-2);
+  border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);margin:0 2px 0 4px;cursor:help}
+.tip:hover,.tip:focus-visible{background:var(--accent);color:var(--paper)}
+.tipbox{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%) translateY(4px);width:max-content;max-width:260px;
+  background:var(--ink);color:var(--paper);font:400 13px/1.45 var(--sans);text-align:left;letter-spacing:0;text-transform:none;
+  padding:8px 10px;border-radius:8px;box-shadow:var(--shadow-lg);opacity:0;visibility:hidden;pointer-events:none;z-index:40;
+  transition:opacity .18s,transform .18s,visibility .18s}
+.tipwrap:hover .tipbox,.tip:focus-visible + .tipbox,.tip:focus + .tipbox{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.tipwrap.dismissed .tipbox{opacity:0!important;visibility:hidden!important;transition:none}
+.term{text-decoration:underline dotted color-mix(in srgb,var(--accent) 55%,transparent);text-underline-offset:3px}
+.quote .tipbox,.d-head .tipbox{font-family:var(--sans)}
+/* drill-down from the summary into the evidence behind each result */
+details.drill{margin-top:16px;border:1px solid var(--line);border-radius:var(--r-md);padding:10px 14px;background:var(--bg)}
+details.drill > summary{font-weight:600;color:var(--accent);cursor:pointer}
+.drill-item{border-top:1px solid var(--line-2);padding:8px 0}
+.drill-item:first-of-type{margin-top:8px}
+.drill-item > summary{display:flex;gap:10px;align-items:flex-start;cursor:pointer;list-style:none}
+.drill-item > summary::-webkit-details-marker{display:none}
+.drill-item > summary::before{content:"▸";color:var(--muted);transition:transform .2s;flex:none}
+.drill-item[open] > summary::before{transform:rotate(90deg)}
+.drill-q{font-size:var(--fs-sm);color:var(--ink);max-width:70ch}
+.drill-body{padding:8px 0 4px 22px;font-size:var(--fs-sm);color:var(--ink-2);max-width:72ch}
+.drill-body ul{margin:6px 0;padding-left:18px}
+/* the existing detail-level switch as a labelled segmented control */
+.seg-wrap{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.seg-label{font-size:var(--fs-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.seg button[aria-pressed=true]{color:var(--accent);box-shadow:var(--shadow),inset 0 -2px 0 var(--accent)}
+/* group plot: show both markers, average only, or middle value only */
+.gd-mode{display:inline-flex;gap:4px;margin-left:auto}
+.gd-mode button{font-size:var(--fs-xs);padding:3px 9px;border-radius:var(--r-pill)}
+.gd-mode button[aria-pressed=true]{background:var(--accent-2);color:var(--accent);border-color:var(--accent)}
+.gd-key{flex-wrap:wrap;align-items:center}
+.gdots[data-show=mean] .gd-med,.gdots[data-show=median] .gd-mean{opacity:.08}
+.gdots[data-show=mean] .gd-mean,.gdots[data-show=median] .gd-med{box-shadow:0 0 0 4px color-mix(in srgb,var(--chart-1) 25%,transparent)}
+.gd-row:hover .gd-track{background-color:var(--accent-2)}
+
 /* gentle motion only for people who are fine with motion */
-@media (prefers-reduced-motion:reduce){svg.hero-art,.sk,.vbar div,.bars .b,.alt .bar div,.complete span,.scale .pt,.gd-mean,.gd-med{animation:none}}
+@media (prefers-reduced-motion:reduce){svg.hero-art,.sk,.vbar div,.bars .b,.alt .bar div,.complete span,.scale .pt,.gd-mean,.gd-med{animation:none}
+  *{transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
@@ -660,11 +716,12 @@ ol.tl li::after{background:linear-gradient(var(--accent),var(--line))}
       <button data-filter="problems" aria-pressed="false">Problems only</button>
       <button data-filter="todo" aria-pressed="false">Not yet confirmed</button>
     </div>
-    <div class="seg" role="group" aria-label="Detail level">
+    <div class="seg-wrap"><span class="seg-label" id="segLabel">How much detail</span>
+    <div class="seg" role="group" aria-label="Detail level" aria-describedby="segLabel">
       <button data-view="lead" aria-pressed="false">Program lead</button>
       <button data-view="reviewer" aria-pressed="true">Reviewer</button>
       <button data-view="researcher" aria-pressed="false">Researcher</button>
-    </div>
+    </div></div>
   </div>
   <div class="review">
     <div class="card reader"><p class="title" id="readerTitle">The report</p><div class="sents" id="sents"></div></div>
@@ -918,7 +975,8 @@ function headline(c, n){
 
 function renderStory(){
   const c = counts(), cl = claims(), n = cl.length, done = cl.filter(i => i.review).length, total = audit.items.length;
-  const seg = v => c[v] ? `<div class="bg-${v}" style="width:${100 * c[v] / total}%" title="${LABEL[v]}: ${c[v]}"></div>` : "";
+  const seg = v => c[v] ? `<div class="bg-${v}" data-series="${v}" style="width:${100 * c[v] / total}%" title="${LABEL[v]}: ${c[v]}"
+      tabindex="0" aria-label="${LABEL[v]}: ${c[v]} of ${total} sentences"></div>` : "";
   const problems = cl.filter(i => ["contradicted", "insufficient_evidence"].includes(finalV(i)))
     .sort((a, b) => (finalV(a) === "contradicted" ? 0 : 1) - (finalV(b) === "contradicted" ? 0 : 1)).slice(0, 3);
   const fc = problems.map(it => {
@@ -957,9 +1015,11 @@ function renderStory(){
       ${seg("contradicted")}${seg("insufficient_evidence")}${seg("supported")}${seg("not_a_claim")}</div>
     <div class="legend num">
       ${["contradicted", "insufficient_evidence", "supported", "not_a_claim"].map(v =>
-        `<span><i class="bg-${v}"></i><b>${c[v]}</b> ${LABEL[v].toLowerCase()}</span>`).join("")}
+        `<button type="button" class="lg" data-series="${v}" aria-pressed="true" title="${esc(VERDICT_HELP[v])} Click to dim or show it in the bar."><i class="bg-${v}"></i><b>${c[v]}</b> ${LABEL[v].toLowerCase()}</button>`).join("")}
     </div>`})}
     ${fc ? `<div class="top3">${fc}</div>` : ""}
+    ${cl.length ? `<details class="drill"><summary>Show the evidence behind each result <span class="acc-help">${cl.length} ${plural(cl.length, "claim", "claims")}</span></summary>
+      ${cl.map(drillItem).join("")}</details>` : ""}
     <div class="row" style="margin-top:14px;align-items:center">
       <button class="pill-btn" id="btnPlain" aria-expanded="${!$("#plain").classList.contains("hidden")}" aria-controls="plain">Explain it in plain words</button>
       ${(((plan && plan.plain) || audit.plain || {}).words || []).length ? `<button class="pill-btn" id="btnGloss" aria-controls="plain">Glossary (${((plan && plan.plain) || audit.plain).words.length})</button>` : ""}
@@ -968,6 +1028,7 @@ function renderStory(){
     <div class="progress"><div class="meter"><div style="width:${n ? 100 * done / n : 0}%"></div></div>
       <span><b class="num">${done} of ${n}</b> verdicts confirmed by a person${done < n ? " · each one waits for you in step 2" : " · ready to decide"}</span></div>`;
   $$("[data-go]").forEach(b => b.onclick = () => { sel = b.dataset.go; renderReader(); renderDetail(); go("#s2", "#accept"); });
+  wireLegend($("#story"));
   $("#btnPlain").onclick = () => { const h = $("#plain").classList.toggle("hidden"); $("#btnPlain").setAttribute("aria-expanded", !h); if (!h) go("#plain"); };
   if ($("#btnGloss")) $("#btnGloss").onclick = () => { $("#plain").classList.remove("hidden"); $("#btnPlain").setAttribute("aria-expanded", true);
     const d = $("#gloss"); if (d) { d.open = true; go("#gloss"); } };
@@ -1071,6 +1132,72 @@ function renderReader(){
 }
 
 // ---------------------------------------------------------------- comparison visuals
+// ---- phase 5: view-only interactions
+// Plain explanations of the app's own result words (how the tool uses them; not medical statements)
+const VERDICT_HELP = {supported: "The data agrees with the report's number, within the allowed margin.",
+  contradicted: "The data shows a different number from the report.",
+  insufficient_evidence: "This data can't settle it, or the tool has no way to measure it here.",
+  not_a_claim: "An opinion, recommendation or background sentence: there is nothing to check."};
+let tipN = 0;
+function tip(term, text){
+  if (!text) return "";
+  const id = `tip-${++tipN}`;
+  return `<span class="tipwrap"><button type="button" class="tip" aria-label="What does “${esc(term)}” mean?" aria-describedby="${id}">?</button><span role="tooltip" id="${id}" class="tipbox">${esc(text)}</span></span>`;
+}
+// "?" beside medical words in a claim, explained with the app's own glossary for this report (first mention only)
+function withTerms(text){
+  const words = (((plan && plan.plain) || (audit && audit.plain) || {}).words) || [];
+  const hits = [];
+  for (const w of words) {
+    const key = w.term.split(" (")[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const m = new RegExp(`\\b${key}[\\w-]*`, "i").exec(text);     // whole word incl. hyphen: "ER-alpha", not "ER ?-alpha"
+    if (m && !hits.some(h => m.index < h.end && h.start < m.index + m[0].length))
+      hits.push({start: m.index, end: m.index + m[0].length, term: w.term, meaning: w.meaning});
+  }
+  hits.sort((a, b) => a.start - b.start);
+  let out = "", at = 0;
+  for (const h of hits) { out += esc(text.slice(at, h.start)) + `<span class="term">${esc(text.slice(h.start, h.end))}</span>` + tip(h.term, h.meaning); at = h.end; }
+  return out + esc(text.slice(at));
+}
+// drill-down: the evidence already behind each result, one fold-out per claim
+function drillItem(it){
+  const r = it.result, v = finalV(it), cv = (it.review && it.review.correct_value) || r.correct_value;
+  return `<details class="drill-item"><summary>${badge(v)}<span class="drill-q">${esc(it.claim_text)}</span></summary>
+    <div class="drill-body"><p>${esc(r.summary)}</p>
+      ${r.subchecks.length ? `<ul>${r.subchecks.map(sc => `<li><b>${esc(sc.label)}:</b> report ${esc(sc.claimed)} · data ${esc(sc.observed)}</li>`).join("")}</ul>` : ""}
+      ${v === "contradicted" && cv ? `<p><b>What the data shows instead:</b> ${esc(cv)}</p>` : ""}
+      ${r.needed ? `<p><b>Data that would be needed:</b> ${esc(r.needed)}</p>` : ""}
+      <button type="button" class="ghost" data-go="${it.id}">Open the full details →</button></div></details>`;
+}
+// legend: hover/focus highlights a result in the bar; click dims or restores it (proportions never change)
+function wireLegend(root){
+  const segs = [...root.querySelectorAll(".vbar [data-series]")];
+  const hl = s => segs.forEach(x => x.classList.toggle("faded", !!s && x.dataset.series !== s));
+  root.querySelectorAll(".lg").forEach(b => {
+    const s = b.dataset.series;
+    b.onclick = () => { const on = b.getAttribute("aria-pressed") !== "false"; b.setAttribute("aria-pressed", !on);
+      segs.filter(x => x.dataset.series === s).forEach(x => x.classList.toggle("dimmed", on)); };
+    b.onmouseenter = b.onfocus = () => hl(s); b.onmouseleave = b.onblur = () => hl(null);
+  });
+  segs.forEach(x => { x.onmouseenter = x.onfocus = () => hl(x.dataset.series); x.onmouseleave = x.onblur = () => hl(null); });
+}
+// group dot plot: show both markers, or only the average, or only the middle value
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-gd]"); if (!b) return;
+  const plot = b.closest(".gdots"); plot.dataset.show = b.dataset.gd;
+  plot.querySelectorAll("[data-gd]").forEach(x => x.setAttribute("aria-pressed", x === b));
+});
+// Escape closes an open "?" tip
+// (WCAG 1.4.13: a tip shown by hover or focus can be dismissed with Escape without moving the mouse)
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  document.querySelectorAll(".tipwrap").forEach(w => { if (w.matches(":hover") || w.contains(document.activeElement)) w.classList.add("dismissed"); });
+  if (document.activeElement && document.activeElement.classList.contains("tip")) document.activeElement.blur();
+});
+document.addEventListener("mouseover", e => {      // moving away lets the tip work again next time
+  document.querySelectorAll(".tipwrap.dismissed").forEach(w => { if (!w.contains(e.target)) w.classList.remove("dismissed"); });
+});
+
 // ---- phase 4: one frame for every chart (title, "what this shows", show table/chart). View-only; values unchanged.
 function vizBox({title, caption, chart, head, rows, aria}){
   return `<figure class="viz" role="group" aria-label="${esc(aria || title)}">
@@ -1098,13 +1225,14 @@ function groupDots(sc){
   const vals = [ma, mb, da, db], lo = Math.min(...vals), hi = Math.max(...vals), pad = (hi - lo || 1) * 0.15;
   const P = v => `${(100 * (v - (lo - pad)) / ((hi + pad) - (lo - pad))).toFixed(2)}%`;
   const row = (name, mean, med, n) => `<div class="gd-row"><span class="gd-name">${esc(name)}</span>
-      <div class="gd-track"><span class="gd-mean" style="left:${P(mean)}" title="${esc(name)}: mean ${mean}"></span>
-        <span class="gd-med" style="left:${P(med)}" title="${esc(name)}: median ${med}"></span></div>
+      <div class="gd-track"><span class="gd-mean" style="left:${P(mean)}" title="${esc(name)}: mean ${mean}" tabindex="0" aria-label="${esc(name)}: mean ${mean}"></span>
+        <span class="gd-med" style="left:${P(med)}" title="${esc(name)}: median ${med}" tabindex="0" aria-label="${esc(name)}: median ${med}"></span></div>
       <span class="gd-val num">mean ${mean} · median ${med}${n ? ` · n ${n}` : ""}</span></div>`;
   const chart = `<div class="gdots" role="img" aria-label="${esc(names[0])}: mean ${ma}, median ${da}. ${esc(names[1])}: mean ${mb}, median ${db}.">
       ${row(names[0], ma, da, nn && nn[1])}${row(names[1], mb, db, nn && nn[2])}
       <div class="gd-axis num"><span>${(lo - pad).toFixed(2)}</span><span>Measured level (as recorded in the data)</span><span>${(hi + pad).toFixed(2)}</span></div>
-      <div class="gd-key"><span><i class="k-mean"></i>mean (average)</span><span><i class="k-med"></i>median (middle value)</span></div></div>`;
+      <div class="gd-key"><span><i class="k-mean"></i>mean (average)</span><span><i class="k-med"></i>median (middle value)</span>
+        <span class="gd-mode" role="group" aria-label="Show on the plot"><button type="button" data-gd="both" aria-pressed="true">Both</button><button type="button" data-gd="mean" aria-pressed="false">Average only</button><button type="button" data-gd="median" aria-pressed="false">Middle value only</button></span></div></div>`;
   return vizBox({title: "The two groups side by side", caption: "where each group's average and middle value sit on the same scale.",
     chart, head: ["Group", "Mean", "Median", "Tumors"], rows: [[names[0], ma, da, nn ? nn[1] : "—"], [names[1], mb, db, nn ? nn[2] : "—"]],
     aria: `Dot plot comparing ${names[0]} and ${names[1]}`});
@@ -1145,7 +1273,7 @@ function compare(sc){
         <div class="track"></div>
         <div class="band" style="left:${P(Math.max(lo, o - tol))};width:calc(${P(Math.min(hi, o + tol))} - ${P(Math.max(lo, o - tol))})"></div>
         ${ok ? "" : `<div class="link" style="left:${P(left)};width:calc(${P(right)} - ${P(left)})"></div>`}
-        <div class="pt data" style="left:${P(o)}" title="${dataWord()}: ${esc(sc.observed)}"></div><div class="pt rep ${ok ? "ok" : ""}" style="left:${P(c)}" title="Report: ${esc(sc.claimed)}"></div>
+        <div class="pt data" style="left:${P(o)}" title="${dataWord()}: ${esc(sc.observed)}" tabindex="0" aria-label="${dataWord()}: ${esc(sc.observed)}"></div><div class="pt rep ${ok ? "ok" : ""}" style="left:${P(c)}" title="Report: ${esc(sc.claimed)}" tabindex="0" aria-label="Report: ${esc(sc.claimed)}"></div>
         <div class="tag ${Math.abs(c - o) < (hi - lo) * 0.18 ? "dn" : "up"} data" style="left:${P(o)}">${dataWord()} ${o}%</div>
         <div class="tag up rep ${ok ? "ok" : ""}" style="left:${P(c)}">Report ${c}%</div>
       </div>
@@ -1232,11 +1360,11 @@ function renderDetail(){
   const cv = (it.review && it.review.correct_value) || r.correct_value;
   const imp = (plan && plan.impacts && plan.impacts[it.id]) || it.impact;
   const pp = (plan && plan.plain) || audit.plain, pt = pp && pp.points.find(x => x.id === (it.label || it.id));
-  let h = `<div class="d-head">${badge(v)}<span class="id">${it.id}${it.label ? ` · report's ${esc(it.label)}` : ""}</span>
+  let h = `<div class="d-head">${badge(v)}${tip(LABEL[v], VERDICT_HELP[v])}<span class="id">${it.id}${it.label ? ` · report's ${esc(it.label)}` : ""}</span>
       <span class="small muted">confidence ${esc(r.confidence)}${it.review && v !== tv ? ` · tool said ${LABEL[tv]}` : ""}</span>
       <button class="ghost backlink" id="backSum" style="margin-left:auto">↑ Back to summary</button></div>
     ${it.title ? `<div class="small muted" style="margin-top:6px">The report's own label: ${esc(it.title)} <span class="tiny">(not used to decide the verdict)</span></div>` : ""}
-    <p class="quote">${esc(it.claim_text)}</p>
+    <p class="quote">${withTerms(it.claim_text)}</p>
     ${pt && pt.text && v !== "not_a_claim" ? `<div class="plainline"><b>In plain words:</b> ${esc(pt.text.replace(/^“[^”]*”\s*/, "").replace(/^(goes|isn't|is |matches|doesn't)/, m => "This " + m))}${srcTag("i")}</div>` : ""}
     ${it.evidence_cited ? `<div class="callout"><b class="h" style="color:var(--accent)">Evidence the report cites ${srcTag("r")}</b>${esc(it.evidence_cited)}</div>` : ""}
     <p class="summary">${esc(r.summary)} ${srcTag(judged.length ? "d" : "i")}</p>`;

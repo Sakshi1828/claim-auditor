@@ -179,6 +179,17 @@ or within ±1.5 points or 5% if the claim says *about / approximately / roughly*
 TCGA-BRCA via the UCSC Xena TCGA hub and NCI Imaging Data Commons (see the challenge repo's `DATA_LICENSES.md`).
 Raw data is fetched by the organizers' `fetch.py` and is **not** committed here. De-identified, patient-derived, research use only.
 
+## Optional LLM layer (in development, not used by the auditor yet)
+`auditor/llm.py` connects Gemini 2.5 Flash (primary) and Groq `openai/gpt-oss-120b` (fallback) behind one interface
+that returns schema-validated JSON (`auditor/claim_schema.py`), with timeouts, retries, rate-limit handling, caching
+and graceful failure. **Keys are user-supplied**: copy `.env.example` to `.env` (git-ignored) and add your own. Keys
+are sent only in request headers and are redacted from every message, cache file and export.
+```bash
+python tests/test_llm.py           # offline: fakes the APIs, no key needed
+python tools/llm_smoke_test.py --both   # live: sends 7 sample claims to each provider
+```
+Without a key the tool behaves exactly as before.
+
 ## Third-party code and licenses
 | Package | Used for | License |
 |---|---|---|

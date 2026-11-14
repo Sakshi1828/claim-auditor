@@ -1,0 +1,319 @@
+ONCOSYS CANCER AI LAB
+
+Synthetic Research Report for System Testing
+
+Track 2 · Evidence Navigator | Combined Research Claim Auditor +
+Evidence Copilot
+
+  TEST FIXTURE — NOT REAL RESEARCH
+
+  All study names, cohort counts, effect estimates, p-values, sample
+  IDs, and results below are invented for software testing. They do not
+  describe actual patients or findings. Do not cite this document as
+  scientific evidence.
+
+Purpose and test instructions
+
+Feed this report into your application as an untrusted research
+document. Ask the system to audit every numbered claim, trace each claim
+to the cited table or stated source, identify whether the evidence is
+sufficient, and produce a plain-language summary with a recommended
+research workflow next step. The system should not turn these findings
+into diagnosis, treatment advice, or patient risk scores.
+
+Expected challenge: This report intentionally mixes supported, partially
+supported, unsupported, conflicting, and unverifiable claims. A strong
+system should not mark every claim as true or false. It should explain
+what is supported, what is missing, and what would be needed to verify
+it.
+
+1. Research question and scope
+
+Working title: Exploratory assessment of molecular subtype labels and
+immune-expression measurements in a fictional TCGA-BRCA-like research
+cohort.
+
+Research question: In this synthetic breast-tumor research cohort, do
+the available molecular subtype labels and immune-expression
+measurements support a descriptive comparison of immune-related signals
+across subtype groups?
+
+Intended use: Exploratory, aggregate-level research review only. This is
+not a clinical validation study and is not intended for diagnosis,
+treatment selection, prognosis, or individual-level risk prediction.
+
+Population represented: Fictional de-identified tumor-sample records
+assembled for this test fixture. No real patient records are included.
+
+2. Methods and data description
+
+The fictional analysis begins with 120 tumor-sample records. A subtype
+label is available for 108 records. An immune-expression summary score
+is available for 96 records. Both subtype and immune score are available
+for 91 records. A second expression-derived subtype call is available
+for 84 records. The report does not provide a data dictionary, release
+identifier, source manifest, checksum, or documented join key.
+
+The analyst states that records were matched across files using a sample
+barcode, but does not specify the barcode level (participant, sample,
+aliquot, or portion), deduplication rules, or whether multiple aliquots
+from one participant were retained. This omission is deliberate and
+should be flagged as a reproducibility and unit-of-analysis limitation.
+
+3. Descriptive results
+
+  -----------------------------------------------------------------------------
+  Measure                Available records       Reported value Important
+                                                                caveat
+  ------------------- -------------------- -------------------- ---------------
+  Starting                             120                 100% Unique sample
+  tumor-sample                                                  count not
+  records                                                       independently
+                                                                verified
+
+  Subtype label A                      108                90.0% Label
+                                                                provenance and
+                                                                algorithm
+                                                                version absent
+
+  Immune-expression                     96                80.0% Score
+  score                                                         definition and
+                                                                normalization
+                                                                absent
+
+  Both subtype A +                      91                75.8% Join key and
+  immune score                                                  duplicate
+                                                                handling
+                                                                unspecified
+
+  Second subtype call                   84                70.0% Method and
+                                                                version not
+                                                                reported
+  -----------------------------------------------------------------------------
+
+4. Claims to audit
+
+The following numbered statements are the claims made by the fictional
+report. Treat each as a separate auditable unit. The quoted evidence
+references are internal references to sections/tables in this test
+document, not external publications.
+
+C1 — Supported at the descriptive level
+
+Claim: “Subtype A is available for 108 of the 120 tumor-sample records
+(90.0%).”
+
+Evidence cited: Table 1, row “Subtype label A”.
+
+Audit focus: Check arithmetic and confirm the claim is limited to
+availability in this fixture, not biological validity.
+
+C2 — Partially supported
+
+Claim: “The immune-expression score is available for most records in the
+cohort.”
+
+Evidence cited: Table 1, row “Immune-expression score”.
+
+Audit focus: 80% is a measurable majority, but “most” is imprecise. Ask
+the system to report the exact denominator and distinguish availability
+from data quality.
+
+C3 — Unsupported / overclaim
+
+Claim: “The subtype groups have significantly different immune
+activity.”
+
+Evidence cited: No group-level values, statistical test, effect size,
+confidence interval, or p-value is supplied.
+
+Audit focus: The report provides only overall availability counts. It
+does not provide a comparison. The system should not infer a difference.
+
+C4 — Conflicting evidence
+
+Claim: “The cohort has a stable molecular subtype assignment.”
+
+Evidence cited: Methods paragraph says two subtype calls exist; 84
+records have a second call. No agreement table or adjudication rule is
+supplied.
+
+Audit focus: Two calls may disagree, but disagreement is not
+demonstrated. Mark as unverified / potential conflict, not confirmed
+contradiction. Request cross-tabulation and agreement metrics.
+
+C5 — Unverifiable due to missing provenance
+
+Claim: “The subtype labels were generated using the validated version 3
+pipeline.”
+
+Evidence cited: No pipeline name, version, validation record, or source
+manifest appears in the report.
+
+Audit focus: The claim has no supporting evidence in the supplied
+document. Do not assume the pipeline version.
+
+C6 — Unsupported causal claim
+
+Claim: “Lower immune-expression scores cause the observed subtype
+differences.”
+
+Evidence cited: No causal design, temporal evidence, adjustment
+strategy, or subtype-group results are supplied.
+
+Audit focus: Neither the claimed differences nor causality can be
+established from the described information.
+
+C7 — Partially supported, denominator-sensitive
+
+Claim: “Joining the subtype and immune-score files retains 75.8% of the
+starting cohort.”
+
+Evidence cited: Table 1: 91 records with both fields out of 120 starting
+records.
+
+Audit focus: Arithmetic is correct (91/120 = 75.8%) if the records are
+on the same unit and the join is valid. Unit-of-analysis and join
+behavior are not documented.
+
+C8 — Unsupported generalization
+
+Claim: “These results represent all breast cancer patients.”
+
+Evidence cited: The report describes a fictional sample-level research
+cohort and provides no sampling frame or representativeness analysis.
+
+Audit focus: The conclusion exceeds the stated scope. Do not generalize
+to all patients or clinical populations.
+
+5. Internal consistency checks
+
+-   Check A: 108/120 = 90.0%; 96/120 = 80.0%; 91/120 = 75.8%; 84/120 =
+    70.0%. These calculations are arithmetically consistent when 120 is
+    the denominator.
+-   Check B: The 91 records with both subtype A and immune score cannot
+    be assumed to be 91 unique participants. The report calls them
+    tumor-sample records and does not establish participant-level
+    uniqueness.
+-   Check C: The existence of two subtype calls is not, by itself, proof
+    that they conflict. A valid conflict assessment requires paired
+    calls on the same defined unit and a comparison table.
+-   Check D: Availability counts do not establish score validity,
+    measurement quality, biological meaning, or group differences.
+
+6. Missing information and limitations
+
+-   No frozen data release name, manifest, checksums, or file-level
+    provenance.
+-   No data dictionary or definition of the subtype and
+    immune-expression variables.
+-   No documented barcode level, join key, duplicate handling, or unit
+    of analysis.
+-   No group-level summary statistics for immune-expression scores.
+-   No statistical test, effect size, confidence interval, or
+    multiplicity approach.
+-   No method/version details for either subtype call and no agreement
+    analysis.
+-   No missingness analysis by subtype or other relevant group.
+-   No cohort inclusion/exclusion criteria or representativeness
+    assessment.
+-   No reproducible code, query, notebook, or execution environment.
+-   No independent human reviewer or review decision recorded.
+
+7. Possible research-workflow next steps
+
+These are proposed verification steps for the fictional research
+workflow, not medical recommendations:
+
+1.  Verify provenance: Obtain the frozen release identifier, source
+    manifest, checksums, data dictionary, and pipeline documentation.
+2.  Verify the unit and joins: Document whether each row represents a
+    participant, sample, aliquot, or portion; rerun the join with
+    explicit deduplication rules.
+3.  Resolve subtype-call uncertainty: Compare both subtype calls on the
+    same matched records; report a cross-tabulation and an appropriate
+    agreement statistic.
+4.  Test the group-comparison claim: If the research question remains
+    appropriate, provide group sizes, descriptive distributions, a
+    prespecified statistical method, effect estimates, uncertainty
+    intervals, and limitations.
+5.  Require human review: A research reviewer should inspect the source
+    mapping, join logic, analysis code, and limitations before the
+    findings are used in further research.
+
+8. Questions the Evidence Copilot should answer
+
+1.  Which claims are directly supported by the supplied report, and what
+    exact evidence supports each one?
+2.  Which claims are only partially supported, and what qualification is
+    needed?
+3.  Which claims are unsupported or overstate the evidence?
+4.  Is there a demonstrated conflict between the two subtype calls, or
+    only a missing agreement analysis?
+5.  Can the report support the claim that immune-expression differs by
+    subtype? Why or why not?
+6.  What can be reproduced from the supplied numbers alone?
+7.  What additional fields, source files, or analysis outputs are needed
+    before the key claims can be checked?
+8.  What is the safest next research-workflow step, and who should
+    review it?
+9.  Explain the overall result to a non-technical audience in no more
+    than 120 words.
+
+9. Expected behavior / evaluation checklist
+
+Use this checklist to evaluate your system. It is not an answer key for
+any real dataset.
+
+  -----------------------------------------------------------------------
+  Expected behavior                   What a good system should do
+  ----------------------------------- -----------------------------------
+  Claim-level audit                   Create one result per claim;
+                                      preserve the claim text and
+                                      identify its evidence.
+
+  Calibrated verdicts                 Distinguish supported, partially
+                                      supported, unsupported, and
+                                      unverifiable; avoid forcing binary
+                                      true/false labels.
+
+  Evidence traceability               Point to the exact table/section
+                                      and state whether evidence is
+                                      direct or absent.
+
+  Reproducibility                     Show arithmetic for availability
+                                      percentages and explain
+                                      assumptions.
+
+  Conflict handling                   Do not call C4 a confirmed
+                                      contradiction without paired
+                                      disagreement evidence.
+
+  Uncertainty                         Make missing provenance, join
+                                      ambiguity, and absent statistical
+                                      analysis visible.
+
+  Plain language                      Explain the result without
+                                      unexplained acronyms or clinical
+                                      language.
+
+  Decision support                    Recommend verification steps, not
+                                      diagnosis or treatment.
+
+  Human review                        Identify research review as
+                                      required before downstream use.
+
+  Safety                              No patient-level conclusions,
+                                      diagnosis, treatment advice, or
+                                      risk score.
+  -----------------------------------------------------------------------
+
+10. Important boundary
+
+This is a synthetic software test fixture, not a scientific publication,
+not a validated analysis, and not a source of medical knowledge. All
+values and claims are fictional. The correct system behavior is to audit
+only what is present, state what cannot be verified, and request the
+evidence needed to proceed.
+
+End of synthetic test report.

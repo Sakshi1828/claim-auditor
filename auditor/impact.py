@@ -112,7 +112,53 @@ def _replace_numbers(sentence: str, result: dict) -> str:
     return out if out != sentence else ""
 
 
-def explain(item: dict, verdict: str, release_name: str) -> dict:
+def _explain_other_dataset(item: dict, verdict: str, out: dict) -> dict:
+    """A claim about a dataset that isn't the release: be clear that only the report's own numbers were checked."""
+    r = item["result"]
+    text = item["claim_text"]
+    out["cant_tell"] = ["Anything about real data: the report describes a different dataset, so its numbers were not "
+                        "compared with TCGA-BRCA or any release.",
+                        "Whether the report's own table is right. There is no data file to check it against.",
+                        "Whether the records are unique participants, samples or aliquots, and whether the join was valid."]
+    if r.get("limitation"):
+        out["cant_tell"].append(r["limitation"])
+    if verdict == "supported":
+        vague = any(s["claimed"] in ("most", "majority", "few", "nearly") for s in r["subchecks"])
+        out["why_it_matters"] = ("The report's own numbers agree, which shows the arithmetic is consistent. It does not "
+                                 "show the numbers are true: nothing was checked against data.")
+        if vague:
+            exact = "; ".join(s["observed"] for s in r["subchecks"] if s["ok"] is not None)
+            out["exact"] = exact
+            out["action"] = "make_precise"
+            out["next_step"] = (f"Replace the vague wording with the exact value and its denominator ({exact}), and say it "
+                                f"describes availability, not data quality.")
+        else:
+            out["action"] = "keep_descriptive"
+            out["next_step"] = ("Keep it as a descriptive statement about the report's own dataset, with the exact numbers. "
+                                "Before relying on it, get the release identifier, manifest, checksums and data dictionary "
+                                "so it can be checked against data.")
+    elif verdict == "contradicted":
+        out["action"] = "fix_number"
+        out["why_it_matters"] = ("The report's own arithmetic doesn't add up: " + "; ".join(
+            f"{s['label']} gives {s['observed']}, the report says {s['claimed']}" for s in r["subchecks"] if s["ok"] is False)
+            + ". Anything computed from this number inherits the error.")
+        out["next_step"] = f"Fix the arithmetic to {r.get('correct_value')} and check the table it came from."
+        out["suggested_text"] = _replace_numbers(text, r)
+        out["ask_author"] = "Which numerator and denominator were used for this percentage?"
+    else:
+        need = r.get("needed") or "the evidence behind it"
+        out["action"] = "get_evidence"
+        out["why_it_matters"] = ("If it's kept as written, readers will treat it as a finding, but the report gives nothing "
+                                 "that supports it" + (", and a potential conflict is not a confirmed contradiction."
+                                                      if "potential conflict" in r["summary"] else "."))
+        out["next_step"] = f"Don't present this as a finding. To check it you would need: {need}"
+        first = re.split(r"(?<!\be\.g)(?<!\bi\.e)\.\s+", need)[0].rstrip(".")   # first sentence, not cut at "e.g."
+        out["ask_author"] = "Please provide: " + first[0].lower() + first[1:] + "."
+        out["suggested_text"] = "[Unverified: needs " + first[0].lower() + first[1:] + ".]"
+    return out
+
+
+def explain(item: dict, verdict: str, release_name: str, scope: dict | None = None) -> dict:
     """Why it matters, what to do next, what the tool can't tell, and a suggested rewrite for one claim."""
     r = item["result"]
     check = r["check"]
@@ -124,6 +170,8 @@ def explain(item: dict, verdict: str, release_name: str) -> dict:
         limits.append(r["limitation"])
     out = {"why_it_matters": "", "next_step": "", "cant_tell": [x for x in limits if x], "suggested_text": "",
            "ask_author": "", "action": ""}
+    if check in ("own_numbers", "other_dataset") and verdict != "not_a_claim":
+        return _explain_other_dataset(item, verdict, out)
 
     if verdict == "contradicted":
         gaps = "; ".join(f"{s['label']}: report says {s['claimed']}, data says {s['observed']} "
@@ -187,8 +235,9 @@ def explain(item: dict, verdict: str, release_name: str) -> dict:
     return out
 
 
-def action_plan(items: list[dict], release_name: str, final_verdict) -> dict:
+def action_plan(items: list[dict], release_name: str, final_verdict, scope: dict | None = None) -> dict:
     """Report-level next steps, the corrected report, and what the audit can't tell the reader."""
+    other = bool(scope) and not scope.get("compared_with_release", True)
     claims = [(it, final_verdict(it)) for it in items]
     checkable = [(it, v) for it, v in claims if v != "not_a_claim"]
     by = lambda k: [(it, v) for it, v in checkable if v == k]      # noqa: E731
@@ -203,17 +252,47 @@ def action_plan(items: list[dict], release_name: str, final_verdict) -> dict:
                       "correct_value": (it.get("review") or {}).get("correct_value") or it["result"].get("correct_value")})
     for it, v in ins:
         e = explain(it, v, release_name)
-        label = {"check_by_hand": "Check by hand", "rerun_other_release": "Rerun on a fuller release"}.get(
-            e["action"], "Remove or reword")
+        label = {"check_by_hand": "Check by hand", "rerun_other_release": "Rerun on a fuller release",
+                 "get_evidence": "Get the missing evidence"}.get(e["action"], "Remove or reword")
         steps.append({"id": it["id"], "priority": 2 if e["action"] != "check_by_hand" else 3, "do": label,
                       "detail": e["next_step"], "suggested_text": e["suggested_text"]})
     for it, v in sup:
-        if it["result"].get("confidence") == "medium":
-            steps.append({"id": it["id"], "priority": 3, "do": "Decide on rounding", "detail": explain(it, v, release_name)["next_step"],
+        e = explain(it, v, release_name)
+        if e["action"] == "make_precise":
+            steps.append({"id": it["id"], "priority": 2, "do": "Make the wording exact", "detail": e["next_step"],
                           "suggested_text": ""})
+        elif it["result"].get("confidence") == "medium" and not other:
+            steps.append({"id": it["id"], "priority": 3, "do": "Decide on rounding", "detail": e["next_step"],
+                          "suggested_text": ""})
+    if other:
+        steps.append({"id": "ALL", "priority": 0, "do": "Get the data's provenance first",
+                      "detail": "The report describes its own dataset and names no frozen release, manifest or checksums. "
+                                "Obtain the release identifier, source manifest, checksums and data dictionary, and document "
+                                "the unit of analysis (participant, sample, aliquot), the join key and de-duplication, before "
+                                "any of its claims can be checked against data.", "suggested_text": ""})
+    labels = {it["id"]: it.get("label") for it in items if it.get("label")}
+    for st in steps:   # show the report's own claim numbers (C1, C2...) where it has them
+        if st["id"] in labels:
+            st["id"] = f"{st['id']} (report's {labels[st['id']]})"
     steps.sort(key=lambda s: s["priority"])
 
-    if not checkable:
+    if other:
+        own = [it for it, v in checkable if it["result"]["check"] == "own_numbers" and v == "supported"]
+        if con:
+            decision = "Fix a problem"
+            why = (f"{len(con)} claim(s) don't match the report's own numbers. This report describes a different dataset, "
+                   f"so nothing was compared with TCGA-BRCA.")
+        elif not checkable:
+            decision, why = "Stop", "No checkable claims were found."
+        else:
+            decision = "Narrow the question"
+            why = (f"This report describes a different dataset, so none of its claims could be checked against real data. "
+                   f"{len(own)} of {len(checkable)} rest only on the report's own arithmetic, which is consistent; "
+                   f"{len(ins)} can't be verified at all. Keep the descriptive counts, remove or reword the rest, and get "
+                   f"the data's provenance before the report is used.")
+        if unreviewed:
+            why += f" {len(unreviewed)} verdict(s) still need a person to confirm them."
+    elif not checkable:
         decision, why = "Stop", "No checkable claims were found, so nothing in this report has been verified."
     elif con:
         decision = "Fix a problem"
@@ -225,7 +304,7 @@ def action_plan(items: list[dict], release_name: str, final_verdict) -> dict:
                f"reword them, and the rest of the report can proceed.")
     else:
         decision, why = "Proceed", f"All {len(sup)} checked claims match release {release_name}."
-    if unreviewed:
+    if unreviewed and not other:
         why += f" {len(unreviewed)} verdict(s) still need a person to confirm them."
 
     cant = [
@@ -238,11 +317,23 @@ def action_plan(items: list[dict], release_name: str, final_verdict) -> dict:
         "Whether the source data itself is right. The tool trusts the frozen files and only flags known problems "
         "(redacted survival rows, the gap between the two manifests).",
     ]
+    if other:
+        cant = [
+            "Anything about real data. " + (scope or {}).get("reason", "This report describes a different dataset.")
+            + " A reviewer can force a comparison with the release, but it only means something if the report really is "
+              "about that release.",
+            "Whether the report's own tables are right: there is no data file behind them to check.",
+            "Whether the records are unique participants, samples or aliquots, or whether the join was valid.",
+            "Whether any difference, cause or generalisation in the report is real: it gives no group results, tests or "
+            "sampling frame.",
+            "Anything clinical: this is a research-data check only, never diagnosis, treatment or risk.",
+        ]
     if unrec:
         cant.insert(0, f"{len(unrec)} sentence(s) the tool could not read ({', '.join(it['id'] for it, _ in unrec)}). "
                        f"Nothing has checked them yet.")
-    cant.append("Claims stated without numbers, or spread across several sentences, may be missed: the tool reads one "
-                "sentence at a time.")
+    if not (scope or {}).get("explicit_claims"):
+        cant.append("Claims stated without numbers, or spread across several sentences, may be missed: the tool reads one "
+                    "sentence at a time.")
 
     # The corrected report: the same sentences, with fixes applied and unsupported claims marked.
     corrected = []
@@ -257,21 +348,39 @@ def action_plan(items: list[dict], release_name: str, final_verdict) -> dict:
                               "new": new or f"{it['claim_text']} [CHECK WITH AUTHOR: {e['ask_author']}]"})
         elif v == "insufficient_evidence":
             e = explain(it, v, release_name)
-            corrected.append({"id": it["id"], "status": "check_by_hand" if e["action"] == "check_by_hand" else "remove",
-                              "old": it["claim_text"], "new": it["claim_text"] + " " + (
-                                  "[NOT CHECKED: verify by hand]" if e["action"] == "check_by_hand" else
-                                  "[UNSUPPORTED BY THIS RELEASE: remove or reword]")})
+            status = {"check_by_hand": "check_by_hand", "get_evidence": "unverified"}.get(e["action"], "remove")
+            tag = {"check_by_hand": "[NOT CHECKED: verify by hand]",
+                   "unverified": e["suggested_text"] or "[UNVERIFIED]"}.get(status, "[UNSUPPORTED BY THIS RELEASE: remove or reword]")
+            corrected.append({"id": it["id"], "status": status, "old": it["claim_text"], "new": f"{it['claim_text']} {tag}"})
+        elif v == "supported" and explain(it, v, release_name)["action"] == "make_precise":
+            corrected.append({"id": it["id"], "status": "make_precise", "old": it["claim_text"],
+                              "new": f"{it['claim_text']} [Make exact: {explain(it, v, release_name).get('exact', '')}]"})
         else:
             corrected.append({"id": it["id"], "status": "kept", "old": it["claim_text"], "new": it["claim_text"]})
+    for c in corrected:
+        lab = next((it.get("label") for it, _ in claims if it["id"] == c["id"] and it.get("label")), None)
+        c["label"] = lab
     return {"decision": decision, "why": why, "steps": steps, "cant_tell": cant, "corrected": corrected,
             "counts": {"supported": len(sup), "contradicted": len(con), "insufficient_evidence": len(ins),
                        "unreviewed": len(unreviewed)}}
 
 
 def corrected_markdown(plan: dict, release_name: str) -> str:
-    lines = [f"# Corrected report (suggested by the Research Claim Auditor, release {release_name})", "",
-             "*Suggested edits for the author. Each change must be confirmed by the author and a reviewer. "
+    scope = plan.get("scope") or {}
+    other = not scope.get("compared_with_release", True)
+    against = "the report's own numbers only (it describes a different dataset)" if other else f"release {release_name}"
+    lines = [f"# Suggested corrections (Research Claim Auditor, checked against {against})", "",
+             "*Suggestions only: nothing here has been applied. The author and a reviewer must confirm each change. "
              "Research use only.*", ""]
+    if scope.get("explicit_claims"):
+        # the report labels its claims: list them one by one instead of rebuilding the whole document
+        for c in plan["corrected"]:
+            head = f"**{c.get('label') or c['id']}**"
+            if c["status"] == "kept":
+                lines += [f"- {head} keep as written: {c['old']}", ""]
+            else:
+                lines += [f"- {head} ({c['status'].replace('_', ' ')})", f"  - was: {c['old']}", f"  - suggested: {c['new']}", ""]
+        return "\n".join(lines) + "\n"
     for c in plan["corrected"]:
         lines.append(c["new"])
         lines.append("")
@@ -279,5 +388,5 @@ def corrected_markdown(plan: dict, release_name: str) -> str:
     if changes:
         lines += ["---", "## Changes", ""]
         for c in changes:
-            lines.append(f"- **{c['id']}** ({c['status'].replace('_', ' ')}): \"{c['old']}\"")
+            lines.append(f"- **{c.get('label') or c['id']}** ({c['status'].replace('_', ' ')}): \"{c['old']}\"")
     return "\n".join(lines) + "\n"

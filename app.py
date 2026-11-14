@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import pathlib
 import subprocess
 import sys
@@ -47,25 +48,53 @@ def opened_envelopes() -> list[dict]:
             for d in sorted(root.iterdir()) if (d / "claim_auditor_report.md").exists()]
 
 
+JUNK_REASONS = {"idk", "i dont know", "i don't know", "dunno", "test", "testing", "n/a", "na", "none", "ok", "okay",
+                "asdf", "xxx", "...", "-", "no reason", "because", "yes", "no", "fine", "good", "bad", "?"}
+
+
+def reason_problem(reason: str, minimum_words: int = 4) -> str | None:
+    """A reviewer's reason is part of the record: refuse placeholders like "idk"."""
+    r = (reason or "").strip()
+    if not r:
+        return "a reason is required"
+    if r.lower().strip(" .!") in JUNK_REASONS or len(re.findall(r"[A-Za-z]{2,}", r)) < minimum_words or len(r) < 15:
+        return (f"the reason \"{r}\" doesn't explain the decision. Write at least {minimum_words} words saying what you "
+                f"checked or why, e.g. \"One subtype share is wrong; the author must correct it before we use the report.\"")
+    return None
+
+
 def decision_markdown(audit: dict, decision: dict) -> str:
-    lines = [f"# Claim audit decision", "",
-             f"- **Decision:** {decision.get('decision')}",
-             f"- **Why:** {decision.get('reason', '')}",
-             f"- **Decided by:** {decision.get('reviewer', '')} ({decision.get('reviewer_role', '')})",
-             f"- **Must also be reviewed by:** {decision.get('also_review', '')}",
-             f"- **Release:** {audit['release']['name']} ({len(audit['release']['files'])} files, checksums in audit.json)",
-             f"- **Research use only.** Not a clinical decision. No patient-level conclusions.", "",
-             "| Claim | Tool verdict | Final verdict | Correct value | Reviewer note |", "|---|---|---|---|---|"]
-    for it in audit["items"]:
-        if it["tool_verdict"] == "not_a_claim" and not it.get("review"):
-            continue
+    plan = plan_for(audit)
+    scope = audit.get("scope") or {}
+    cl = [it for it in audit["items"] if it["tool_verdict"] != "not_a_claim" or it.get("review")]
+    done = [it for it in cl if it.get("review")]
+    lines = ["# Claim audit decision record", "",
+             f"*Research use only. Not a clinical decision. No patient-level conclusions.*", "",
+             "## What was checked", "",
+             f"- **Data:** {'release ' + audit['release']['name'] + ' (' + str(len(audit['release']['files'])) + ' files, checksums in audit.json)' if scope.get('compared_with_release', True) else 'NOT compared with any release. ' + scope.get('reason', '')}",
+             f"- **Claims audited:** {len(cl)}" + (f" (the report's own labelled claims; {scope.get('context_sentences', 0)} other "
+                                                   f"sentences were treated as context)" if scope.get('explicit_claims') else ""),
+             f"- **Confirmed by a person:** {len(done)} of {len(cl)}"
+             + ("" if len(done) == len(cl) else " (the rest are exported as needing human review)"), "",
+             "## 1. The tool's suggestion (automated)", "",
+             f"**{plan['decision']}.** {plan['why']}", "",
+             "## 2. The reviewer's decision (human)", "",
+             f"- **Decision:** {decision.get('decision')}"
+             + ("" if decision.get("decision") == plan["decision"] else f" (differs from the tool's suggestion: {plan['decision']})"),
+             f"- **Reason:** {decision.get('reason', '')}",
+             f"- **Decided by:** {decision.get('reviewer', '')} ({decision.get('reviewer_role', '')}) at {decision.get('at', '')}",
+             f"- **Must also be reviewed by:** {decision.get('also_review', '')}", "",
+             "## Claims", "",
+             "| Claim | Report's label | Tool verdict | Final verdict | Correct value | Reviewer |", "|---|---|---|---|---|---|"]
+    for it in cl:
         rv = it.get("review") or {}
         fv = rv.get('verdict', it['tool_verdict'])
         cv = (rv.get('correct_value') or it['result'].get('correct_value') or '') if fv == 'contradicted' else ''
-        lines.append(f"| {it['claim_text'][:120].replace('|', '/')} | {it['tool_verdict']} | {fv} | {cv.replace('|', '/')} | "
-                     f"{(rv.get('reason') or ('accepted' if rv else 'NOT REVIEWED')).replace('|', '/')} |")
-    plan = plan_for(audit)
-    lines += ["", "## What happens next", "", f"**Tool's suggestion: {plan['decision']}.** {plan['why']}", ""]
+        who = (("overridden: " if rv.get("decision") == "override" else "confirmed")
+               + (rv.get("reason") or "") if rv else "NOT REVIEWED")
+        lines.append(f"| {it['claim_text'][:120].replace('|', '/')} | {it.get('label') or ''} | {it['tool_verdict']} | {fv} | "
+                     f"{cv.replace('|', '/')} | {who.replace('|', '/')} |")
+    lines += ["", "## What happens next (tool's plan)", ""]
     lines += [f"{k}. **{s['id']} · {s['do']}.** {s['detail']}" + (f"\n   Suggested text: _{s['suggested_text']}_"
                                                                  if s.get("suggested_text") else "")
               for k, s in enumerate(plan["steps"], 1)] or ["Nothing to fix."]
@@ -109,20 +138,28 @@ class Handler(BaseHTTPRequestHandler):
             if self.path == "/api/audit":
                 t0 = time.time()
                 rel = get_release(body.get("release_dir"))
-                audit = run_audit(body.get("report_text", ""), rel)
-                d, why = suggested_decision(audit["items"], rel.name)
-                audit["suggested"] = {"decision": d, "reason": why}
+                audit = run_audit(body.get("report_text", ""), rel, compare=True if body.get("compare") else None)
+                p = plan_for(audit)
+                audit["suggested"] = {"decision": p["decision"], "reason": p["why"]}
                 audit["seconds"] = round(time.time() - t0, 2)
                 return self._json(audit)
             if self.path == "/api/plan":     # recomputed after every review, so it follows the reviewer's verdicts
                 a = body["audit"]
                 plan = plan_for(a)
                 plan["corrected_markdown"] = corrected_markdown(plan, a["release"]["name"])
-                plan["impacts"] = {it["id"]: explain(it, final_verdict(it), a["release"]["name"]) for it in a["items"]}
+                plan["impacts"] = {it["id"]: explain(it, final_verdict(it), a["release"]["name"], a.get("scope"))
+                                   for it in a["items"]}
                 return self._json(plan)
             if self.path == "/api/export":
                 audit, decision = body["audit"], body.get("decision") or {}
                 team = body.get("team") or "Cache us if u can"
+                problem = reason_problem(decision.get("reason", "")) if decision.get("decision") else None
+                bad_overrides = [it["id"] for it in audit["items"] if (it.get("review") or {}).get("decision") == "override"
+                                 and reason_problem(it["review"].get("reason", ""), 3)]
+                if problem or bad_overrides:
+                    return self._json({"error": f"Not exported: {problem}" if problem else
+                                       f"Not exported: the override reason on {', '.join(bad_overrides)} is too short to "
+                                       f"explain the change."}, 400)
                 OUT.mkdir(exist_ok=True)
                 shared = to_shared_format(audit, decision if decision.get("decision") else None, team=team)
                 write_json(shared, OUT / "audit.json")

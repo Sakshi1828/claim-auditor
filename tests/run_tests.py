@@ -10,6 +10,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(ROOT))
 
+import json  # noqa: E402
 import re  # noqa: E402
 
 from auditor.audit import run_audit, to_shared_format  # noqa: E402
@@ -36,6 +37,11 @@ EXPECT = {
         ["supported", "supported", "supported", "contradicted", "contradicted", "contradicted", "contradicted",
          "contradicted", "contradicted", "contradicted", "supported", "supported", "supported", "contradicted",
          "supported", "supported", "insufficient_evidence", "insufficient_evidence", "insufficient_evidence", "supported"],
+    # A synthetic test fixture about a fictional 120-record cohort with labelled claims C1-C8 (an outside test of
+    # the tool). Its numbers must never be compared with TCGA-BRCA; only its own arithmetic and cited table rows.
+    HERE / "synthetic_report.txt":
+        ["supported", "supported", "insufficient_evidence", "insufficient_evidence", "insufficient_evidence",
+         "insufficient_evidence", "supported", "insufficient_evidence"],
     # Held out: written and answered (with plain pandas) before the tool was run on it.
     HERE / "holdout_report.md":
         ["supported"] * 7 + ["contradicted"] + ["supported"] * 4 + ["contradicted"] + ["supported"] * 3
@@ -52,6 +58,9 @@ ACTIONS = {
         ("remove_or_reword", None),
         ("check_by_hand", None),
     ],
+    HERE / "synthetic_report.txt": [
+        ("keep_descriptive", None), ("make_precise", None), ("get_evidence", None), ("get_evidence", None),
+        ("get_evidence", None), ("get_evidence", None), ("keep_descriptive", None), ("get_evidence", None)],
     HERE / "real_world_report.md": [
         ("keep", None), (None, None), ("keep", None),
         ("fix_number", "TP53 is mutated in 84.9% (90 of 106) of basal-like tumors."),            # within the subgroup
@@ -70,6 +79,19 @@ bad = 0
 for path, want in EXPECT.items():
     audit = run_audit(path.read_text(encoding="utf-8"), REL)
     got = [i["tool_verdict"] for i in audit["items"]]
+    # Dataset identity: only the synthetic fixture describes another dataset; every other report is about release A
+    want_other = path.name == "synthetic_report.txt"
+    if (audit["scope"]["mode"] == "other_dataset") != want_other or audit["scope"]["compared_with_release"] == want_other:
+        bad += 1
+        print(f"FAIL {path.name}: scope {audit['scope']['mode']}, compared with release = {audit['scope']['compared_with_release']}")
+    if want_other:
+        touched = [i["id"] for i in audit["items"] if i["result"]["files"]]
+        if touched or "1,101" in json.dumps(audit["items"]):
+            bad += 1
+            print(f"FAIL {path.name}: a synthetic report was checked against TCGA-BRCA files ({touched})")
+        if audit["scope"]["explicit_claims"] != 8:
+            bad += 1
+            print(f"FAIL {path.name}: found {audit['scope']['explicit_claims']} labelled claims, expected 8 (C1-C8)")
     for f in to_shared_format(audit)["findings"]:   # every contradicted claim must say what the data shows, with a number
         if f["claim_verdict"] == "contradicted" and not re.search(r"\d", f.get("correct_value") or ""):
             bad += 1

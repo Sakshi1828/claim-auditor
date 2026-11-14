@@ -77,7 +77,9 @@ def _strip_markdown(md: str) -> list[str]:
                 paras.append(" ".join(buf))
                 buf = []
             continue
-        if s.startswith("#") or s.startswith("|") or s.startswith("---"):
+        # headings, markdown tables, and plain-text tables (ruler lines, or cells laid out in columns)
+        if s.startswith("#") or s.startswith("|") or s.startswith("---") or re.match(r"^[-=+:]{5,}", s) \
+                or len(re.findall(r"\S {3,}\S", line.rstrip())) >= 2:
             if buf:
                 paras.append(" ".join(buf))
                 buf = []
@@ -114,8 +116,13 @@ def split_sentences(md: str) -> list[Sentence]:
             parts.append(cur)
         for p in parts:
             p = p.strip()
-            if len(p) > 3:
-                sentences.append(Sentence(index=len(sentences), text=p, numbers=find_numbers(p)))
+            if len(p) <= 3:
+                continue
+            # a title or section heading in a plain-text report: no full stop and no number to check,
+            # or a title-style line with separators ("Track 2 · Evidence Navigator | ...")
+            if not re.search(r"[.!?;:\"”)]$", p) and (not re.search(r"\d", p) or re.search(r"\s[|·•]\s", p)):
+                continue
+            sentences.append(Sentence(index=len(sentences), text=p, numbers=find_numbers(p)))
     return sentences
 
 

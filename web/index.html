@@ -253,6 +253,9 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
 .choice span{font-size:12.5px;color:var(--muted)}
 .choice[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset;background:var(--accent-2)}
 .choice .sug{position:absolute;top:8px;right:8px;font-size:10.5px;font-weight:700;color:var(--accent);letter-spacing:.05em;text-transform:uppercase}
+.scope-box{margin:14px 0 4px;border-radius:12px;padding:12px 14px;background:var(--unk-bg);border:1px solid color-mix(in srgb,var(--unk) 35%,transparent);font-size:14px;max-width:900px}
+.scope-box b{color:var(--unk)}
+.scope-box.warn{background:var(--bad-bg);border-color:color-mix(in srgb,var(--bad) 35%,transparent)} .scope-box.warn b{color:var(--bad)}
 .export-ok{margin-top:14px;border-radius:11px;background:var(--ok-bg);padding:12px 14px;font-size:13.5px}
 .export-ok code{font:12.5px var(--mono)}
 .export-bad{background:var(--bad-bg)}
@@ -420,23 +423,25 @@ $("#btnUnseal").onclick = async () => {
     else status("Could not open that envelope. Check the number and the four words, or see the log.");
   } catch(e){ status("Error: " + e.message); }
 };
-$("#btnRun").onclick = () => run();
+$("#btnRun").onclick = () => run(false);
 
-async function run(){
+async function run(compare){
   const text = $("#report").value.trim();
   if (!text) { status("Load or paste a report first."); $("#report").focus(); return; }
   try { localStorage.setItem("ca_reviewer", $("#reviewer").value); } catch(e){}
-  status("Checking each claim against the data…", true);
+  status("Checking each claim…", true);
   try {
-    audit = await api("/api/audit", {report_text: text, release_dir: $("#releaseDir").value});
+    audit = await api("/api/audit", {report_text: text, release_dir: $("#releaseDir").value, compare: compare === true});
     plan = null; planKey = ""; decisionTouched = false; filter = "all";
     $("#exportOut").className = "hidden"; $("#exportOut").dataset.ok = ""; $("#decReason").value = "";
     $$("[data-filter]").forEach(x => x.setAttribute("aria-pressed", x.dataset.filter === "all"));
-    const t = text.match(/^#\s+(.+)$/m); audit.title = t ? t[1].replace(/[*_`]/g, "").trim() : "Untitled report";
+    const t = text.match(/^#\s+(.+)$/m), first = (text.split(/\n/).find(l => l.trim()) || "").trim();
+    audit.title = t ? t[1].replace(/[*_`]/g, "").trim() : (first && first.length <= 90 ? first : "Untitled report");
     const first = claims().find(i => finalV(i) === "contradicted") || claims()[0];
     sel = first ? first.id : null;
     const n = claims().length;
-    status(`Checked ${audit.items.length} sentences (${n} ${plural(n, "claim", "claims")}) in ${audit.seconds}s against release ${audit.release.name}.`);
+    status(`Checked ${n} ${plural(n, "claim", "claims")} in ${audit.seconds}s ` + (otherData()
+      ? "against the report's own numbers (it describes a different dataset)." : `against release ${audit.release.name}.`));
     ["#storyWrap", "#s2", "#s3"].forEach(s => $(s).classList.remove("hidden"));
     ["#nav2", "#nav3"].forEach(s => $(s).removeAttribute("aria-disabled"));
     render();
@@ -469,8 +474,26 @@ function renderNav(){
   $("#nav3").className = $("#exportOut").dataset.ok ? "done" : "";
 }
 
+const otherData = () => audit && audit.scope && audit.scope.compared_with_release === false;
+const dataWord = () => otherData() ? "Report's numbers" : "Data";
+const JUNK = new Set(["idk","i dont know","i don't know","dunno","test","testing","n/a","na","none","ok","okay","asdf","xxx","...","-","no reason","because","yes","no","fine","good","bad","?"]);
+function reasonProblem(r, minWords = 4){
+  r = (r || "").trim();
+  if (!r) return "A reason is required.";
+  const words = (r.match(/[A-Za-z]{2,}/g) || []).length;
+  if (JUNK.has(r.toLowerCase().replace(/[ .!]+$/, "")) || words < minWords || r.length < 15)
+    return `“${r}” doesn't explain the decision. Write at least ${minWords} words on what you checked or why.`;
+  return null;
+}
 function headline(c, n){
   if (!n) return "No checkable claims were found in this report.";
+  if (otherData()) {
+    const own = c.supported, bad = c.contradicted, unv = c.insufficient_evidence;
+    return `This report describes <i>a different dataset</i>, so nothing was compared with TCGA-BRCA. Of its ${n} ${plural(n, "claim", "claims")}, `
+      + `<u>${own} ${plural(own, "is", "are")} consistent</u> with its own numbers`
+      + (bad ? `, <em>${bad} ${plural(bad, "doesn't", "don't")} add up</em>` : "")
+      + `${bad ? "," : ""} and <i>${unv} can't be verified</i>.`;
+  }
   const parts = [];
   if (c.contradicted) parts.push(`<em>${c.contradicted} of ${n} ${plural(n, "claim", "claims")} ${plural(c.contradicted, "is", "are")} contradicted</em> by the data`);
   if (c.insufficient_evidence) parts.push(`<i>${c.insufficient_evidence} ${plural(c.insufficient_evidence, "goes", "go")} beyond</i> what it can show`);
@@ -495,9 +518,22 @@ function renderStory(){
       <div class="t">${v === "contradicted" ? "Wrong number" : "Can't be checked"} · ${it.id}</div>
       <div class="q">“${esc(it.claim_text)}”</div><div class="d">${d}</div></button>`;
   }).join("");
+  const sc = audit.scope || {};
+  const scopeBox = otherData()
+    ? `<div class="scope-box"><b>Different dataset: not compared with TCGA-BRCA.</b> ${esc(sc.reason || "")}
+        ${sc.quotes && sc.quotes.length ? `<div class="small" style="margin-top:4px">The report says: “${esc(sc.quotes[0])}”</div>` : ""}
+        <div class="row" style="margin-top:8px;align-items:center"><button id="btnCompare">Compare with TCGA-BRCA anyway</button>
+        <span class="small muted">Only meaningful if the report really is about this release.</span></div></div>`
+    : sc.forced ? `<div class="scope-box warn"><b>Compared with TCGA-BRCA at your request.</b> The report appears to describe a
+        different dataset (${esc(sc.reason || "")}), so differences may mean "different dataset", not "wrong".
+        <button id="btnUncompare" class="ghost">Undo: check its own numbers only</button></div>` : "";
+  const labelled = sc.explicit_claims ? `<div class="small muted" style="margin-top:6px">Audited the report's ${sc.explicit_claims} labelled claims
+      (C1, C2…). Its other ${sc.context_sentences || ""} sentences are treated as context, not claims.</div>` : "";
   $("#story").innerHTML = `
     <div class="ribbon-rule"></div>
-    <div class="kicker">${esc(audit.title)} · ${total} sentences · checked against release ${esc(audit.release.name)} in ${audit.seconds}s</div>
+    <div class="kicker">${esc(audit.title)} · ${sc.explicit_claims ? sc.explicit_claims + " labelled claims" : total + " sentences"} · ${otherData()
+      ? "checked against the report's own numbers" : "checked against release " + esc(audit.release.name)} in ${audit.seconds}s</div>
+    ${scopeBox}
     <h2 class="headline">${headline(c, n)}</h2>
     <p class="dek">${plan ? `<b>Suggested next step: ${esc(plan.decision)}.</b> ${esc(plan.why.replace(/^[^.]*\.\s*/, ""))}` : ""}</p>
     <div class="vbar" role="img" aria-label="${c.supported} supported, ${c.contradicted} contradicted, ${c.insufficient_evidence} insufficient evidence, ${c.not_a_claim} not claims">
@@ -507,9 +543,12 @@ function renderStory(){
         `<span><i class="bg-${v}"></i><b>${c[v]}</b> ${LABEL[v].toLowerCase()}</span>`).join("")}
     </div>
     ${fc ? `<div class="top3">${fc}</div>` : ""}
+    ${labelled}
     <div class="progress"><div class="meter"><div style="width:${n ? 100 * done / n : 0}%"></div></div>
       <span><b class="num">${done} of ${n}</b> verdicts confirmed by a person${done < n ? " · each one waits for you in step 2" : " · ready to decide"}</span></div>`;
   $$("[data-go]").forEach(b => b.onclick = () => { sel = b.dataset.go; renderReader(); renderDetail(); $("#s2").scrollIntoView({behavior:"smooth"}); });
+  if ($("#btnCompare")) $("#btnCompare").onclick = () => run(true);
+  if ($("#btnUncompare")) $("#btnUncompare").onclick = () => run(false);
 }
 
 function renderReader(){
@@ -522,7 +561,7 @@ function renderReader(){
     const meta = isClaim ? `<div class="meta"><span>${it.id}</span>·<span>${LABEL[v]}</span>·${it.review
       ? `<span class="ok">✓ ${it.review.decision === "override" ? "overridden" : "confirmed"}</span>` : `<span class="warn">needs a person</span>`}</div>` : "";
     return `<button class="sent v-${v} ${it.id === sel ? "sel" : ""}" data-id="${it.id}" aria-current="${it.id === sel}">
-      <span class="mk v-${v}">${SVG[v]}</span><span class="txt">${esc(it.claim_text)}${meta}</span></button>`;
+      <span class="mk v-${v}">${SVG[v]}</span><span class="txt">${it.label ? `<b>${esc(it.label)}</b> ` : ""}${esc(it.claim_text)}${meta}</span></button>`;
   }).join("") : `<p class="muted small" style="padding:8px">Nothing here. ${filter === "todo" ? "Every claim has been confirmed." : "No problems found."}</p>`;
   $$(".sent").forEach(el => el.onclick = () => { sel = el.dataset.id; renderReader(); renderDetail(); });
 }
@@ -535,7 +574,7 @@ function compare(sc){
   const lab = `<div class="lab">${esc(sc.label)} <small>· ${esc(sc.rule)}</small></div>`;
   if (c == null || o == null || /rank/.test(sc.claimed))
     return `<div class="cmp">${lab}<div class="pair"><div><small>Report says</small>${esc(sc.claimed)}</div>
-      <div><small>Data says</small><b>${esc(sc.observed)}</b></div></div>${vline(ok, "")}</div>`;
+      <div><small>${dataWord()} says</small><b>${esc(sc.observed)}</b></div></div>${vline(ok, "")}</div>`;
   const diff = c - o;
   if (isPct){
     const tol = num((sc.rule.match(/±\s*([\d.]+)/) || [])[1]) || 0.5;
@@ -551,7 +590,7 @@ function compare(sc){
         <div class="band" style="left:${P(Math.max(lo, o - tol))};width:calc(${P(Math.min(hi, o + tol))} - ${P(Math.max(lo, o - tol))})"></div>
         ${ok ? "" : `<div class="link" style="left:${P(left)};width:calc(${P(right)} - ${P(left)})"></div>`}
         <div class="pt data" style="left:${P(o)}"></div><div class="pt rep ${ok ? "ok" : ""}" style="left:${P(c)}"></div>
-        <div class="tag ${Math.abs(c - o) < (hi - lo) * 0.18 ? "dn" : "up"} data" style="left:${P(o)}">Data ${o}%</div>
+        <div class="tag ${Math.abs(c - o) < (hi - lo) * 0.18 ? "dn" : "up"} data" style="left:${P(o)}">${dataWord()} ${o}%</div>
         <div class="tag up rep ${ok ? "ok" : ""}" style="left:${P(c)}">Report ${c}%</div>
       </div>
       <div class="axis num"><span>${lo}%</span><span>${(lo + hi) / 2}%</span><span>${hi}%</span></div>
@@ -563,7 +602,7 @@ function compare(sc){
     `${fmt(Math.abs(diff))} ${diff > 0 ? "too many" : "too few"}${o ? ` (${Math.round(100 * Math.abs(diff) / Math.abs(o))}% off)` : ""}.`;
   return `<div class="cmp">${lab}<div class="bars num">
       <span>Report says</span><div class="b rep ${ok ? "ok" : ""}" style="width:${100 * Math.abs(c) / mx}%"></div><span class="v">${esc(sc.claimed)}</span>
-      <span>Data says</span><div class="b" style="width:${100 * Math.abs(o) / mx}%"></div><span class="v">${fmt(o)}${unit && !/of/.test(unit) ? " " + esc(unit) : ""}</span>
+      <span>${dataWord()}</span><div class="b" style="width:${100 * Math.abs(o) / mx}%"></div><span class="v">${fmt(o)}${unit && !/of/.test(unit) ? " " + esc(unit) : ""}</span>
     </div>${vline(ok, gapTxt)}</div>`;
 }
 const vline = (ok, t) => ok == null ? "" : `<div class="verdict-line ${ok ? "ok" : "bad"}">${ok ? SVG.supported : SVG.contradicted}<span>${ok ? "Matches." : "Doesn't match."} ${esc(t)}</span></div>`;
@@ -589,15 +628,17 @@ function renderDetail(){
   const judged = r.subchecks.filter(s => s.ok !== null), context = r.subchecks.filter(s => s.ok === null);
   const cv = (it.review && it.review.correct_value) || r.correct_value;
   const imp = (plan && plan.impacts && plan.impacts[it.id]) || it.impact;
-  let h = `<div class="d-head">${badge(v)}<span class="id">${it.id}</span>
+  let h = `<div class="d-head">${badge(v)}<span class="id">${it.id}${it.label ? ` · report's ${esc(it.label)}` : ""}</span>
       <span class="small muted">confidence ${esc(r.confidence)}${it.review && v !== tv ? ` · tool said ${LABEL[tv]}` : ""}</span></div>
+    ${it.title ? `<div class="small muted" style="margin-top:6px">The report's own label: ${esc(it.title)} <span class="tiny">(not used to decide the verdict)</span></div>` : ""}
     <p class="quote">${esc(it.claim_text)}</p>
+    ${it.evidence_cited ? `<div class="callout"><b class="h" style="color:var(--accent)">Evidence the report cites</b>${esc(it.evidence_cited)}</div>` : ""}
     <p class="summary">${esc(r.summary)}</p>`;
   if (v === "not_a_claim") {
     h += `<div class="callout"><b class="h">Not scored</b>${esc(r.limitation || "Nothing in this sentence can be measured in the data.")}</div>`;
   } else {
-    if (judged.length && view !== "lead") h += `<h3>What the report says vs what the data says</h3>` + judged.map(compare).join("");
-    if (v === "contradicted" && cv) h += `<div class="callout bad"><b class="h">What the data shows instead</b><span class="big-val num">${esc(cv)}</span></div>`;
+    if (judged.length && view !== "lead") h += `<h3>${otherData() ? "The claim vs the report's own numbers" : "What the report says vs what the data says"}</h3>` + judged.map(compare).join("");
+    if (v === "contradicted" && cv) h += `<div class="callout bad"><b class="h">${otherData() ? "What the report's own numbers give" : "What the data shows instead"}</b><span class="big-val num">${esc(cv)}</span></div>`;
     if (r.needed) h += `<div class="callout unk"><b class="h">Data that would be needed</b>${esc(r.needed)}</div>`;
     if (imp) {
       h += `<div class="after">
@@ -647,7 +688,8 @@ function renderDetail(){
   if ($("#clear")) $("#clear").onclick = () => { it.review = null; render(); };
   if ($("#copySugg")) $("#copySugg").onclick = () => { navigator.clipboard && navigator.clipboard.writeText(imp.suggested_text); $("#copySugg").textContent = "Copied ✓"; };
   $("#ovrSave").onclick = () => {
-    const reason = $("#ovrR").value.trim(); if (!reason) { $("#ovrR").focus(); $("#ovrR").placeholder = "An override needs a reason."; return; }
+    const reason = $("#ovrR").value.trim(), rp = reasonProblem(reason, 3);
+    if (rp) { $("#ovrR").focus(); $("#ovrR").value = ""; $("#ovrR").placeholder = rp; return; }
     const nv = $("#ovrV").value, c = $("#ovrC").value.trim();
     if (nv === "contradicted" && !c) { $("#ovrC").focus(); $("#ovrC").placeholder = "Type what the data actually shows."; return; }
     it.review = {decision:"override", verdict: nv, reason, ...(nv === "contradicted" ? {correct_value: c} : {}), ...who()}; next();
@@ -715,8 +757,9 @@ $("#btnCorr").onclick = () => {
   a.download = "corrected_report.md"; a.click(); URL.revokeObjectURL(a.href);
 };
 $("#btnExport").onclick = async () => {
-  const reason = $("#decReason").value.trim();
-  if (!reason) { $("#decReason").focus(); $("#decReason").placeholder = "Write why you chose this decision before exporting."; return; }
+  const reason = $("#decReason").value.trim(), rp = reasonProblem(reason, 4);
+  if (rp) { $("#decReason").focus(); $("#decReason").value = ""; $("#decReason").placeholder = rp;
+    $("#exportOut").className = "export-ok export-bad"; $("#exportOut").textContent = "Not exported: " + rp; return; }
   const d = {decision: decision || (plan && plan.decision) || "Stop", reason, reviewer: $("#reviewer").value || "unnamed reviewer",
     reviewer_role: $("#role").value, also_review: $("#alsoReview").value, at: new Date().toISOString(),
     claims_confirmed: claims().filter(i => i.review).length, claims_total: claims().length};

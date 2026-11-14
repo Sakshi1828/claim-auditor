@@ -12,6 +12,7 @@ import pandas as pd
 
 from .claims import Number, Sentence
 from .release import FILES, LAYER_LABELS, Release, is_primary
+from .scope import needed_for, statement_kind
 
 
 # ---------------------------------------------------------------------------- result objects
@@ -1054,13 +1055,30 @@ class Fallback(Checker):
         return Result(verdict="insufficient_evidence", check=self.name,
                       summary="The tool has no automatic check for this kind of statement. A reviewer must check it by hand.",
                       confidence="low",
-                      needed="A reviewer should identify the field(s) this claim refers to, or mark it as not a claim.",
+                      needed=needed_for(s.text),
                       limitation="Unchecked by the tool: this is not a judgement that the data can't answer it.")
+
+
+class StatementKindChecker(Checker):
+    """Safety disclaimers, instructions, questions and stated limitations are not research findings. They are kept
+    (and never flagged for removal): a disclaimer like "not intended for diagnosis" is what a report should say."""
+    name = "not_a_claim"
+
+    def applies(self, s, r):
+        return statement_kind(s.text) is not None
+
+    def run(self, s, r):
+        kind = statement_kind(s.text)
+        keep = "disclaimer" in kind or "limitation" in kind
+        return Result(verdict="not_a_claim", check=self.name, confidence="medium",
+                      summary=f"This sentence is {kind}, not a factual claim about the data, so it is not scored."
+                              + (" Keep it in the report." if keep else ""),
+                      limitation="A reviewer can mark it as a claim if they disagree.")
 
 
 # Mutation runs before subtype/receptor shares: "TP53 is mutated in 80% of basal-like tumors" is a mutation rate
 # within a subtype, not a claim about how common basal-like tumors are.
-CHECKERS: list[Checker] = [TreatmentChecker(), ManifestChecker(), NotAClaimChecker(), SurvivalChecker(),
+CHECKERS: list[Checker] = [StatementKindChecker(), TreatmentChecker(), ManifestChecker(), NotAClaimChecker(), SurvivalChecker(),
                            ProteinCompareChecker(), MutationChecker(), SubtypeChecker(), ReceptorShareChecker(), AgeChecker(),
                            CohortChecker(), Fallback()]
 

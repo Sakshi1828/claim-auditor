@@ -26,6 +26,7 @@ from auditor.impact import corrected_markdown, explain  # noqa: E402
 from auditor.plain import plain_markdown, plain_summary  # noqa: E402
 from auditor.envelope import opened_dir, unseal  # noqa: E402
 from auditor.adapt import fingerprint  # noqa: E402
+from auditor.llm import LLMClient  # noqa: E402
 from auditor.release import Release  # noqa: E402
 
 CHALLENGE = HERE.parent / "oncosys-hackathon-challenge"
@@ -132,6 +133,7 @@ class Handler(BaseHTTPRequestHandler):
                 "release_dir": str((CHALLENGE / "data/tcga-brca/raw").resolve()),
                 "practice_report": practice.read_text(encoding="utf-8") if practice.exists() else "",
                 "envelopes": opened_envelopes(),
+                "llm": LLMClient.from_env().status(),     # provider, model, key configured yes/no (never the key)
             })
         self._send(404, b"not found", "text/plain")
 
@@ -142,7 +144,8 @@ class Handler(BaseHTTPRequestHandler):
             if self.path == "/api/audit":
                 t0 = time.time()
                 rel = get_release(body.get("release_dir"))
-                audit = run_audit(body.get("report_text", ""), rel, compare=True if body.get("compare") else None)
+                audit = run_audit(body.get("report_text", ""), rel, compare=True if body.get("compare") else None,
+                                  semantic=bool(body.get("semantic")))
                 p = plan_for(audit)
                 audit["suggested"] = {"decision": p["decision"], "reason": p["why"]}
                 audit["plain"] = plain_summary(audit["items"], p, audit.get("scope"), final_verdict)

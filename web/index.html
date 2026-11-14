@@ -152,6 +152,18 @@ pre{background:var(--code);border:1px solid var(--line);border-radius:9px;paddin
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 
+/* ---------- AI reading + analysis trace ---------- */
+.ai-toggle{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:13.5px;color:var(--ink-2);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+.ai-toggle input{width:auto;margin-top:3px}
+.ana{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:14px}
+.ana h4{margin:0 0 6px;font-size:13px}
+.ana table{font-size:13px}
+.ana td:first-child{color:var(--muted);white-space:nowrap;width:1%;padding-right:12px}
+.decided{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:2px 8px;background:var(--accent-2);color:var(--accent)}
+.decided.warn{background:var(--bad-bg);color:var(--bad)}
+.step-bad{color:var(--bad);font-weight:600}
+.rel-box{margin:14px 0 4px;border-radius:12px;padding:10px 14px;background:var(--accent-2);font-size:13.5px;max-width:900px}
+
 /* ---------- decision stamp + pill buttons ---------- */
 .stamprow{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:4px}
 .stamp{display:inline-flex;flex-direction:column;align-items:center;font:800 14px var(--sans);letter-spacing:.09em;padding:6px 14px;border-radius:9px;border:2px solid currentColor;transform:rotate(-1.5deg);line-height:1.15}
@@ -353,8 +365,11 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
       </div>
       <div class="row" style="margin-top:14px;align-items:center">
         <button class="primary big" id="btnRun">Check every claim →</button>
-        <span class="muted small">Takes a second or two. Nothing leaves this computer.</span>
+        <span class="muted small" id="runNote">Takes a second or two. Nothing leaves this computer.</span>
       </div>
+      <label class="ai-toggle hidden" id="aiWrap" style="margin-top:10px"><input type="checkbox" id="aiOn">
+        <span><b>Also read claims with AI</b> (<span id="aiModel"></span>): the model only describes each claim; code checks
+        it against the data and decides. Sends the report's sentences, not the data, to the provider. Slower (≈30 s).</span></label>
       <div id="status" role="status" aria-live="polite"></div>
     </div>
     <div>
@@ -510,6 +525,12 @@ async function init(){
   $("#report").addEventListener("input", () => { if (!audit) updateGuide(); });
   cfg = await api("/api/config");
   $("#releaseDir").value = cfg.release_dir;
+  const llm = (cfg.llm || []).find(p => p.key_configured);
+  if (llm) {             // only offered when the user has put a key in .env
+    $("#aiWrap").classList.remove("hidden"); $("#aiModel").textContent = `${llm.provider} · ${llm.model}`;
+    $("#aiOn").onchange = () => $("#runNote").textContent = $("#aiOn").checked
+      ? "Rule checks plus an AI reading of each claim: about 30 seconds." : "Takes a second or two. Nothing leaves this computer.";
+  }
   try { $("#reviewer").value = localStorage.getItem("ca_reviewer") || ""; } catch(e){}
 }
 $("#btnPractice").onclick = () => { $("#report").value = cfg.practice_report; status("Practice report loaded. Press “Check every claim”."); $("#btnRun").focus(); updateGuide(); };
@@ -532,7 +553,10 @@ async function run(compare){
   status("Checking each claim…", true);
   clearResults();   // never show or export an earlier report's results while this one runs or if it fails
   try {
-    const fresh = await api("/api/audit", {report_text: text, release_dir: $("#releaseDir").value, compare: compare === true});
+    const ai = !$("#aiWrap").classList.contains("hidden") && $("#aiOn").checked;
+    if (ai) status("Checking each claim, and reading it with AI (about 30 seconds)…", true);
+    const fresh = await api("/api/audit", {report_text: text, release_dir: $("#releaseDir").value, compare: compare === true,
+                                           semantic: ai});
     audit = fresh;
     plan = null; planKey = ""; decisionTouched = false; filter = "all";
     $("#exportOut").className = "hidden"; $("#exportOut").dataset.ok = ""; $("#decReason").value = "";
@@ -657,7 +681,7 @@ function renderStory(){
     <div class="ribbon-rule"></div>
     <div class="kicker">${esc(audit.title)} · ${sc.explicit_claims ? sc.explicit_claims + " labelled claims" : total + " sentences"} · ${otherData()
       ? "checked against the report's own numbers" : "checked against release " + esc(audit.release.name)} in ${audit.seconds}s</div>
-    ${scopeBox}
+    ${scopeBox}${relBox()}
     <h2 class="headline" id="storyHead" tabindex="-1">${headline(c, n)}</h2>
     ${plan ? `<div class="stamprow">${stamp(plan.decision)}<p class="dek"><b>${esc(((plan.plain || audit.plain || {}).bottom_line) || plan.why)}</b></p></div>` : ""}
     <div class="vbar" role="img" aria-label="${c.supported} supported, ${c.contradicted} contradicted, ${c.insufficient_evidence} insufficient evidence, ${c.not_a_claim} not claims">
@@ -697,6 +721,65 @@ function renderPlain(){
     ${p.words.length ? `<details id="gloss"><summary>What the medical words mean (${p.words.length})</summary><dl>${p.words.map(w =>
       `<dt>${esc(w.term)}</dt><dd>${esc(w.meaning)}</dd>`).join("")}</dl></details>` : ""}
     <div class="note">${esc(p.note)}</div>`;
+}
+
+// The release differs from release A: say how, once, at the top
+function relBox(){
+  const a = audit.release.adaptation, s = audit.semantic || {};
+  const ai = s.enabled ? `<div class="small" style="margin-top:4px">AI reading by <b>${esc(s.model || "")}</b> in ${esc(s.seconds)} s`
+    + (s.errors && s.errors.length ? ` · <span class="step-bad">${s.errors.length} batch(es) failed; those claims use rule checks only</span>` : "") + `</div>` : "";
+  if (!a) return ai ? `<div class="rel-box">${ai}</div>` : "";
+  const ren = Object.entries(a.renamed_fields || {}).map(([k, x]) => `${esc(k)} → ${esc(x)}`);
+  const parts = [ren.length && `renamed: ${ren.join(", ")}`, a.files_missing.length && `missing files: ${esc(a.files_missing.join(", "))}`,
+    a.missing_fields.length && `${a.missing_fields.length} field(s) missing`, a.added_fields.length && `added: ${esc(a.added_fields.slice(0, 5).join(", "))}`,
+    Object.keys(a.type_changes || {}).length && `type changed: ${esc(Object.keys(a.type_changes).join(", "))}`].filter(Boolean);
+  return `<div class="rel-box"><b>Release ${esc(audit.release.name)} differs from release A.</b> ${parts.join(" · ")}.
+    Every claim was checked against this release only.${ai}</div>`;
+}
+
+// How the claim was read (AI, optional), how it was computed (trace), what data was used, who decided, review status
+function analysisPanel(it, r, v){
+  if (v === "not_a_claim" && !it.interpretation) return "";
+  const rows = [];
+  const add = (k, val) => val && rows.push(`<tr><td>${k}</td><td>${val}</td></tr>`);   // k: our own fixed labels
+  let h = `<div class="ana"><h4>How this claim was analysed</h4>`;
+  const sp = (it.interpretation || [])[0];
+  if (sp) {
+    const cv = sp.claimed_value, t = sp.target;
+    add("AI reading " + srcTag("i"), `${esc(sp.category)} · ${esc(sp.metric)} · ${esc(sp.aggregation)}`);
+    add("Target", t.field ? `<code>${esc(t.field)}</code>${t.value ? ` = <b>${esc(t.value)}</b>` : ""}` : "<i>not matched to the data</i>");
+    add("Population", esc(sp.population.base) + (sp.population.filters.length ? " · " + sp.population.filters
+        .map(f => `<code>${esc(f.field || "?")}</code>${f.value ? "=" + esc(f.value) : ""}`).join(", ") : ""));
+    add("Claimed value", esc(cv.as_written || "") + (cv.number != null ? ` <span class="muted">(${esc(cv.comparator)} ${esc(cv.number)} ${esc(cv.unit)})</span>` : ""));
+    if (sp.comparison && sp.comparison.groups.length) add("Compares", sp.comparison.groups.map(g => `<code>${esc(g.field)}</code>=${esc(g.value || "")}`).join(" vs ") + ` (${esc(sp.comparison.direction)})`);
+    add("Can the data answer?", esc(sp.verifiability.status) + (sp.verifiability.reason ? `: ${esc(sp.verifiability.reason)}` : ""));
+    if (sp.ambiguities.length) add("Ambiguities", esc(sp.ambiguities.join("; ")));
+    add("Checked against the data", sp.grounding.ok ? "✓ every field and value exists in this release"
+        : `<span class="step-bad">✗ ${esc(sp.grounding.issues.join("; "))}</span>`);
+  }
+  const trace = r.trace && r.trace.length ? r.trace : ((it.engine || {}).trace || []);
+  const step = p => (trace.find(s => s.step.startsWith(p)) || {});
+  if (trace.length) {
+    add("Operation", esc(step("6").detail || "(stopped before an operation was chosen)"));
+    add("Fields used", esc(step("1").detail || ""));
+    add("Data quality", esc(step("3").detail || ""));
+    add("Population / denominator", esc(step("5").detail || ""));
+    add("Calculation " + srcTag("d"), esc(step("7").detail || ""));
+    const stop = trace.find(s => !s.ok);
+    if (stop) add("Stopped", `<span class="step-bad">step ${esc(stop.step)}: ${esc(stop.detail)}</span>`);
+  } else {
+    add("Calculation " + srcTag("d"), `${esc(r.check)} checker · n = ${r.n != null ? Number(r.n).toLocaleString() : "—"}`);
+  }
+  const renamed = (r.limitation.match(/In this release ([^.]*)\./) || [])[1];
+  if (renamed) add("Column mapping", esc(renamed));
+  const eng = it.engine;
+  if (eng && eng.verdict !== v && ["supported", "contradicted"].includes(eng.verdict))
+    add("Engine's own answer", `<span class="step-bad">${esc(eng.verdict)}: ${esc((eng.observed || []).join("; "))}</span>`);
+  const dec = it.decided_by || "rules";
+  add("Decided by", `<span class="decided ${/DISAGREES|don't exist/.test(dec) ? "warn" : ""}">${esc(dec)}</span>`);
+  add("Human review", it.review ? `✓ ${it.review.decision === "override" ? "overridden" : "confirmed"} by ${esc(it.review.reviewer)}`
+      : `<span class="step-bad">not yet confirmed by a person</span>`);
+  return h + `<table><tbody>${rows.join("")}</tbody></table></div>`;
 }
 
 function renderReader(){
@@ -803,6 +886,7 @@ function renderDetail(){
     }
     if (view !== "lead") h += alternatives(r, it);
   }
+  h += analysisPanel(it, r, v);
   if (view !== "lead") {
     h += `<details class="ev" ${view === "researcher" ? "open" : ""}><summary>Show the evidence: files, fields, calculation</summary>`;
     if (context.length) h += `<h3>Context from the data</h3><table><tbody>` +

@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 import datetime as dt
-import re
 import json
+import os
+import re
+import time
 
 from .checks import Result, SubCheck, check_sentence
 from .claims import Sentence, find_numbers, split_sentences
@@ -51,11 +53,39 @@ def own_numbers_result(text: str, evidence: str, rows: list[str], scope: dict) -
                   limitation=where + cited)
 
 
-def run_audit(report_text: str, release: Release, compare: bool | None = None) -> dict:
+def semantic_enabled(flag: bool | None) -> bool:
+    """Hybrid mode needs a user-supplied key. None = follow AUDIT_SEMANTIC in .env (default on when a key exists)."""
+    from .llm import LLMClient
+    if flag is False:
+        return False
+    st = LLMClient.from_env().status()
+    has_key = any(s["key_configured"] for s in st)
+    if flag is None:
+        return has_key and os.environ.get("AUDIT_SEMANTIC", "1") not in ("0", "false", "off")
+    return has_key
+
+
+def _engine_for(specs: list[dict], release: Release):
+    """Run the analytical engine on every grounded claim the model read in this sentence; merge to one result."""
+    from .engine import execute
+    runs = [(sp, execute(sp, release)) for sp in specs if sp.get("is_factual")]
+    if not runs:
+        return None, False
+    grounded = all(sp["grounding"]["ok"] for sp, _ in runs)
+    judged = [(sp, r) for sp, r in runs if r.verdict in ("supported", "contradicted")]
+    pick = next((r for _, r in judged if r.verdict == "contradicted"), None) or (judged[0][1] if judged and
+                                                                                len(judged) == len(runs) else None)
+    return (pick or runs[0][1]), grounded
+
+
+def run_audit(report_text: str, release: Release, compare: bool | None = None, semantic: bool | None = False) -> dict:
     """Returns the full audit as plain data: one item per claim, with the tool's verdict and evidence.
 
     compare=None decides from the report: a report about another dataset (e.g. a synthetic fixture) is never
-    compared with the release. compare=True forces the comparison (the reviewer asked for it)."""
+    compared with the release. compare=True forces the comparison (the reviewer asked for it).
+    semantic=True (or None + a key in .env): hybrid mode. An LLM reads each claim, code grounds the reading in the
+    release, the analytical engine computes it; the rule-based checkers keep their verdicts and the engine only fills
+    gaps (disagreements are flagged for a person). Without a key, or if the model fails, this is rules only."""
     ctx = activate(release)          # profile + map THIS release before anything is read or computed
     rename = {k: v["to"] for k, v in ctx.plan["renamed"].items()}
     m = release.membership
@@ -71,8 +101,18 @@ def run_audit(report_text: str, release: Release, compare: bool | None = None) -
              if labelled else [(None, s) for s in split_sentences(report_text)])
     if labelled:
         scope["context_sentences"] = len(split_sentences(report_text))
+    # hybrid mode: the model reads every unit once (batched), never for reports about another dataset
+    sem_by_id, sem_meta = {}, {"enabled": False}
+    if not other and units and semantic_enabled(semantic):
+        from .semantic import understand
+        t0 = time.time()
+        und = understand([s.text for _, s in units], release)
+        for c in und["claims"]:
+            sem_by_id.setdefault(c["sentence_id"], []).append(c)
+        sem_meta = {"enabled": True, "provider": und.get("provider"), "model": und.get("model"),
+                    "seconds": round(time.time() - t0, 2), "cached": und.get("cached"), "errors": und["errors"][:5]}
     items = []
-    for meta, s in units:
+    for k_unit, (meta, s) in enumerate(units, 1):
         if not other:
             res = check_sentence(s, release)                          # the normal path: check against the release
         elif meta:
@@ -90,6 +130,21 @@ def run_audit(report_text: str, release: Release, compare: bool | None = None) -
                          summary="The report labels this as a claim, but the tool has no automatic check for it. "
                                  "A reviewer must check it by hand.", needed=needed_for(s.text),
                          limitation="Unchecked by the tool: this is not a judgement that the data can't answer it.")
+        # hybrid: the engine's computation of the model's reading, merged with the rules (rules win when they judged)
+        specs, eng, decided = sem_by_id.get(k_unit, []), None, "rules"
+        if specs:
+            from .engine import combine
+            eng, grounded = _engine_for(specs, release)
+            rule_verdict = res.verdict
+            if eng is not None and grounded:
+                merged = combine(res, eng)
+                if merged is eng:
+                    decided = "engine (rules had no check for this wording)"
+                elif eng.verdict in ("supported", "contradicted") and rule_verdict in ("supported", "contradicted"):
+                    decided = "rules and engine agree" if eng.verdict == rule_verdict else "rules (engine DISAGREES: a person must check)"
+                res = merged
+            elif eng is not None:
+                decided = "rules (the model's reading named fields that don't exist, so the engine was not used)"
         # release-specific notes: renamed fields that were used, and data this release lacks
         used = [f for f in res.fields if f in rename]
         if used:
@@ -109,6 +164,13 @@ def run_audit(report_text: str, release: Release, compare: bool | None = None) -
             "tool_verdict": res.verdict,
             "result": res.to_dict(),
             "review": None,     # filled in by a person: {"decision": "accept"|"override", "verdict", "reason", "reviewer"}
+            "decided_by": decided,
+            "interpretation": [{k: sp[k] for k in ("claim_text", "is_factual", "category", "entity", "metric",
+                                                   "aggregation", "target", "claimed_value", "population",
+                                                   "comparison", "verifiability", "ambiguities", "grounding")}
+                               for sp in specs] or None,
+            "engine": ({"verdict": eng.verdict, "check": eng.check, "summary": eng.summary, "trace": eng.trace,
+                        "observed": [sc.observed for sc in eng.subchecks]} if eng is not None else None),
         })
         items[-1]["impact"] = explain(items[-1], res.verdict, release.name, scope)
     return {
@@ -116,6 +178,7 @@ def run_audit(report_text: str, release: Release, compare: bool | None = None) -
         "release": {"name": release.name, "dir": str(release.dir), "files": release.checksums,
                     "fingerprint": ctx.fingerprint, "adaptation": ctx.report() if ctx.changed else None},
         "scope": scope,
+        "semantic": sem_meta,
         "items": items,
     }
 
@@ -178,6 +241,10 @@ def to_shared_format(audit: dict, decision: dict | None = None, team: str = TEAM
             "ask_author": imp["ask_author"],
             "suggested_text": imp["suggested_text"],
             "cannot_tell": imp["cant_tell"],
+            # hybrid mode (extra fields, allowed by the schema): how the claim was read and computed
+            "decided_by": it.get("decided_by", "rules"),
+            "interpretation": it.get("interpretation"),
+            "analysis_trace": r.get("trace") or ((it.get("engine") or {}).get("trace")),
         }
         if verdict == "contradicted":
             # the reviewer's number wins; else the tool's; else what the data showed in each measured check
@@ -200,6 +267,10 @@ def to_shared_format(audit: dict, decision: dict | None = None, team: str = TEAM
         "findings": findings,
     }
     plan = plan_for(audit)
+    out["method"] = {"mode": "hybrid" if (audit.get("semantic") or {}).get("enabled") else "rules",
+                     "llm": {k: v for k, v in (audit.get("semantic") or {}).items() if k in ("provider", "model")},
+                     "release_fingerprint": audit["release"].get("fingerprint"),
+                     "release_adaptation": audit["release"].get("adaptation")}
     out["next_steps"] = {"suggested_decision": plan["decision"], "why": plan["why"], "steps": plan["steps"],
                          "audit_cannot_tell": plan["cant_tell"]}
     out["plain_summary"] = plain_summary(audit["items"], plan, scope, final_verdict)

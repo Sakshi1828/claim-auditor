@@ -43,7 +43,7 @@ def page_html() -> str:
     return (ROOT / "web/index.html").read_text(encoding="utf-8")
 
 
-PRESENTATION_IDS = ("ill-", "ic-", "pat-", "illustrations", "moreOpts", "s3tabs")   # new ids allowed: illustrations and layout wrappers, never controls
+PRESENTATION_IDS = ("ill-", "ic-", "pat-", "illustrations", "moreOpts", "s3tabs", "menuBtn", "stepsNav", "heroTitle")   # new ids allowed: illustrations and layout wrappers, never controls
 
 
 def snapshot() -> dict:
@@ -111,6 +111,11 @@ if __name__ == "__main__":
         bad_added = [i for i in added if not i.startswith(PRESENTATION_IDS)]
         print(f"element ids: {len(removed)} removed, {len(added)} added (illustrations only: {not bad_added})")
         base["page"]["element_ids"] = snap["page"]["element_ids"] = []
+        ob, nb = set(base["page"]["buttons"]), set(snap["page"]["buttons"])
+        removed += [f"button {b}" for b in sorted(ob - nb)]
+        bad_added += [b for b in sorted(nb - ob) if not b.startswith(PRESENTATION_IDS)]
+        print(f"buttons: {len(ob - nb)} removed, {len(nb - ob)} added ({', '.join(sorted(nb - ob)) or 'none'})")
+        base["page"]["buttons"] = snap["page"]["buttons"] = []
         old_t, new_t = set(base["page"].get("static_text", [])), set(snap["page"]["static_text"])
         lost = sorted(old_t - new_t)
         print(f"static text: {len(lost)} removed or edited, {len(new_t - old_t)} added (labels and help lines)")

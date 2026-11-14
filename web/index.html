@@ -181,7 +181,7 @@ pre{background:var(--code);border:1px solid var(--line);border-radius:9px;paddin
 }
 
 /* ---------- phase 2: hierarchy and progressive disclosure (presentation only) ---------- */
-.sec-ic{width:26px;height:26px;color:var(--accent);flex:none;align-self:center}
+svg.sec-ic{width:26px;height:26px;color:var(--accent);flex:none;align-self:center}
 .sec-h{align-items:center;flex-wrap:wrap}
 details.acc{margin-top:16px;border:1px solid var(--line);border-radius:var(--r-md);padding:10px 14px;background:var(--bg)}
 details.acc > summary{font-weight:600;color:var(--ink);list-style-position:inside}
@@ -379,6 +379,65 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
 .export-ok code{font:12.5px var(--mono)}
 .export-bad{background:var(--bad-bg)}
 .foot{margin-top:40px;text-align:center;font-size:12.5px;color:var(--muted)}
+
+/* ================= PHASE 3: hero, header, unified cards, empty and loading states (presentation only) ========== */
+/* header: icons, a clear active step, and a drawer on small screens */
+.top-in{position:relative}
+svg.nav-ic{width:16px;height:16px;flex:none}
+.steps-nav a.on{box-shadow:inset 0 -2px 0 var(--accent)}
+.menu-btn{display:none;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--r-md);font-size:var(--fs-sm)}
+.menu-btn svg{width:20px;height:20px}
+@media (max-width:760px){
+  .menu-btn{display:inline-flex}
+  #stepsNav{display:none;position:absolute;left:12px;right:12px;top:calc(100% + 6px);background:var(--paper);
+    border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);padding:8px;z-index:30}
+  #stepsNav.open{display:block}
+  #stepsNav .steps-nav{flex-direction:column;gap:2px}
+  #stepsNav .steps-nav a{padding:12px 14px;font-size:var(--fs-base)}
+}
+/* hero: calm, premium, explains the app; disappears once results are on screen */
+.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:28px;
+  align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);
+  padding:34px 38px;margin:4px 0 28px}
+svg.hero-texture{position:absolute;inset:0;width:100%;height:100%;opacity:.05;pointer-events:none}
+.hero-text{position:relative}
+svg.hero-art{display:block;aspect-ratio:3/1}
+.hero-eyebrow{font-size:var(--fs-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+.hero h2{font:600 var(--fs-2xl)/var(--lh-heading) var(--serif);letter-spacing:-.015em;margin:0 0 12px;max-width:22ch}
+.hero-sub{font-size:var(--fs-md);color:var(--ink-2);max-width:60ch;margin:0 0 18px}
+.hero-steps{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+.hero-steps li{display:flex;gap:8px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-pill);
+  padding:6px 14px;font-size:var(--fs-sm);color:var(--ink-2)}
+.hero-steps svg{width:18px;height:18px;color:var(--accent)}
+svg.hero-art{position:relative;width:100%;max-width:340px;height:auto;justify-self:center;animation:helix-float 9s ease-in-out infinite}
+@keyframes helix-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+body:has(#storyWrap:not(.hidden)) .hero{display:none}
+@media (max-width:760px){.hero{grid-template-columns:1fr;padding:24px 22px}.hero h2{font-size:var(--fs-xl)}svg.hero-art{max-width:220px}}
+/* one card style everywhere: same radius, soft shadow, consistent padding */
+.card{border-radius:var(--r-lg);box-shadow:var(--shadow)}
+.pad{padding:var(--sp-5)}
+.story{padding:28px 30px}
+.reader{padding:20px 22px} .detail{padding:24px 26px}
+.rec{border-radius:var(--r-lg);border:1px solid color-mix(in srgb,currentColor 12%,transparent)}
+details.env,.cmp,.callout,.ana,.export-ok,.plainline,.scope-box,.rel-box{border-radius:var(--r-md)}
+/* loading: a calm skeleton only while the app is already busy (checking or unsealing) */
+.skeleton,.empty-state{display:none;margin-top:26px}
+body:has(#status.busy) .skeleton{display:block;padding:24px 28px}
+.sk{background:linear-gradient(90deg,var(--line-2),var(--line),var(--line-2));background-size:200% 100%;border-radius:8px;
+  animation:sk-shimmer 1.4s ease-in-out infinite}
+.sk-title{height:22px;width:55%;margin-bottom:14px} .sk-line{height:12px;margin:9px 0} .sk-line.short{width:70%}
+.sk-row{display:flex;gap:12px;margin-top:18px} .sk-box{flex:1;height:70px;border-radius:var(--r-md)}
+@keyframes sk-shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+/* empty: a friendly note with the cell drawing until there are results */
+body:not(:has(#status.busy)):has(#storyWrap.hidden) .empty-state{display:flex}
+.empty-state{gap:24px;align-items:center;padding:24px 30px}
+svg.empty-art{width:200px;height:100px;flex:none}
+.empty-state h3{font:600 var(--fs-lg) var(--serif);letter-spacing:0;text-transform:none;color:var(--ink);margin:0 0 4px}
+.empty-state p{margin:0;color:var(--ink-2);max-width:60ch}
+@media (max-width:600px){.empty-state{flex-direction:column;text-align:center}}
+.detail-empty{text-align:center;padding:24px 10px} .detail-empty svg{width:180px;height:90px}
+/* gentle motion only for people who are fine with motion */
+@media (prefers-reduced-motion:reduce){svg.hero-art,.sk{animation:none}}
 </style>
 </head>
 <body>
@@ -454,10 +513,12 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
         <path d="M18 7.5c-3.2 0-5.4 2.4-5.4 5.3 0 2.5 1.6 4.8 3.3 7.2L10 29.5h4.4l3.6-5.7 3.6 5.7H26l-5.9-9.5c1.7-2.4 3.3-4.7 3.3-7.2 0-2.9-2.2-5.3-5.4-5.3Zm0 3.2c1.3 0 2.3 1 2.3 2.2 0 1.3-1 3.1-2.3 5.1-1.3-2-2.3-3.8-2.3-5.1 0-1.2 1-2.2 2.3-2.2Z" fill="#fff"/></svg>
       <div><h1>Research Claim Auditor</h1><span>Breast cancer research claims, checked against TCGA-BRCA data.</span></div>
     </div>
-    <nav aria-label="Steps"><ol class="steps-nav">
-      <li><a href="#s1" id="nav1" class="on"><span class="dot">1</span>Load</a></li>
-      <li><a href="#s2" id="nav2" aria-disabled="true"><span class="dot">2</span>Review</a></li>
-      <li><a href="#s3" id="nav3" aria-disabled="true"><span class="dot">3</span>Decide</a></li>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="stepsNav" aria-label="Open the steps menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Menu</span></button>
+    <nav aria-label="Steps" id="stepsNav"><ol class="steps-nav">
+      <li><a href="#s1" id="nav1" class="on"><span class="dot">1</span><svg class="nav-ic" aria-hidden="true"><use href="#ic-evidence"/></svg>Load</a></li>
+      <li><a href="#s2" id="nav2" aria-disabled="true"><span class="dot">2</span><svg class="nav-ic" aria-hidden="true"><use href="#ic-review"/></svg>Review</a></li>
+      <li><a href="#s3" id="nav3" aria-disabled="true"><span class="dot">3</span><svg class="nav-ic" aria-hidden="true"><use href="#ic-next"/></svg>Decide</a></li>
     </ol></nav>
     <div class="safety"><b>Research use only.</b> Not a clinical tool: no diagnosis, treatment advice or risk scores. A person confirms every verdict.</div>
   </div>
@@ -468,6 +529,22 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
 </div>
 
 <main id="main" tabindex="-1">
+<!-- ============ HERO (phase 3: presentation only; hidden once results are shown) ============ -->
+<section class="hero" aria-labelledby="heroTitle">
+  <svg class="hero-texture" aria-hidden="true"><rect width="100%" height="100%" fill="url(#pat-tissue)"/></svg>
+  <div class="hero-text">
+    <p class="hero-eyebrow">For research teams · breast cancer data (TCGA-BRCA)</p>
+    <h2 id="heroTitle">Is this research report right? Check it against the real data.</h2>
+    <p class="hero-sub">Load a report. Every claim is checked against the data and marked as supported, wrong, or not
+      checkable, with the real numbers shown. Then a person reviews it and decides what to fix.</p>
+    <ol class="hero-steps" aria-label="How it works">
+      <li><svg aria-hidden="true"><use href="#ic-evidence"/></svg><span><b>Load</b> a report</span></li>
+      <li><svg aria-hidden="true"><use href="#ic-review"/></svg><span><b>Review</b> each claim</span></li>
+      <li><svg aria-hidden="true"><use href="#ic-next"/></svg><span><b>Decide</b> and save</span></li>
+    </ol>
+  </div>
+  <svg class="hero-art" viewBox="0 0 240 80" role="img" aria-label="A gentle drawing of a DNA double helix"><use href="#ill-dna"/></svg>
+</section>
 <!-- ============ 1. LOAD ============ -->
 <section id="s1" aria-labelledby="h1">
   <div class="sec-h" style="margin-top:6px"><svg class="sec-ic" aria-hidden="true"><use href="#ic-evidence"/></svg><span class="k">Step 1</span><h2 id="h1">Load a report</h2><p>Paste it, upload it, or open a sealed envelope.</p></div>
@@ -511,6 +588,17 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
     </div>
   </div>
 </section>
+
+<!-- ============ LOADING + EMPTY STATES (phase 3: CSS decides when they show; no logic) ============ -->
+<div class="card skeleton" aria-hidden="true">
+  <div class="sk sk-title"></div><div class="sk sk-line"></div><div class="sk sk-line short"></div>
+  <div class="sk-row"><div class="sk sk-box"></div><div class="sk sk-box"></div><div class="sk sk-box"></div></div>
+</div>
+<div class="card empty-state">
+  <svg class="empty-art" viewBox="0 0 240 120" aria-hidden="true"><use href="#ill-cells"/></svg>
+  <div><h3>Your results will appear here</h3>
+    <p>Load a report above and press “Check every claim”. Each claim will be listed with what the data really shows.</p></div>
+</div>
 
 <!-- ============ STORY ============ -->
 <section id="storyWrap" class="hidden" aria-label="Audit summary" style="margin-top:26px">
@@ -659,6 +747,7 @@ function updateGuide(){
 async function init(){
   layout(); updateGuide();
   wireTabs($("#s3tabs"), false);
+  wireMenu();
   $("#report").addEventListener("input", () => { if (!audit) updateGuide(); });
   cfg = await api("/api/config");
   $("#releaseDir").value = cfg.release_dir;
@@ -989,6 +1078,16 @@ function alternatives(r, it){
 }
 
 // ---------------------------------------------------------------- detail
+// ---- view-only mobile drawer (phase 3): opens/closes the same step links; Escape or picking a link closes it
+function wireMenu(){
+  const btn = $("#menuBtn"), nav = $("#stepsNav");
+  const set = open => { btn.setAttribute("aria-expanded", open); nav.classList.toggle("open", open);
+    btn.setAttribute("aria-label", open ? "Close the steps menu" : "Open the steps menu"); layout(); };
+  btn.onclick = () => set(btn.getAttribute("aria-expanded") !== "true");
+  nav.addEventListener("click", e => { if (e.target.closest("a")) set(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && nav.classList.contains("open")) { set(false); btn.focus(); } });
+}
+
 // ---- view-only tabs (phase 2): show one group of blocks at a time; every block stays in the page
 let detailTab = "num";
 function detailTabs(tabs){
@@ -1018,7 +1117,7 @@ function wireTabs(root, remember = true){
 
 function renderDetail(){
   const it = audit && audit.items.find(i => i.id === sel);
-  if (!it) { $("#detail").innerHTML = `<p class="muted">Select a sentence on the left.</p>`; return; }
+  if (!it) { $("#detail").innerHTML = `<div class="detail-empty"><svg viewBox="0 0 240 120" aria-hidden="true"><use href="#ill-cells"/></svg><p class="muted">Select a sentence on the left.</p></div>`; return; }
   const r = it.result, v = finalV(it), tv = it.tool_verdict;
   const judged = r.subchecks.filter(s => s.ok !== null), context = r.subchecks.filter(s => s.ok === null);
   const cv = (it.review && it.review.correct_value) || r.correct_value;

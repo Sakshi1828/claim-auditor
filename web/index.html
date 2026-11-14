@@ -127,6 +127,23 @@ pre{background:var(--code);border:1px solid var(--line);border-radius:9px;paddin
 .meter{flex:0 0 180px;height:6px;background:var(--line-2);border-radius:999px;overflow:hidden}
 .meter div{height:100%;background:var(--accent);transition:width .3s}
 
+/* ---------- plain words ---------- */
+.plain{margin-top:14px;padding:20px 24px}
+.plain .k{font:700 12px var(--sans);color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.plain .bl{font:600 19px/1.35 var(--serif);margin:6px 0 8px;max-width:880px}
+.plain p{margin:0 0 6px;color:var(--ink-2);max-width:880px}
+.plain ul{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px;max-width:960px}
+.plain li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.5}
+.plain li .tag{flex:none;min-width:150px;font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;text-align:center;margin-top:2px}
+.plain .m-wrong .tag{background:var(--bad-bg);color:var(--bad)}
+.plain .m-ask .tag,.plain .m-unknown .tag{background:var(--unk-bg);color:var(--unk)}
+.plain .m-ok .tag{background:var(--ok-bg);color:var(--ok)}
+.plain details{margin-top:12px}
+.plain dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:10px 0 0;font-size:14px}
+.plain dt{font-weight:700} .plain dd{margin:0;color:var(--ink-2)}
+.plain .note{font-size:12.5px;color:var(--muted);margin-top:12px}
+@media (max-width:700px){.plain li{flex-direction:column;gap:2px}.plain li .tag{min-width:0}.plain dl{grid-template-columns:1fr}}
+
 /* ---------- badges ---------- */
 .badge{display:inline-flex;gap:6px;align-items:center;border-radius:999px;padding:3px 11px;font-size:13px;font-weight:700;white-space:nowrap}
 .badge svg{width:13px;height:13px}
@@ -321,6 +338,7 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
 <!-- ============ STORY ============ -->
 <section id="storyWrap" class="hidden" aria-label="Audit summary" style="margin-top:26px">
   <div class="card story" id="story"></div>
+  <div class="card plain" id="plain" aria-label="The audit in plain words"></div>
 </section>
 
 <!-- ============ 2. REVIEW ============ -->
@@ -560,6 +578,24 @@ function renderStory(){
   $$("[data-go]").forEach(b => b.onclick = () => { sel = b.dataset.go; renderReader(); renderDetail(); $("#s2").scrollIntoView({behavior:"smooth"}); });
   if ($("#btnCompare")) $("#btnCompare").onclick = () => run(true);
   if ($("#btnUncompare")) $("#btnUncompare").onclick = () => run(false);
+  renderPlain();
+}
+
+// The same findings, worded for someone with no data or biology background (built by auditor/plain.py)
+function renderPlain(){
+  const p = (plan && plan.plain) || audit.plain;
+  if (!p) { $("#plain").innerHTML = ""; return; }
+  const pts = p.points.filter(x => x.text), probs = pts.filter(x => x.mark !== "ok"), ok = pts.filter(x => x.mark === "ok");
+  const li = x => `<li class="m-${x.mark}"><span class="tag">${esc(x.label)} · ${esc(x.id)}</span><span>${esc(x.text)}</span></li>`;
+  $("#plain").innerHTML = `
+    <div class="k">In plain words</div>
+    <div class="bl">${esc(p.bottom_line)}</div>
+    <p>${esc(p.what_we_did)} ${esc(p.tally)}</p>
+    ${probs.length ? `<ul>${probs.map(li).join("")}</ul>` : ""}
+    ${ok.length ? `<details ${probs.length ? "" : "open"}><summary>${ok.length} ${plural(ok.length, "statement that checks out", "statements that check out")}</summary><ul>${ok.map(li).join("")}</ul></details>` : ""}
+    ${p.words.length ? `<details><summary>What the medical words mean (${p.words.length})</summary><dl>${p.words.map(w =>
+      `<dt>${esc(w.term)}</dt><dd>${esc(w.meaning)}</dd>`).join("")}</dl></details>` : ""}
+    <div class="note">${esc(p.note)}</div>`;
 }
 
 function renderReader(){

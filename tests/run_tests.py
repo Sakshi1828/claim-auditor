@@ -107,6 +107,13 @@ for path, want in EXPECT.items():
         if act and act != "keep" and not (imp["why_it_matters"] and imp["next_step"] and imp["cant_tell"]):
             bad += 1
             print(f"FAIL {path.name} sentence {k}: missing why / next step / can't tell")
+    # Plain-words summary: one jargon-free sentence per claim, no column names or code formatting
+    pl = to_shared_format(audit)["plain_summary"]
+    n_claims = len([g for g in got if g != "not_a_claim"])
+    leaks = [x["id"] for x in pl["points"] if re.search(r"`|_RNAseq|_nature2012|\bnan\b|percentage point|denominator", x["text"])]
+    if len([x for x in pl["points"] if x["text"]]) != n_claims or not pl["bottom_line"] or leaks:
+        bad += 1
+        print(f"FAIL {path.name}: plain summary has {len(pl['points'])} points for {n_claims} claims, jargon in {leaks}")
     for k, (g, w) in enumerate(zip(got, want), 1):
         if g != w:
             bad += 1

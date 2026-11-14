@@ -120,6 +120,7 @@ python claim-auditor/tests/run_tests.py
 | Full audit with tool verdicts, reviewer decisions and calculations | `outputs/audit_full.json` |
 | Human-readable decision record, next steps and what the audit can't tell you | `outputs/decision_summary.md` |
 | Suggested corrected report for the author | `outputs/corrected_report.md` |
+| **In plain words**: a bottom line, one jargon-free sentence per claim and a short glossary, for readers with no data or biology background | top of the app and of `decision_summary.md`; `plain_summary` in `audit.json` |
 
 ## What happens after a verdict
 Finding a wrong number is the start. For every claim the tool also says:

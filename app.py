@@ -23,6 +23,7 @@ sys.path.insert(0, str(HERE))
 
 from auditor.audit import final_verdict, plan_for, run_audit, suggested_decision, to_shared_format, write_json  # noqa: E402
 from auditor.impact import corrected_markdown, explain  # noqa: E402
+from auditor.plain import plain_markdown, plain_summary  # noqa: E402
 from auditor.envelope import opened_dir, unseal  # noqa: E402
 from auditor.release import Release  # noqa: E402
 
@@ -70,6 +71,7 @@ def decision_markdown(audit: dict, decision: dict) -> str:
     done = [it for it in cl if it.get("review")]
     lines = ["# Claim audit decision record", "",
              f"*Research use only. Not a clinical decision. No patient-level conclusions.*", "",
+             *plain_markdown(plain_summary(audit["items"], plan, scope, final_verdict)),
              "## What was checked", "",
              f"- **Data:** {'release ' + audit['release']['name'] + ' (' + str(len(audit['release']['files'])) + ' files, checksums in audit.json)' if scope.get('compared_with_release', True) else 'NOT compared with any release. ' + scope.get('reason', '')}",
              f"- **Claims audited:** {len(cl)}" + (f" (the report's own labelled claims; {scope.get('context_sentences', 0)} other "
@@ -141,6 +143,7 @@ class Handler(BaseHTTPRequestHandler):
                 audit = run_audit(body.get("report_text", ""), rel, compare=True if body.get("compare") else None)
                 p = plan_for(audit)
                 audit["suggested"] = {"decision": p["decision"], "reason": p["why"]}
+                audit["plain"] = plain_summary(audit["items"], p, audit.get("scope"), final_verdict)
                 audit["seconds"] = round(time.time() - t0, 2)
                 return self._json(audit)
             if self.path == "/api/plan":     # recomputed after every review, so it follows the reviewer's verdicts
@@ -149,6 +152,7 @@ class Handler(BaseHTTPRequestHandler):
                 plan["corrected_markdown"] = corrected_markdown(plan, a["release"]["name"])
                 plan["impacts"] = {it["id"]: explain(it, final_verdict(it), a["release"]["name"], a.get("scope"))
                                    for it in a["items"]}
+                plan["plain"] = plain_summary(a["items"], plan, a.get("scope"), final_verdict, plan["impacts"])
                 return self._json(plan)
             if self.path == "/api/export":
                 audit, decision = body["audit"], body.get("decision") or {}

@@ -19,7 +19,8 @@ import time
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from auditor.audit import LABEL, plan_for, run_audit, to_shared_format, write_json  # noqa: E402
+from auditor.audit import LABEL, final_verdict, plan_for, run_audit, to_shared_format, write_json  # noqa: E402
+from auditor.plain import plain_summary  # noqa: E402
 from auditor.impact import corrected_markdown  # noqa: E402
 from auditor.envelope import opened_dir, unseal  # noqa: E402
 from auditor.release import Release  # noqa: E402
@@ -119,6 +120,14 @@ def main(argv=None):
     print("WHAT THIS AUDIT CAN'T TELL YOU")
     for c in plan["cant_tell"]:
         print(f"  - {c[:200]}")
+    pl = plain_summary(audit["items"], plan, audit.get("scope"), final_verdict)
+    print()
+    print("IN PLAIN WORDS")
+    print(f"  Bottom line: {pl['bottom_line']}")
+    print(f"  {pl['tally']}")
+    for x in pl["points"]:
+        if x["mark"] != "ok":
+            print(f"  - {x['label']} ({x['id']}): {x['text'][:260]}")
     corr = out.with_name("corrected_report.md")
     corr.write_text(corrected_markdown(plan, release.name), encoding="utf-8")
     print()

@@ -8,6 +8,7 @@ import json
 from .checks import Result, SubCheck, check_sentence
 from .claims import Sentence, find_numbers, split_sentences
 from .impact import action_plan, explain
+from .plain import plain_summary
 from .release import Release
 from .scope import detect_scope, explicit_claims, needed_for, own_arithmetic, statement_kind, table_rows
 
@@ -190,6 +191,7 @@ def to_shared_format(audit: dict, decision: dict | None = None, team: str = TEAM
     plan = plan_for(audit)
     out["next_steps"] = {"suggested_decision": plan["decision"], "why": plan["why"], "steps": plan["steps"],
                          "audit_cannot_tell": plan["cant_tell"]}
+    out["plain_summary"] = plain_summary(audit["items"], plan, scope, final_verdict)
     if decision:
         out["verdict"] = decision["decision"]
         out["decision_record"] = decision

@@ -1,0 +1,152 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Redesign Phase 2 Report</title>
+<style>
+:root{
+  /* base palette */
+  --navy:#1f2d3d; --teal:#2b6b6f; --teal-soft:#e4efed; --sage:#8fae93; --sage-soft:#eef3ec;
+  --sand:#f6f4ef; --white:#fffefb; --stone:#e5e1d8; --stone-2:#efebe3;
+  /* status (words shown on screen do not change; only their colours) */
+  --status-strong:#3d6b48;      --status-strong-bg:#e7efe4;      /* Strong evidence  -> "Supported" */
+  --status-conflict:#8f4a3c;    --status-conflict-bg:#f4e7e2;    /* Conflicting      -> "Contradicted" */
+  --status-uncertain:#76591a;   --status-uncertain-bg:#f5eedc;   /* Uncertain        -> "Insufficient evidence" */
+  --status-limited:#56616c;     --status-limited-bg:#eceef0;     /* Limited data     -> "Not a claim" / neutral */
+  /* roles used by the page (same names as before) */
+  --bg:var(--sand); --paper:var(--white); --ink:var(--navy); --ink-2:#46505c; --muted:#5f6873;
+  --line:var(--stone); --line-2:var(--stone-2);
+  --accent:var(--teal); --accent-2:var(--teal-soft); --rose:#9cc3bd; --cell:rgba(43,107,111,.06);
+  --ok:var(--status-strong); --ok-bg:var(--status-strong-bg); --ok-band:rgba(61,107,72,.16);
+  --bad:var(--status-conflict); --bad-bg:var(--status-conflict-bg);
+  --unk:var(--status-uncertain); --unk-bg:var(--status-uncertain-bg);
+  --na:var(--status-limited); --na-bg:var(--status-limited-bg);
+  --focus:#1d6f8a; --code:#f1efe8;
+  --shadow:0 1px 2px rgba(31,45,61,.04),0 6px 18px rgba(31,45,61,.06);
+  --shadow-lg:0 2px 4px rgba(31,45,61,.05),0 12px 32px rgba(31,45,61,.08);
+  /* fonts: built-in system fonts only, so the app still works offline and sends nothing out */
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+  /* type scale */
+  --fs-xs:12px; --fs-sm:13.5px; --fs-base:15.5px; --fs-md:17px; --fs-lg:20px; --fs-xl:26px; --fs-2xl:32px;
+  --lh-body:1.6; --lh-heading:1.25;
+  /* spacing, radius */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px; --sp-8:64px;
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-pill:999px;
+  /* charts: 6 muted colours that stay distinct for colour-blind readers (based on Okabe-Ito) */
+  --chart-1:#3f6e8c; --chart-2:#d9a24f; --chart-3:#4f9a86; --chart-4:#c2777f; --chart-5:#8a7cb3; --chart-6:#a9a05a;
+}
+*{box-sizing:border-box} body{margin:0;background:var(--sand);color:var(--navy);font:16px/1.65 var(--sans)}
+main{max-width:860px;margin:0 auto;padding:32px 20px 60px}
+h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.25}
+h1{font-size:32px;margin:6px 0 4px} h2{font-size:23px;margin:34px 0 10px;padding-top:16px;border-top:1px solid var(--stone)}
+h3{display:flex;gap:10px;align-items:center;font-size:20px;margin:0 0 8px}
+p,li,td{color:#3a4654} .lead{font-size:18px}
+.card{background:var(--white);border:1px solid var(--stone);border-radius:14px;padding:18px 20px;margin:14px 0;box-shadow:var(--shadow)}
+.ok{background:var(--status-strong-bg);color:var(--status-strong);border-radius:12px;padding:14px 18px;font-weight:600}
+table{width:100%;border-collapse:collapse} td{padding:8px 8px;border-bottom:1px solid var(--stone-2);vertical-align:top}
+td:first-child{width:120px}
+.i{width:26px;height:26px;color:var(--teal);flex:none}
+.tag{display:inline-block;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700}
+.t-moved{background:var(--teal-soft);color:var(--teal)} .t-tabbed{background:var(--teal-soft);color:var(--teal)}
+.t-collapsed{background:var(--status-uncertain-bg);color:var(--status-uncertain)} .t-shortened{background:var(--status-uncertain-bg);color:var(--status-uncertain)}
+.t-added,.t-restyled{background:var(--sage-soft);color:var(--status-strong)} .t-unchanged{background:var(--status-limited-bg);color:var(--status-limited)}
+.btn{background:var(--teal);color:#fff;border:0;border-radius:10px;padding:12px 20px;font:600 16px var(--sans);cursor:pointer}
+.pill{display:inline-block;background:var(--teal-soft);color:var(--teal);border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600}
+@media print{.noprint{display:none} body{background:#fff} .card{box-shadow:none;break-inside:avoid}}
+</style></head><body><svg id="illustrations" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <!-- Cells: an orderly healthy cluster (left) beside a gently irregular, atypical cluster (right) -->
+    <symbol id="ill-cells" viewBox="0 0 240 120">
+      <g fill="none" stroke-width="1.6" style="stroke:var(--teal)">
+        <circle cx="34" cy="44" r="17"/><circle cx="64" cy="36" r="15"/><circle cx="52" cy="72" r="17"/>
+        <circle cx="86" cy="64" r="15"/><circle cx="24" cy="80" r="13"/>
+      </g>
+      <g style="fill:var(--sage)" opacity=".55">
+        <circle cx="34" cy="44" r="5"/><circle cx="64" cy="36" r="4.5"/><circle cx="52" cy="72" r="5"/>
+        <circle cx="86" cy="64" r="4.5"/><circle cx="24" cy="80" r="4"/>
+      </g>
+      <line x1="120" y1="18" x2="120" y2="102" stroke-dasharray="2 5" stroke-width="1.2" style="stroke:var(--stone)"/>
+      <g fill="none" stroke-width="1.6" style="stroke:var(--status-uncertain)" opacity=".85">
+        <path d="M150 30c12-6 26 2 25 14s-8 18-20 17-17-9-16-17 5-11 11-14z"/>
+        <path d="M188 40c14-3 24 8 20 20s-16 15-25 9-9-26 5-29z"/>
+        <path d="M160 70c12 0 22 6 20 18s-14 14-23 10-12-10-9-18 5-10 12-10z"/>
+        <path d="M206 78c9 1 14 9 11 16s-11 9-17 5-6-12 0-17 3-4 6-4z"/>
+      </g>
+      <g style="fill:var(--status-uncertain)" opacity=".35">
+        <ellipse cx="160" cy="45" rx="8" ry="6"/><ellipse cx="193" cy="54" rx="9" ry="7"/>
+        <ellipse cx="166" cy="85" rx="7" ry="8"/><ellipse cx="207" cy="89" rx="5" ry="4"/>
+      </g>
+    </symbol>
+    <!-- DNA: a soft double helix -->
+    <symbol id="ill-dna" viewBox="0 0 240 80">
+      <g fill="none" stroke-width="1.8" stroke-linecap="round">
+        <path d="M0 40 C 30 0, 50 0, 80 40 S 130 80, 160 40 S 210 0, 240 40" style="stroke:var(--teal)"/>
+        <path d="M0 40 C 30 80, 50 80, 80 40 S 130 0, 160 40 S 210 80, 240 40" style="stroke:var(--sage)"/>
+      </g>
+      <g stroke-width="1.2" stroke-linecap="round" style="stroke:var(--stone)">
+        <line x1="20" y1="20" x2="20" y2="60"/><line x1="40" y1="12" x2="40" y2="68"/><line x1="60" y1="20" x2="60" y2="60"/>
+        <line x1="100" y1="20" x2="100" y2="60"/><line x1="120" y1="12" x2="120" y2="68"/><line x1="140" y1="20" x2="140" y2="60"/>
+        <line x1="180" y1="20" x2="180" y2="60"/><line x1="200" y1="12" x2="200" y2="68"/><line x1="220" y1="20" x2="220" y2="60"/>
+      </g>
+    </symbol>
+    <!-- Background textures: use at very low opacity (about 0.05) behind cards -->
+    <pattern id="pat-tissue" width="64" height="56" patternUnits="userSpaceOnUse">
+      <path d="M16 4 32 12 32 30 16 38 0 30 0 12Z M48 22 64 30 64 48 48 56 32 48 32 30Z" fill="none" stroke-width="1"
+            style="stroke:var(--teal)"/>
+      <circle cx="16" cy="21" r="3" style="fill:var(--sage)"/><circle cx="48" cy="39" r="3" style="fill:var(--sage)"/>
+    </pattern>
+    <pattern id="pat-molecules" width="90" height="90" patternUnits="userSpaceOnUse">
+      <g stroke-width="1" style="stroke:var(--teal)"><line x1="12" y1="18" x2="48" y2="30"/><line x1="48" y1="30" x2="70" y2="66"/>
+        <line x1="48" y1="30" x2="30" y2="70"/><line x1="70" y1="66" x2="86" y2="40"/></g>
+      <g style="fill:var(--teal)"><circle cx="12" cy="18" r="3"/><circle cx="48" cy="30" r="4"/><circle cx="70" cy="66" r="3"/>
+        <circle cx="30" cy="70" r="2.5"/><circle cx="86" cy="40" r="2.5"/></g>
+    </pattern>
+    <symbol id="ill-tissue" viewBox="0 0 240 120"><rect width="240" height="120" fill="url(#pat-tissue)"/></symbol>
+    <symbol id="ill-molecules" viewBox="0 0 240 120"><rect width="240" height="120" fill="url(#pat-molecules)"/></symbol>
+    <!-- Icons: 24 x 24, line style, colour follows the surrounding text -->
+    <symbol id="ic-evidence" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v6"/><path d="M6 3v18h6"/><path d="M9 9h5M9 13h3"/><circle cx="17" cy="17" r="3"/><path d="m19.2 19.2 2 2"/></g></symbol>
+    <symbol id="ic-compare" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 20h16"/><rect x="6" y="9" width="4" height="11" rx="1"/><rect x="14" y="5" width="4" height="15" rx="1"/></g></symbol>
+    <symbol id="ic-uncertain" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9" stroke-dasharray="3 3"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.4 2.3c-.6.3-.9.8-.9 1.5V14"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></g></symbol>
+    <symbol id="ic-next" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M13 8l4 4-4 4"/></g></symbol>
+    <symbol id="ic-review" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3.5"/><path d="M3.5 20c.6-4 3.2-6 6.5-6 1.4 0 2.6.3 3.6 1"/><path d="m14.5 18 2 2 4-4.5"/></g></symbol>
+    <symbol id="ic-data" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><ellipse cx="12" cy="6" rx="7" ry="2.8"/><path d="M5 6v12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8V6"/><path d="M5 12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8"/></g></symbol>
+    <symbol id="ic-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".7" fill="currentColor"/></g></symbol>
+  </defs>
+</svg><main>
+<span class="pill">Redesign · Phase 2 of 8</span>
+<h1>Less clutter: what we moved, folded away and put in tabs</h1>
+<p class="lead">The screen showed too much at once. We <b>reorganised</b> it so the most important thing comes first and
+the details are one click away. We did <b>not delete</b> anything and did <b>not change</b> how anything works.</p>
+<div class="noprint" style="margin:16px 0"><button class="btn" onclick="window.print()">Save as PDF</button>
+<span style="color:#5f6873;margin-left:10px">Opens your print window: choose “Save as PDF”.</span></div>
+<div class="ok">✓ All 554 pieces of information the page showed before are still there, reachable through a tab, a fold-out
+or “Show all”. Every button still works, the export is still accepted by the organizers' checker, and all 5 test packs pass.</div>
+
+<h2>How each screen is organised now</h2>
+<p>Every screen now follows the same order: <b>1.</b> the main point at the top, <b>2.</b> the key numbers in the middle,
+<b>3.</b> the detail behind a click.</p>
+<div class="card"><h3><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-evidence"/></svg>Step 1 · Load a report</h3><table><tr><td><span class="tag t-moved">Moved</span></td><td>The report box and the big “Check every claim” button are now at the top, so the first thing you see is what to do.</td></tr><tr><td><span class="tag t-collapsed">Collapsed</span></td><td>Your name, your role, the data release folder and the AI tick box are now inside “Settings” (click to open). A short line explains when to change the data folder.</td></tr><tr><td><span class="tag t-unchanged">Unchanged</span></td><td>Practice report, Upload a file, and Open a sealed envelope stay exactly where they were.</td></tr></table></div><div class="card"><h3><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-info"/></svg>Result · Key takeaway</h3><table><tr><td><span class="tag t-added">Added</span></td><td>A “Key takeaway” heading above the summary. It only labels the summary that was already there; no new findings.</td></tr><tr><td><span class="tag t-restyled">Restyled</span></td><td>The result counts (contradicted, insufficient, supported, not a claim) now look like small number cards.</td></tr><tr><td><span class="tag t-unchanged">Unchanged</span></td><td>“Explain it in plain words” and “Glossary” still open the plain-language box.</td></tr></table></div><div class="card"><h3><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-review"/></svg>Step 2 · Review each claim</h3><table><tr><td><span class="tag t-collapsed">Collapsed</span></td><td>The key to the coloured labels (From the data / Interpretation / From the report) is now behind “What do the coloured labels mean?”.</td></tr><tr><td><span class="tag t-tabbed">Tabbed</span></td><td>Each claim's details are now in 3 tabs instead of one long page: “The numbers”, “What to do”, “How it was checked”. The claim itself, its plain-words line and the one-line summary stay on top.</td></tr><tr><td><span class="tag t-unchanged">Unchanged</span></td><td>Confirm, Override, Undo and Next claim are always visible under the tabs. Filters and the Program lead / Reviewer / Researcher switch work as before.</td></tr></table></div><div class="card"><h3><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-next"/></svg>Step 3 · What happens next</h3><table><tr><td><span class="tag t-moved">Moved</span></td><td>Your decision and the Export button now come right after the tool's suggestion, so the main action is easy to find.</td></tr><tr><td><span class="tag t-tabbed">Tabbed</span></td><td>The supporting information is in 3 tabs: “Steps to fix”, “What the check can't tell you”, “Corrected report”.</td></tr><tr><td><span class="tag t-shortened">Shortened</span></td><td>Long lists show the first 3 items and a “Show all (N)” button. Nothing is removed.</td></tr></table></div>
+
+<h2>Easier to read everywhere</h2>
+<div class="card"><ul>
+<li>Text lines stop at about 70 letters wide, so your eyes don't travel too far.</li>
+<li>A bit more space between lines in longer text.</li>
+<li>Each section has <b>one icon</b>, <b>one heading</b> and <b>one short helper line</b>.</li>
+<li>Tabs can also be used with the keyboard (left and right arrow keys).</li>
+</ul></div>
+
+<h2>How we checked that nothing was lost</h2>
+<div class="card"><ol>
+<li>Before changing anything, we recorded all <b>554</b> pieces of text the page shows (two test reports, every claim,
+every detail level).</li>
+<li>After the change, we opened every tab, fold-out and “Show all”, and collected the text again.</li>
+<li>Result: <b>0 missing</b>. The only differences are the new headings and helper lines, and the run time
+(“checked in 0.25 s”), which is different every run.</li>
+<li>We clicked every button in order: practice report, check, plain words, glossary, filters, tabs, copy wording,
+confirm, override, undo, detail levels, role, decision, export. All worked; the export said “valid”.</li>
+<li>Our automatic comparison against the original page: no value, button, download or label removed or edited.</li>
+</ol></div>
+
+<h2>Nothing was skipped</h2>
+<p>Every change was a safe rearrangement of what was already there, so nothing had to be skipped.</p>
+<p style="color:#5f6873;margin-top:30px;font-size:14px">Research Claim Auditor · Team Cache us if u can · Redesign phase 2</p>
+</main></body></html>

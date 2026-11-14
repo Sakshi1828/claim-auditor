@@ -114,7 +114,9 @@ def evaluate(client: LLMClient, rel: Release) -> dict:
         ids = list(range(k + 1, k + len(ss) + 1))
         k += len(ss)
         sigs = [signature(rows[i - 1]["spec"]) if rows[i - 1]["spec"] else None for i in ids]
-        groups.append({"group": g, "consistent": len(set(sigs)) == 1 and sigs[0] is not None,
+        is_para = not g.startswith(("causal", "associative", "not in the data", "not factual"))
+        groups.append({"group": g, "paraphrase": is_para,
+                       "consistent": (len(set(sigs)) == 1 and sigs[0] is not None) if is_para else None,
                        "all_match_label": all(all(v is not False for v in rows[i - 1]["scores"].values()) for i in ids),
                        "signatures": [list(s) if s else None for s in sigs], "sentences": ss})
     return {"provider": out.get("provider"), "model": out.get("model"), "seconds": out["seconds"], "errors": out["errors"],
@@ -137,9 +139,11 @@ def report(ev: dict) -> str:
         L.append(f"| {f} | " + " | ".join(pct(ev["totals"][s]["fields"][f]) for s in ("81", "paraphrase", "all")) + " |")
     for k, name in (("fully_correct", "**every labelled field right**"), ("grounded", "fields/values exist in data")):
         L.append(f"| {name} | " + " | ".join(pct(ev["totals"][s][k]) for s in ("81", "paraphrase", "all")) + " |")
-    L += ["", "## Paraphrase groups (same meaning, different words)", "", "| Group | Same structure | Matches label |",
+    L += ["", "## Paraphrase groups (same meaning, different words; '-' = a group of different claims of one kind)", "",
+          "| Group | Same structure | Matches label |",
           "|---|---|---|"]
-    L += [f"| {g['group']} | {'yes' if g['consistent'] else 'NO'} | {'yes' if g['all_match_label'] else 'NO'} |"
+    L += [f"| {g['group']} | {'-' if g['consistent'] is None else 'yes' if g['consistent'] else 'NO'} | "
+          f"{'yes' if g['all_match_label'] else 'NO'} |"
           for g in ev["paraphrase_groups"]]
     L += ["", "## Failure cases", ""]
     for r in ev["rows"]:

@@ -61,6 +61,7 @@ def redact(text: str) -> str:
             s = s.replace(v, "***")
     s = re.sub(r"AIza[0-9A-Za-z_\-]{20,}", "***", s)           # Google-style keys
     s = re.sub(r"gsk_[0-9A-Za-z]{20,}", "***", s)              # Groq-style keys
+    s = re.sub(r"org_[0-9A-Za-z]{16,}", "org_***", s)          # account / organization ids in provider errors
     s = re.sub(r"(?i)(bearer\s+|x-goog-api-key[\"':\s]+|key=)[^\s\"'&,}]+", r"\1***", s)
     return s
 
@@ -97,8 +98,10 @@ class LLMBadResponse(LLMError):
 
 # ------------------------------------------------------------------ HTTP with retries
 def _post_json(url: str, headers: dict, body: dict, timeout: float) -> dict:
+    # a neutral client name: some API gateways refuse Python's default "Python-urllib" agent with HTTP 403
     req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
-                                 headers={"Content-Type": "application/json", **headers})
+                                 headers={"Content-Type": "application/json", "User-Agent": "claim-auditor/1.0",
+                                          "Accept": "application/json", **headers})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return json.loads(r.read().decode("utf-8"))
@@ -113,8 +116,11 @@ def _post_json(url: str, headers: dict, body: dict, timeout: float) -> dict:
             raise LLMRateLimited(f"rate limited (HTTP 429): {detail}", 429, ra) from None
         if e.code >= 500:
             raise LLMServerError(f"provider error (HTTP {e.code}): {detail}", e.code, ra) from None
+        if e.code == 400 and re.search(r"json_validate_failed|max completion tokens|failed_generation", detail):
+            raise LLMBadResponse(f"model output was invalid or cut off (HTTP 400): {detail[:200]}", 400) from None
         if e.code in (401, 403):
-            raise LLMConfigError(f"the API key was rejected (HTTP {e.code}). Check the key in .env.", e.code) from None
+            raise LLMConfigError(f"access refused (HTTP {e.code}): {detail[:200]}. Check the key in .env, and that the "
+                                 f"account can use this model.", e.code) from None
         raise LLMError(f"request rejected (HTTP {e.code}): {detail}", e.code) from None
     except (TimeoutError, urllib.error.URLError) as e:
         reason = getattr(e, "reason", e)
@@ -215,6 +221,8 @@ class GroqProvider(Provider):
     def call(self, system, user, schema, schema_name):
         msgs = [{"role": "system", "content": system}, {"role": "user", "content": user}]
         body = {"model": self.model, "messages": msgs, "temperature": 0,
+                # reasoning tokens count towards this limit; long structured answers need room
+                "max_completion_tokens": int(os.environ.get("GROQ_MAX_TOKENS") or 32768),
                 "response_format": {"type": "json_schema",
                                     "json_schema": {"name": schema_name, "schema": schema, "strict": True}}}
         effort = os.environ.get("GROQ_REASONING_EFFORT")

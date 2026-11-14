@@ -83,7 +83,7 @@ ungrounded = [(x["id"], x["grounding"]["issues"]) for x in r["rows"] if x["groun
 check("perfect answers: every field, value and gene exists in release A (labels are grounded)", not ungrounded,
       str(ungrounded[:4]))
 check("perfect answers: every paraphrase group consistent",
-      all(g["consistent"] for g in r["paraphrase_groups"]), [g["group"] for g in r["paraphrase_groups"] if not g["consistent"]])
+      all(g["consistent"] is not False for g in r["paraphrase_groups"]), [g["group"] for g in r["paraphrase_groups"] if not g["consistent"]])
 
 
 # 3. mistakes are caught

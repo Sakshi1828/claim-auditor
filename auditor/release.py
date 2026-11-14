@@ -50,11 +50,16 @@ class Release:
         if not (self.dir / FILES["clinical"]).exists():
             raise FileNotFoundError(f"No clinical.tsv in {self.dir}. Run fetch.py first, or point at a release folder.")
         self.name = name or ("A" if self.dir.name == "raw" else self.dir.parent.name)
-        self.slide_manifest_path = pathlib.Path(slide_manifest) if slide_manifest else None
+        self.is_release_a = self.dir.name == "raw"
+        # A release folder that ships its own manifests (e.g. an envelope) uses them; otherwise the challenge repo's.
+        own_sl, own_sm = self.dir / "slide_manifest.csv", self.dir / "sample_manifest.csv"
+        self.slide_manifest_path = own_sl if own_sl.exists() else (pathlib.Path(slide_manifest) if slide_manifest else None)
         # Organizers: sample_manifest.csv is the official list of samples and which data each has (for release A).
         sm = self.slide_manifest_path.parent / "sample_manifest.csv" if self.slide_manifest_path else None
-        self.sample_manifest_path = sm if sm and sm.exists() else None
-        self.is_release_a = self.dir.name == "raw"
+        if own_sm.exists():
+            self.sample_manifest_path, self.own_sample_manifest = own_sm, True
+        else:
+            self.sample_manifest_path, self.own_sample_manifest = (sm if sm and sm.exists() else None), False
         self.membership_note = ""
 
     # ---------- files ----------
@@ -124,8 +129,8 @@ class Release:
         """Official sample list. Release A: sample_manifest.csv (organizers' rule). Other releases: built from their files,
         because the manifest describes release A only."""
         files = self.file_membership
-        if self.is_release_a and self.sample_manifest_path:
-            sm = pd.read_csv(self.sample_manifest_path)
+        if self.sample_manifest_path and (self.is_release_a or self.own_sample_manifest):
+            sm = self.sample_manifest
             df = pd.DataFrame({"sample_id": sm.sample_id, "patient_id": sm.patient_id, "type_code": sm.sample_id.str[13:15],
                                "has_clinical": sm.in_clinical.astype(bool)})
             for k in ("survival", "mutation", "copy_number", "rna", "protein"):
@@ -147,7 +152,35 @@ class Release:
             dx = self.slides[self.slides.slide_kind.str.startswith("diagnostic")].groupby("sample_id").size()
             df["n_slides"] = df.sample_id.map(counts).fillna(0).astype(int)
             df["n_diagnostic_slides"] = df.sample_id.map(dx).fillna(0).astype(int)
+            df["n_frozen_slides"] = df.n_slides - df.n_diagnostic_slides
         return df
+
+    @cached_property
+    def sample_manifest(self) -> pd.DataFrame | None:
+        if self.sample_manifest_path and self.sample_manifest_path.exists():
+            return pd.read_csv(self.sample_manifest_path)
+        return None
+
+    @cached_property
+    def manifest_note(self) -> str:
+        """Do the two manifests agree with each other? Reported on every slide claim so a reviewer sees any gap."""
+        sl, sm = self.slides, self.sample_manifest
+        if sl is None or sm is None:
+            return ""
+        outside = sl[~sl.sample_id.isin(sm.sample_id)]
+        parts = []
+        if len(outside):
+            kinds = outside.sample_id.str[13:15].map({"01": "primary", "11": "normal", "06": "metastatic"}).fillna("other")
+            parts.append(f"slide_manifest.csv has {len(outside):,} slide(s) from {outside.sample_id.nunique():,} sample(s) "
+                         f"that are not in sample_manifest.csv ({', '.join(f'{v} {k}' for k, v in kinds.value_counts().items())} "
+                         f"by barcode), so sample_manifest's slides_for_sample adds up to {int(sm.slides_for_sample.sum()):,}, "
+                         f"not {len(sl):,}")
+        per = sl.groupby("sample_id").size()
+        mism = sm[sm.slides_for_sample != sm.sample_id.map(per).fillna(0).astype(int)]
+        if len(mism):
+            parts.append(f"{len(mism):,} sample(s) have a slides_for_sample count that differs from the slide manifest")
+        return ("Manifest cross-check: " + "; ".join(parts) + ".") if parts else "The two manifests agree with each other."
+
 
     @cached_property
     def primary_ids(self) -> list[str]:

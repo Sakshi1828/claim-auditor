@@ -70,6 +70,16 @@ details summary{cursor:pointer;color:var(--accent)}
 label{font-size:13px;color:var(--muted);display:block;margin-bottom:3px}
 .field{margin-bottom:8px}
 #status{min-height:1.5em}
+.after{display:grid;gap:8px;margin:10px 0}
+.aft{border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.aft h4{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
+.aft p{margin:0 0 4px} .aft ul{margin:0;padding-left:18px}
+.sugg{background:var(--ok-bg);padding:1px 4px;border-radius:4px}
+ol.steps{padding-left:20px;margin:6px 0} ol.steps li{margin-bottom:8px}
+.corr p{margin:0 0 8px} .corr del{color:var(--bad);background:var(--bad-bg)} .corr ins{color:var(--ok);background:var(--ok-bg);text-decoration:none}
+.corr .flag{color:var(--unk);background:var(--unk-bg);font-weight:600}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -132,8 +142,16 @@ label{font-size:13px;color:var(--muted);display:block;margin-bottom:3px}
 </section>
 
 <section class="card hidden" id="decide" aria-labelledby="s3">
-  <h2 id="s3">3 · Decide and record</h2>
+  <h2 id="s3">3 · What happens next</h2>
   <div id="suggest" class="callout"></div>
+  <div class="two">
+    <div><h3>Do this, in order</h3><ol class="steps" id="steps"></ol></div>
+    <div><h3>What this audit can't tell you</h3><ul id="cant" class="small"></ul></div>
+  </div>
+  <details id="corrBox"><summary>Suggested corrected report (for the author)</summary>
+    <div class="corr" id="corr" style="margin-top:8px"></div>
+    <button id="btnCorr">Download corrected_report.md</button></details>
+  <h3>Your decision</h3>
   <div class="row">
     <div class="field"><label for="decision">Decision</label>
       <select id="decision"><option>Proceed</option><option>Fix a problem</option><option>Narrow the question</option><option>Stop</option></select></div>
@@ -151,7 +169,7 @@ label{font-size:13px;color:var(--muted);display:block;margin-bottom:3px}
 const $ = s => document.querySelector(s);
 const LABEL = {supported:"Supported", contradicted:"Contradicted", insufficient_evidence:"Insufficient evidence", not_a_claim:"Not a claim"};
 const ICON = {supported:"✓", contradicted:"✗", insufficient_evidence:"?", not_a_claim:"–"};
-let cfg = {}, audit = null, sel = null, view = "reviewer";
+let cfg = {}, audit = null, sel = null, view = "reviewer", plan = null;
 
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const badge = v => `<span class="badge v-${v}"><span aria-hidden="true">${ICON[v]}</span>${LABEL[v]}</span>`;
@@ -188,6 +206,7 @@ async function run(){
   status("Checking each claim against the data…");
   try {
     audit = await api("/api/audit", {report_text: text, release_dir: $("#releaseDir").value});
+    plan = null; planKey = "";
     const first = audit.items.find(i => i.tool_verdict !== "not_a_claim");
     sel = first ? first.id : null;
     status(`Checked ${audit.items.length} sentences in ${audit.seconds}s against release ${audit.release.name}.`);
@@ -238,10 +257,47 @@ function render(){
   document.querySelectorAll(".queue button").forEach(b => b.onclick = () => { sel = b.dataset.id; render(); });
 
   renderDetail();
-  $("#suggest").innerHTML = `<b>Suggested:</b> ${sug.decision}. ${esc(sug.reason)} <span class="muted small">(You decide.)</span>`;
   if (!$("#decision").dataset.touched) $("#decision").value = sug.decision;
+  schedulePlan();
   $("#reviewCount").textContent = reviewed < cl.length ? `${cl.length - reviewed} claim(s) still need confirming. Unconfirmed ones are exported flagged for human review.` : "All claims confirmed.";
 }
+
+// ---- what happens next: recomputed on the server from the reviewers' final verdicts
+let planTimer = null, planKey = "";
+function schedulePlan(){
+  const key = JSON.stringify(audit.items.map(i => [i.id, i.review]));
+  if (key === planKey && plan) { renderPlan(); return; }
+  clearTimeout(planTimer);
+  planTimer = setTimeout(async () => {
+    try { plan = await api("/api/plan", {audit}); planKey = key; renderPlan(); renderDetail(); }
+    catch(e){ status("Could not build next steps: " + e.message); }
+  }, 120);
+}
+function renderPlan(){
+  if (!plan) return;
+  $("#suggest").innerHTML = `<b>Tool's suggestion: ${esc(plan.decision)}.</b> ${esc(plan.why)} <span class="muted small">(You decide below.)</span>`;
+  $("#steps").innerHTML = plan.steps.length ? plan.steps.map(s => `<li><b>${esc(s.id)} · ${esc(s.do)}.</b> ${esc(s.detail)}
+      ${s.suggested_text ? `<div class="small">Suggested wording: <span class="sugg">${esc(s.suggested_text)}</span></div>` : ""}</li>`).join("")
+    : `<li>Nothing to fix. Keep the definitions and the release name next to each number.</li>`;
+  $("#cant").innerHTML = plan.cant_tell.map(c => `<li>${esc(c)}</li>`).join("");
+  $("#corr").innerHTML = plan.corrected.map(c => {
+    if (c.status === "kept") return `<p>${esc(c.new)}</p>`;
+    if (c.status === "fixed") return `<p><del>${esc(c.old)}</del><br><ins>${esc(c.new)}</ins> <span class="small muted">${esc(c.id)}</span></p>`;
+    const tail = c.new.slice(c.old.length).trim();
+    return `<p>${esc(c.old)} <span class="flag">${esc(tail)}</span> <span class="small muted">${esc(c.id)}</span></p>`;
+  }).join("");
+  if (view === "lead") {
+    $("#leadView").innerHTML = `<b>${esc(plan.decision)}.</b> ${esc(plan.why)}` +
+      (plan.steps.length ? `<ol class="steps">${plan.steps.slice(0,3).map(s => `<li><b>${esc(s.do)}</b> (${esc(s.id)}): ${esc(s.detail)}</li>`).join("")}</ol>` : "") +
+      `<span class="small muted">What it can't tell you: ${esc(plan.cant_tell[0])}</span>`;
+  }
+}
+$("#btnCorr").onclick = () => {
+  if (!plan) return;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([plan.corrected_markdown], {type:"text/markdown"}));
+  a.download = "corrected_report.md"; a.click(); URL.revokeObjectURL(a.href);
+};
 
 function suggest(){
   const v = claims().map(finalV).filter(x => x !== "not_a_claim");
@@ -262,14 +318,24 @@ function renderDetail(){
     <div class="row">${badge(tv)} <span class="muted small">tool verdict · confidence ${r.confidence}</span>
     ${it.review ? `<span class="muted small">→ final:</span> ${badge(v)}` : ""}</div>
     <div class="callout ${cls}">${esc(r.summary)}</div>`;
-  if (r.correct_value) h += `<div class="callout bad"><b>What the data shows instead:</b> ${esc(r.correct_value)}</div>`;
+  const cv = (it.review && it.review.correct_value) || r.correct_value;
+  if (v === "contradicted" && cv) h += `<div class="callout bad"><b>What the data shows instead:</b> ${esc(cv)}</div>`;
   if (r.needed) h += `<div class="callout unk"><b>What data would be needed:</b> ${esc(r.needed)}</div>`;
+  const imp = (plan && plan.impacts && plan.impacts[it.id]) || it.impact;
+  if (imp && v !== "not_a_claim") {
+    h += `<div class="after">
+      <div class="aft"><h4>Why it matters</h4><p>${esc(imp.why_it_matters)}</p></div>
+      <div class="aft"><h4>What to do next</h4><p>${esc(imp.next_step)}</p>
+        ${imp.suggested_text ? `<p class="small"><b>Suggested wording:</b> <span class="sugg">${esc(imp.suggested_text)}</span></p>` : ""}
+        ${imp.ask_author && v !== "supported" ? `<p class="small"><b>Ask the author:</b> ${esc(imp.ask_author)}</p>` : ""}</div>
+      <div class="aft"><h4>What the tool can't tell you</h4><ul>${imp.cant_tell.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
+    </div>`;
+  }
   if (judged.length && view !== "lead") h += `<h3>Claim vs data</h3><table><thead><tr><th>Measured</th><th>Report says</th><th>Data says</th><th>Result</th></tr></thead><tbody>` +
       judged.map(s => `<tr><td>${esc(s.label)}<div class="small muted">${esc(s.rule)}</div></td><td>${esc(s.claimed)}</td><td><b>${esc(s.observed)}</b></td>
         <td>${s.ok ? badge("supported").replace("Supported","Matches") : badge("contradicted").replace("Contradicted","Doesn't match")}</td></tr>`).join("") + `</tbody></table>`;
   if (context.length && view !== "lead") h += `<h3>Context from the data</h3><table><tbody>` +
       context.map(s => `<tr><td>${esc(s.label)}</td><td>${esc(s.observed)}<div class="small muted">${esc(s.rule)}</div></td></tr>`).join("") + `</tbody></table>`;
-  if (r.limitation) h += `<h3>Where the evidence stops</h3><p>${esc(r.limitation)}</p>`;
   if (r.alternatives.length && view !== "lead") h += `<h3>Same question, other reasonable definitions</h3><table><thead><tr><th>Definition</th><th>Result</th></tr></thead><tbody>` +
       r.alternatives.map(a => `<tr><td>${esc((a.subtype ? a.subtype + ": " : "") + a.definition)}</td><td>${esc(a.value)}</td></tr>`).join("") + `</tbody></table>`;
   if (view !== "lead") h += `<h3>Source</h3><table><tbody>
@@ -290,16 +356,21 @@ function renderDetail(){
       <div class="row"><div class="field"><label for="ovrV">Verdict</label><select id="ovrV">
         ${["supported","contradicted","insufficient_evidence","not_a_claim"].filter(x => x !== tv).map(x => `<option value="${x}">${LABEL[x]}</option>`).join("")}</select></div>
       <div class="field" style="flex:1"><label for="ovrR">Reason (required, kept with the tool's original verdict)</label><input id="ovrR" style="width:100%"></div>
+      <div class="field hidden" id="ovrCBox"><label for="ovrC">Correct value (required for contradicted, e.g. 49.9% (421 of 844))</label><input id="ovrC" style="width:100%"></div>
       <button id="ovrSave">Save override</button></div></div>
     ${it.review ? `<p class="small muted">${it.review.decision === "override" ? "Overridden" : "Confirmed"} by ${esc(it.review.reviewer)} (${esc(it.review.reviewer_role)}) at ${esc(it.review.at)}${it.review.reason ? ": " + esc(it.review.reason) : ""}. Tool verdict kept: ${LABEL[tv]}.</p>` : ""}`;
   $("#detail").innerHTML = h;
   const who = () => ({reviewer: $("#reviewer").value || "unnamed reviewer", reviewer_role: $("#role").value, at: new Date().toISOString().slice(0,16).replace("T"," ")});
   $("#accept").onclick = () => { it.review = {decision:"accept", verdict: tv, ...who()}; next(); };
   $("#ovr").onclick = () => $("#ovrBox").classList.toggle("hidden");
+  const syncC = () => $("#ovrCBox").classList.toggle("hidden", $("#ovrV").value !== "contradicted");
+  $("#ovrV").onchange = syncC; syncC();
   if ($("#clear")) $("#clear").onclick = () => { it.review = null; render(); };
   $("#ovrSave").onclick = () => {
     const reason = $("#ovrR").value.trim(); if (!reason) { $("#ovrR").focus(); status("An override needs a reason."); return; }
-    it.review = {decision:"override", verdict: $("#ovrV").value, reason, ...who()}; next();
+    const v = $("#ovrV").value, cv = $("#ovrC").value.trim();
+    if (v === "contradicted" && !cv) { $("#ovrC").focus(); status("A contradicted verdict needs the correct value from the data."); return; }
+    it.review = {decision:"override", verdict: v, reason, ...(v === "contradicted" ? {correct_value: cv} : {}), ...who()}; next();
   };
 }
 function next(){

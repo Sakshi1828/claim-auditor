@@ -18,7 +18,8 @@ import time
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from auditor.audit import LABEL, run_audit, suggested_decision, to_shared_format, write_json  # noqa: E402
+from auditor.audit import LABEL, plan_for, run_audit, to_shared_format, write_json  # noqa: E402
+from auditor.impact import corrected_markdown  # noqa: E402
 from auditor.envelope import opened_dir, unseal  # noqa: E402
 from auditor.release import Release  # noqa: E402
 
@@ -72,6 +73,12 @@ def main(argv=None):
             print(f"      correct value: {r['correct_value']}")
         if r.get("needed"):
             print(f"      data needed: {r['needed'][:160]}")
+        imp = it.get("impact") or {}
+        if it["tool_verdict"] != "not_a_claim":
+            print(f"      why it matters: {imp.get('why_it_matters', '')[:220]}")
+            print(f"      next step:      {imp.get('next_step', '')[:220]}")
+            if imp.get("suggested_text"):
+                print(f"      suggested text: {imp['suggested_text'][:220]}")
         print()
     if a.envelope and (opened_dir(challenge, a.envelope[0]) / "release").exists():
         # Saturday's report may be about release A or the envelope's new release: check both, show what moves.
@@ -88,8 +95,18 @@ def main(argv=None):
         if not moved:
             print("   Every verdict is the same on both releases.")
         print()
-    d, why = suggested_decision(audit["items"])
-    print(f"Suggested next step: {d}. {why}")
+    plan = plan_for(audit)
+    print(f"WHAT TO DO NEXT -> {plan['decision']}. {plan['why']}")
+    for k, st in enumerate(plan["steps"], 1):
+        print(f"  {k}. [{st['id']}] {st['do']}: {st['detail'][:200]}")
+    print()
+    print("WHAT THIS AUDIT CAN'T TELL YOU")
+    for c in plan["cant_tell"]:
+        print(f"  - {c[:200]}")
+    corr = out.with_name("corrected_report.md")
+    corr.write_text(corrected_markdown(plan, release.name), encoding="utf-8")
+    print()
+    print(f"Suggested corrected report -> {corr}")
     print("Every verdict needs a person to confirm it: open the review app (python app.py).")
     print(f"\nWrote {out} (shared format) and {out.with_name(out.stem + '_full.json').name}  in {time.time() - t0:.1f} s")
 

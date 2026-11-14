@@ -6,6 +6,7 @@ import json
 
 from .checks import check_sentence
 from .claims import split_sentences
+from .impact import action_plan, explain
 from .release import Release
 
 TEAM = "Cache us if u can"
@@ -30,6 +31,7 @@ def run_audit(report_text: str, release: Release) -> dict:
             "result": res.to_dict(),
             "review": None,     # filled in by a person: {"decision": "accept"|"override", "verdict", "reason", "reviewer"}
         })
+        items[-1]["impact"] = explain(items[-1], res.verdict, release.name)
     return {
         "created": dt.datetime.now().isoformat(timespec="seconds"),
         "release": {"name": release.name, "dir": str(release.dir), "files": release.checksums},
@@ -37,15 +39,14 @@ def run_audit(report_text: str, release: Release) -> dict:
     }
 
 
-def suggested_decision(items: list[dict]) -> tuple[str, str]:
-    v = [final_verdict(i) for i in items if final_verdict(i) != "not_a_claim"]
-    if not v:
-        return "Stop", "No checkable claims were found."
-    if "contradicted" in v:
-        return "Fix a problem", f"{v.count('contradicted')} claim(s) contradict the data and must be corrected before the report is used."
-    if "insufficient_evidence" in v:
-        return "Narrow the question", f"{v.count('insufficient_evidence')} claim(s) go beyond what this data can show; remove or reword them."
-    return "Proceed", "Every checked claim is supported by the data."
+def suggested_decision(items: list[dict], release_name: str = "A") -> tuple[str, str]:
+    plan = action_plan(items, release_name, final_verdict)
+    return plan["decision"], plan["why"]
+
+
+def plan_for(audit: dict) -> dict:
+    """Next steps for the whole report, using the reviewers' final verdicts."""
+    return action_plan(audit["items"], audit["release"]["name"], final_verdict)
 
 
 def final_verdict(item: dict) -> str:
@@ -67,6 +68,7 @@ def to_shared_format(audit: dict, decision: dict | None = None, team: str = TEAM
         ev += [{"kind": "analysis", "id": f"{it['id']}-calc", "note": f"{sc['label']}: claimed {sc['claimed']}, data {sc['observed']}"}
                for sc in r["subchecks"]]
         rv = it.get("review") or {}
+        imp = explain(it, verdict, audit["release"]["name"])
         f = {
             "id": it["id"],
             "kind": "claim_check",
@@ -83,9 +85,18 @@ def to_shared_format(audit: dict, decision: dict | None = None, team: str = TEAM
             "review": rv or None,
             "calculation": r["code"],
             "n": r["n"],
+            # what happens after the verdict
+            "why_it_matters": imp["why_it_matters"],
+            "next_step": imp["next_step"],
+            "ask_author": imp["ask_author"],
+            "suggested_text": imp["suggested_text"],
+            "cannot_tell": imp["cant_tell"],
         }
         if verdict == "contradicted":
-            f["correct_value"] = r.get("correct_value") or (rv.get("correct_value") if rv else None) or "see evidence"
+            # the reviewer's number wins; else the tool's; else what the data showed in each measured check
+            f["correct_value"] = ((rv.get("correct_value") if rv else None) or r.get("correct_value")
+                                  or "; ".join(f"{sc['label']}: {sc['observed']}" for sc in r["subchecks"])
+                                  or "not computed by the tool: see the reviewer's reason")
         findings.append(f)
     out = {
         "format_version": "0.2",
@@ -94,6 +105,9 @@ def to_shared_format(audit: dict, decision: dict | None = None, team: str = TEAM
         "question": "Is each factual claim in this report supported by the TCGA-BRCA release?",
         "findings": findings,
     }
+    plan = plan_for(audit)
+    out["next_steps"] = {"suggested_decision": plan["decision"], "why": plan["why"], "steps": plan["steps"],
+                         "audit_cannot_tell": plan["cant_tell"]}
     if decision:
         out["verdict"] = decision["decision"]
         out["decision_record"] = decision

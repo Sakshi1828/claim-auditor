@@ -68,7 +68,23 @@ python claim-auditor/tests/run_tests.py
 |---|---|
 | `audit.json` (shared format v0.2, one `claim_check` finding per claim) | `outputs/audit.json` |
 | Full audit with tool verdicts, reviewer decisions and calculations | `outputs/audit_full.json` |
-| Human-readable decision record | `outputs/decision_summary.md` |
+| Human-readable decision record, next steps and what the audit can't tell you | `outputs/decision_summary.md` |
+| Suggested corrected report for the author | `outputs/corrected_report.md` |
+
+## What happens after a verdict
+Finding a wrong number is the start. For every claim the tool also says:
+
+| | Contradicted | Insufficient evidence | Supported |
+|---|---|---|---|
+| **Why it matters** | How far off it is in the data's own units ("12.1 points too high, about 102 of 844 tumors") and what that breaks downstream (group sizes, power, cohort joins) | It will be read as a finding even though this release can't show it | It can stay, but only if the definition is stated |
+| **What to do next** | Fix the number (with suggested wording), **or**, if the number matches another reasonable definition (e.g. the 2012 Nature subtype column), ask the author which one they used and name it, without changing the number | Remove or reword it as an open question; or rerun on a release with the missing file; or check by hand if the tool couldn't read it | Keep it and cite the release and definition; decide on rounding if borderline |
+| **What the tool can't tell you** | Why the author's number differs | Whether the effect is real | Whether the author's method was right |
+
+The plan for the whole report (in order: fix, ask, remove, check by hand) and the list of **what this audit can't tell you** are
+shown in section 3 of the app, printed by the command line, written to `audit.json` (`next_steps`, and `why_it_matters` /
+`next_step` / `suggested_text` / `cannot_tell` on each finding) and `decision_summary.md`. A **suggested corrected report**
+(`outputs/corrected_report.md`) applies the fixes and marks what must come out. Everything updates when a reviewer overrides a
+verdict.
 
 ## How a verdict is reached
 Each sentence goes through checkers in order. The first that recognises it runs the calculation:
@@ -77,15 +93,17 @@ Each sentence goes through checkers in order. The first that recognises it runs 
 |---|---|---|
 | `treatment_response` | response / benefit / "works best" / guide-treatment claims | clinical therapy fields (context only) → **insufficient evidence**: there are no response outcomes |
 | `not_a_claim` | recommendations, opinions, background with nothing to measure | not scored |
-| `slide_counts` | slide totals, frozen vs diagnostic | `slide_manifest.csv` |
+| `manifest` | slide totals and kinds (diagnostic, frozen, top/bottom/middle section), slide size (median/mean/total, MB/GB/TB), scan magnification (40x/20x), licence, viewer links, slides per patient/sample, the sample manifest's own slide total, and patients/samples **with** or **without** slides ("1,098 of the 1,101 primary tumors") | `slide_manifest.csv` + `sample_manifest.csv`, cross-checked against each other |
 | `survival` | death counts, follow-up; comparisons → insufficient (need time-to-event analysis) | `survival.tsv` |
 | `protein_comparison` | "ER-alpha protein is higher in ER-positive tumors" | `protein_rppa.tsv.gz` + clinical status |
 | `subtype_share` | PAM50 subtype % / counts / "largest" | `PAM50Call_RNAseq` (or `PAM50_mRNA_nature2012` if the claim says 2012/Nature) |
 | `receptor_share` | ER / PR / HER2 positive or negative, triple-negative | clinical receptor status columns |
 | `mutation_frequency` | "TP53 is mutated in X%", "most frequently mutated" | `mutation_gene_level.tsv.gz` |
 | `age` | median / mean age, share over/under an age | `age_at_initial_pathologic_diagnosis` |
-| `cohort_coverage` | counts of tumors / samples / patients and which data layers they have | barcodes present in each release file |
+| `cohort_coverage` | counts of tumors / samples / patients and which data layers they have, including "N of the M" | `sample_manifest.csv` for release A (or a release's own manifest), else barcodes present in each release file |
 | `unrecognised` | anything else with a number | **insufficient evidence, flagged for manual check** |
+
+**Contradicted claims always carry `correct_value`** with the number the data gives (for example `49.9% (421 of 844)`). If a reviewer overrides a verdict to *contradicted*, the app requires them to type the correct value.
 
 **Tolerance:** counts must match exactly. Percentages must match within ±0.5 points (±0.15 if the claim gives a decimal),
 or within ±1.5 points or 5% if the claim says *about / approximately / roughly*. Results close to the line are marked
@@ -100,6 +118,8 @@ or within ±1.5 points or 5% if the claim says *about / approximately / roughly*
 - For release A, which samples exist and which data layers they have comes from `sample_manifest.csv`, the organizers'
   official list. The tool cross-checks it against the files and reports any disagreement. For any other release (for example an
   envelope), the manifest doesn't apply, so membership is read from that release's own files. Missing values inside a file are not counted.
+- **The two manifests don't fully agree:** `slide_manifest.csv` has 50 slides from 24 normal-tissue samples that are not in `sample_manifest.csv`, so `slides_for_sample` adds up to 3,061, not 3,111. Every slide claim shows this note, and a claim that uses one total where the other was meant is caught.
+- If a release folder ships its own `sample_manifest.csv` / `slide_manifest.csv` (for example an envelope), those are used.
 - Survival rows marked `Redaction = Redacted` (5 primary tumors in release A) are kept, as the organizers advise, and flagged
   on every survival-related claim for a person to review.
 - Survival comparisons and treatment effects are never judged as supported: that needs a pre-specified statistical analysis.

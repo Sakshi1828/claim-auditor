@@ -23,6 +23,11 @@ class SubCheck:
     ok: bool | None       # None = shown for context only
     rule: str = ""
 
+    def __post_init__(self):
+        # numpy booleans (np.False_) fail `is False` checks and JSON export: store a plain bool
+        if self.ok is not None:
+            self.ok = bool(self.ok)
+
 
 @dataclass
 class Result:
@@ -248,45 +253,209 @@ class NotAClaimChecker(Checker):
                       limitation="A reviewer can mark it as a claim if they disagree.")
 
 
-class SlidesChecker(Checker):
-    name = "slide_counts"
+ENTITY_WORDS = r"(?:patients|participants|women|people|donors|cases|samples|tumou?rs|primary|normal|metasta\w*)"
+
+
+def precision_ok(num: Number, observed: float) -> tuple[bool, str]:
+    """Measured values (sizes, averages): right if the data rounds to the stated value at the precision it was written."""
+    d = len(num.text.split(".")[1].rstrip("% percnt")) if "." in num.text else 0
+    tol = 0.5 * 10 ** -d + 1e-9
+    if num.approx:
+        return abs(num.value - observed) <= max(tol, 0.05 * abs(observed)), "within 5% (claim says about)"
+    return abs(num.value - observed) <= tol, f"rounds to the stated value (within {tol:.2g})"
+
+
+class ManifestChecker(Checker):
+    """Claims about the two manifests: slide counts and kinds, slide sizes, scan magnification, licence, viewer links,
+    slides per patient/sample, and sample_manifest.csv's own slide total. Numbers that count patients or samples
+    *with* slides are checked by the cohort checker, which reads sample_manifest.csv, and merged in here."""
+    name = "manifest"
+
+    KINDS = {"diagnostic": r"diagnostic|ffpe", "frozen": r"frozen", "top section": r"\btop\b",
+             "bottom section": r"\bbottom\b", "middle section": r"\bmiddle\b"}
 
     def applies(self, s, r):
-        return bool(re.search(r"\bslides?\b", s.lower)) and bool(s.numbers) and r.slides is not None
+        if r.slides is None and r.sample_manifest is None:
+            return False
+        t = s.lower
+        return bool(re.search(r"\bslides?\b|whole[- ]slide|\bcc[ -]by\b", t)) and (
+            bool(s.numbers) or bool(re.search(r"\b(?:all|every|each)\b", t)))
+
+    @staticmethod
+    def classify(s, i, num):
+        """What does this number count? Decided by the words right after it ("1,978 are frozen", "338 MB")."""
+        nums = s.numbers
+        seg_end = nums[i + 1].start if i + 1 < len(nums) else len(s.text)
+        after = s.text[num.end:seg_end].lower()
+        before = s.text[:num.start].lower()
+        if re.search(r"cc[ -]by[ -]?$", before) or re.search(r"\bversion\s*$", before):
+            return "skip", after                                    # the "3.0" in "CC BY 3.0"
+        if re.match(r"\s*(?:mb|gb|tb|megabytes?|gigabytes?|terabytes?)\b", after):
+            return "size", after
+        if re.match(r"(?:\s*(?:x|×)(?!\w))|(?:\s*-?\s*(?:times|fold)\s+(?:magnification|objective))", after):
+            return "objective", after
+        if re.match(r"\s*(?:\w+\s+){0,2}?slides?\s+(?:per|for each|for every)\s+", after) or (
+                re.match(r"\s*(?:\w+\s+){0,2}?slides?\b", after)
+                and re.search(r"average\b|\bmean\b|on average\b", s.lower) and re.search(r"\b(?:each|per|every|a)\s+(?:patient|sample|case|tumou?r)", s.lower)):
+            return "average", after
+        if re.fullmatch(r"\s*(?:of|out of)\s+(?:the\s+|all\s+)?", after):
+            return "entity", after                                  # "1,098 of the 1,101 primary tumors ..."
+        head = re.split(r"\bslides?\b|\bsections?\b|\bimages?\b", after, maxsplit=1)[0]
+        if re.search(ENTITY_WORDS, head) and not re.search(r"\bof (?:the |all )?(?:\w+ )?slides\b", after):
+            return "entity", after
+        return "slide", after
 
     def run(self, s, r):
-        sl = r.slides
-        total = len(sl)
-        frozen = int((~sl.slide_kind.str.startswith("diagnostic")).sum())
-        dx = total - frozen
-        spans = find_spans(s.text, {"frozen": r"frozen", "diagnostic": r"diagnostic|ffpe", "total": r"\bslides?\b"})
-        obs = {"frozen": frozen, "diagnostic": dx, "total": total}
-        subs = []
-        for i, num in enumerate(s.numbers):
-            # the words right after a number say what it counts: "1,978 are frozen", "3,111 slides"
-            seg_end = s.numbers[i + 1].start if i + 1 < len(s.numbers) else len(s.text)
-            after = s.text[num.end:seg_end].lower()
-            if re.match(r"\W*(?:\w+\W+){0,3}?(frozen)", after):
-                key = "frozen"
-            elif re.match(r"\W*(?:\w+\W+){0,3}?(diagnostic|ffpe)", after):
-                key = "diagnostic"
-            elif re.match(r"\s*(?:pathology |tissue |whole[- ]slide )?(?:slides|images)", after):
-                key = "total"
-            else:
-                key = nearest(num.start, [(p, k) for p, k in spans if k != "total"]) or "total"
-            if num.is_percent:
-                ok, rule = matches(num, pct(obs[key], total), True)
-                subs.append(SubCheck(f"Share of slides that are {key}", num.text, fmt_pct(obs[key], total), ok, rule))
-            else:
-                ok, rule = matches(num, obs[key], False)
-                subs.append(SubCheck(f"{key.capitalize()} slides", num.text, f"{obs[key]:,}", ok, rule))
+        sl, sm, t = r.slides, r.sample_manifest, s.lower
+        subs, files, fields, alts, entity_nums, used_sm = [], [], set(), [], [], False
+        nums = s.numbers
+        kind_n, total = {}, 0
+        if sl is not None:
+            files.append("slide_manifest.csv")
+            total = len(sl)
+            kind_n["diagnostic"] = int(sl.slide_kind.str.startswith("diagnostic").sum())
+            kind_n["frozen"] = total - kind_n["diagnostic"]
+            for k in ("top section", "bottom section", "middle section"):
+                kind_n[k] = int(sl.slide_kind.str.contains(k.split()[0]).sum())
+        says_sm = bool(re.search(r"sample[_ ]manifest|slides_for_sample", t))
+        obj_m = re.search(r"(\d+)\s*(?:x|×)(?!\w)", s.text)
+        for i, num in enumerate(nums):
+            kind, after = self.classify(s, i, num)
+            if kind == "skip":
+                continue
+            if kind == "entity":
+                entity_nums.append(num.text)
+                continue
+            if sl is None:
+                continue
+            if kind == "size":
+                unit = re.match(r"\s*(\w)", after).group(1)                       # m / g / t
+                pre = s.text[:num.start]
+                stat = nearest(num.start, find_spans(pre, {"median": r"median|typical", "mean": r"average|mean",
+                                                           "total": r"total|together|combined|altogether|in all",
+                                                           "max": r"largest|biggest|maximum", "min": r"smallest|minimum"})) or (
+                    "total" if re.search(r"total|together|combined|altogether|in all", after) else "median")
+                mb = float({"median": sl.size_mb.median(), "mean": sl.size_mb.mean(), "total": sl.size_mb.sum(),
+                            "max": sl.size_mb.max(), "min": sl.size_mb.min()}[stat])
+                bases = {"m": [(1, "MB")], "g": [(1e3, "GB"), (1024, "GiB")], "t": [(1e6, "TB"), (1024 ** 2, "TiB")]}[unit]
+                tries = [(mb / b, lab, *precision_ok(num, mb / b)) for b, lab in bases]
+                best = next((x for x in tries if x[2]), tries[0])
+                subs.append(SubCheck(f"{stat.capitalize()} slide size", f"{num.text} {bases[0][1]}",
+                                     f"{best[0]:,.2f} {best[1]} ({mb:,.1f} MB)", best[2], best[3]))
+                fields.add("size_mb")
+            elif kind == "objective":
+                fields.add("objective")
+                if any(n.is_percent for n in nums):
+                    continue                                                   # the % number carries the check
+                v = num.value
+                n_at = int((sl.objective == v).sum())
+                if re.search(r"\b(?:all|every)\b", t):
+                    subs.append(SubCheck(f"All slides scanned at {v:g}x", "all", f"{n_at:,} of {total:,}", n_at == total, "all rows"))
+                elif re.search(r"\b(?:most|majority|mainly|mostly|usually|typically)\b", t):
+                    subs.append(SubCheck(f"Most slides scanned at {v:g}x", "most", fmt_pct(n_at, total), n_at > total / 2,
+                                         "more than half"))
+                else:
+                    subs.append(SubCheck(f"Slides scanned at {v:g}x", f"{num.text}x", fmt_pct(n_at, total), n_at > 0,
+                                         "at least one slide"))
+                alts.append({"definition": "Objective values in slide_manifest.csv",
+                             "value": ", ".join(f"{k:g}x: {c:,}" for k, c in sl.objective.value_counts().items())
+                                      + f", missing: {int(sl.objective.isna().sum())}"})
+            elif kind == "average":
+                ent = "patient" if re.search(r"\b(?:per|each|every|a)\s+(?:patient|case|participant|woman)", s.lower) else "sample"
+                col = "patient_id" if ent == "patient" else "sample_id"
+                with_sl = sl[col].nunique()
+                avg = total / with_sl
+                ok, rule = precision_ok(num, avg)
+                subs.append(SubCheck(f"Slides per {ent} (those with at least one slide)", num.text,
+                                     f"{avg:.2f} ({total:,} / {with_sl:,})", ok, rule))
+                if sm is not None:
+                    den = sm.patient_id.nunique() if ent == "patient" else len(sm)
+                    alts.append({"definition": f"Per {ent} in sample_manifest.csv, including those with no slide",
+                                 "value": f"{total / den:.2f} ({total:,} / {den:,})"})
+            else:   # a count or share of slides
+                if num.is_percent and obj_m and not re.search(r"cc[ -]by", t):
+                    v = float(obj_m.group(1))
+                    n_at = int((sl.objective == v).sum())
+                    ok, rule = matches(num, pct(n_at, total), True)
+                    subs.append(SubCheck(f"Share of slides scanned at {v:g}x", num.text, fmt_pct(n_at, total), ok, rule))
+                    alts.append({"definition": "Only slides with a recorded objective",
+                                 "value": fmt_pct(n_at, int(sl.objective.notna().sum()))})
+                    fields.add("objective")
+                    continue
+                if num.is_percent and re.search(r"cc[ -]by", t):
+                    n_l = int(sl.license.str.contains("CC BY", case=False).sum())
+                    ok, rule = matches(num, pct(n_l, total), True)
+                    subs.append(SubCheck("Share of slides under CC BY", num.text, fmt_pct(n_l, total), ok, rule))
+                    fields.add("license")
+                    continue
+                seg_kind = next((k for k, pat in self.KINDS.items()
+                                 if re.match(r"\W*(?:\w+\W+){0,3}?(?:" + pat + ")", after)), None)
+                if seg_kind:
+                    key = seg_kind
+                elif re.match(r"\s*(?:\w+\s+){0,2}?(?:slides|images)", after):
+                    key = None
+                else:
+                    key = nearest(num.start, find_spans(s.text, self.KINDS))
+                fields.add("slide_kind")
+                sm_total = int(sm.slides_for_sample.sum()) if sm is not None else None
+                if key is None and says_sm and sm is not None:
+                    obs, used_sm = sm_total, True
+                    label = "Slides counted in sample_manifest.csv (sum of slides_for_sample)"
+                    fields.add("slides_for_sample")
+                else:
+                    obs = kind_n[key] if key else total
+                    label = f"{key.capitalize()} slides" if key else "Slides listed in slide_manifest.csv"
+                if num.is_percent:
+                    ok, rule = matches(num, pct(obs, total), True)
+                    subs.append(SubCheck(f"Share of slides that are {key or 'listed'}", num.text, fmt_pct(obs, total), ok, rule))
+                else:
+                    ok, rule = matches(num, obs, False)
+                    subs.append(SubCheck(label, num.text, f"{obs:,}", ok, rule))
+                    if not ok and key is None and not says_sm and sm_total is not None and num.value == sm_total:
+                        subs[-1].observed += (f" ({num.text} is the sample_manifest.csv total, which leaves out "
+                                              f"{total - sm_total:,} slides)")
+        # licence / viewer claims with no number of their own ("all slides are CC BY 3.0")
+        if sl is not None and re.search(r"cc[ -]by", t) and re.search(r"\b(?:all|every|each)\b", t) and not any(
+                n.is_percent for n in nums):
+            lic = sl.license.value_counts()
+            stated = re.search(r"cc[ -]by(?:[ -](?:nc|sa|nd))*(?:[ -]\d\.\d)?", t).group(0)
+            ok = len(lic) == 1 and re.sub(r"[ -]", "", stated) == re.sub(r"[ -]", "", lic.index[0].lower())
+            subs.append(SubCheck("Every slide has the stated licence", "all " + stated.upper(),
+                                 "; ".join(f"{k}: {c:,}" for k, c in lic.items()), ok, "all rows"))
+            fields.add("license")
+        if sl is not None and re.search(r"viewer|link|url", t) and re.search(r"\b(?:all|every|each)\b", t):
+            n_v = int(sl.viewer_url.notna().sum())
+            subs.append(SubCheck("Slides with a viewer link", "all", f"{n_v:,} of {total:,}", n_v == total, "all rows"))
+            fields.add("viewer_url")
+        cohort = None
+        if entity_nums:   # "1,062 patients have a diagnostic slide": sample_manifest.csv via the cohort checker
+            cohort = CohortChecker().run(s, r)
+            subs += [sc for sc in cohort.subchecks if sc.claimed in entity_nums]
+            files.append("sample_manifest.csv" if sm is not None else "release files")
+            fields.add("sample_id")
+        if used_sm:
+            files.append("sample_manifest.csv")
+        if not subs:
+            na = NotAClaimChecker()
+            return na.run(s, r) if na.applies(s, r) else Fallback().run(s, r)
         v = verdict_from(subs)
-        return Result(verdict=v, check=self.name,
-                      summary=f"slide_manifest.csv lists {total:,} slides: {dx:,} diagnostic (FFPE) and {frozen:,} frozen sections.",
-                      subchecks=subs, correct_value=correct_from(subs) if v == "contradicted" else None,
-                      files=["slide_manifest.csv"], fields=["slide_kind"], n=total, population="All TCGA-BRCA slides in IDC",
-                      limitation="Counts come from the challenge's slide manifest (IDC), not from the release files.",
-                      code="sl = pd.read_csv('slide_manifest.csv')\nsl.slide_kind.str.startswith('diagnostic').value_counts()")
+        summary = (f"slide_manifest.csv lists {total:,} slides from {sl.patient_id.nunique():,} patients: "
+                   f"{kind_n['diagnostic']:,} diagnostic (FFPE) and {kind_n['frozen']:,} frozen sections."
+                   if sl is not None else "Checked against sample_manifest.csv.")
+        limitation = " ".join(x for x in [
+            r.manifest_note,
+            cohort.limitation if cohort else "",
+            "Slide facts come from the challenge's manifests (NCI Imaging Data Commons), not from the release data files.",
+        ] if x)
+        return Result(verdict=v, check=self.name, summary=summary, subchecks=subs,
+                      correct_value=correct_from(subs) if v == "contradicted" else None,
+                      files=list(dict.fromkeys(files)), fields=sorted(fields), n=total or None,
+                      population="TCGA-BRCA slides and samples listed in the manifests", limitation=limitation,
+                      alternatives=alts,
+                      code=("sl = pd.read_csv('slide_manifest.csv'); sm = pd.read_csv('sample_manifest.csv')\n"
+                            "sl.slide_kind.value_counts(); sl.size_mb.median(); sl.objective.value_counts()\n"
+                            "len(sl) / sl.patient_id.nunique(); sm.slides_for_sample.sum()\n"
+                            "sl[~sl.sample_id.isin(sm.sample_id)]   # slides the sample manifest doesn't list"))
 
 
 class SubtypeChecker(Checker):
@@ -673,9 +842,21 @@ class CohortChecker(Checker):
         subs, used_layers, missing = [], set(), set()
         last_entity = None
         nums = s.numbers
+        segs = [s.text[n.end:(nums[i + 1].start if i + 1 < len(nums) else len(s.text))] for i, n in enumerate(nums)]
+        # "1,098 of the 1,101 primary tumors have a slide": the first number is the count, the second the denominator
+        denom = {i + 1 for i in range(len(nums) - 1)
+                 if re.fullmatch(r"\s*(?:of|out of)\s+(?:the\s+|all\s+)?", segs[i], re.I) and not nums[i].is_percent}
         for i, num in enumerate(nums):
-            seg_end = nums[i + 1].start if i + 1 < len(nums) else len(s.text)
-            after = s.text[num.end:seg_end]
+            # "grade 3 tumors", "stage 2 cases": the number is a label, not a count
+            if re.search(r"\b(?:grade|stage|type|phase|level|class|cluster|version|tier|pt|t|n|m)\s*$", s.text[:num.start], re.I):
+                continue
+            after = segs[i + 1] if (i + 1) in denom else segs[i]
+            if i in denom:
+                ent = next((k for k, pat in self.ENTITIES if re.match(pat, after, re.I)), None) or default
+                ok, rule = matches(num, totals[ent], False)
+                subs.append(SubCheck(f"Number of {ent if ent != 'primary' else 'primary tumors'} (denominator)", num.text,
+                                     f"{totals[ent]:,}", ok, rule))
+                continue
             entity = next((k for k, pat in self.ENTITIES if re.match(pat, after, re.I)), None)
             layers = [k for k, pat in LAYER_PATTERNS.items() if re.search(pat, after, re.I)]
             if re.search(r"\b(?:all|every) (?:five|5|six|6) (?:data )?layers|every (?:data )?layer|all (?:data )?layers", after, re.I):
@@ -688,11 +869,19 @@ class CohortChecker(Checker):
                     "patients": m}[ent]
             if layers:
                 mask = pd.Series(True, index=base.index)
+                slide_desc = "slides"
                 for L in layers:
                     if L == "slides":
                         if "n_slides" in base:
-                            col = "n_diagnostic_slides" if re.search(r"diagnostic", after, re.I) else "n_slides"
-                            mask &= base[col] > 0
+                            col = ("n_diagnostic_slides" if re.search(r"diagnostic|ffpe", after, re.I) else
+                                   "n_frozen_slides" if re.search(r"frozen", after, re.I) else "n_slides")
+                            kind = {"n_diagnostic_slides": "diagnostic ", "n_frozen_slides": "frozen "}.get(col, "")
+                            if re.search(r"\b(?:no|without|lack\w*|missing)\b(?:\s+\w+){0,2}?\s+(?:slides?|images?)", after, re.I):
+                                mask &= base[col] == 0
+                                slide_desc = f"no {kind}slides"
+                            else:
+                                mask &= base[col] > 0
+                                slide_desc = f"at least one {kind}slide"
                     elif f"has_{L}" in base:
                         if not r.has_file(L):
                             missing.add(L)
@@ -701,7 +890,8 @@ class CohortChecker(Checker):
                 used_layers.update(layers)
                 sel = base[mask]
                 obs = sel.patient_id.nunique() if ent == "patients" else len(sel)
-                label = f"{ent.capitalize()} with " + ", ".join(LAYER_LABELS.get(L, L) for L in layers)
+                label = f"{ent.capitalize()} with " + ", ".join(slide_desc if L == "slides" else LAYER_LABELS.get(L, L)
+                                                                for L in layers)
                 if missing & set(layers):
                     subs.append(SubCheck(label, num.text, f"can't count: no {', '.join(LAYER_LABELS[L] for L in missing)} file "
                                          f"in this release ({len(sel):,} have the other layers)", None, "layer missing"))
@@ -725,14 +915,23 @@ class CohortChecker(Checker):
             needed = f"This release has no {', '.join(LAYER_LABELS[L] for L in sorted(missing))} file; use a release that includes it."
         flags =" & ".join(f"has_{L}" for L in sorted(used_layers) if L != "slides")
         layer_counts = ", ".join(f"{LAYER_LABELS[L]} {int(prim[f'has_{L}'].sum()):,}" for L in LAYER_LABELS if r.has_file(L))
+        source = "sample_manifest.csv" if r.membership_note.startswith("Sample list and data layers from sample_manifest")             else "the release files"
+        if "slides" in used_layers and "n_slides" in prim:
+            layer_counts += f", slides {int((prim.n_slides > 0).sum()):,}"
         return Result(verdict=v, check=self.name,
-                      summary=f"Built sample membership from the release files: {totals['primary']:,} primary tumors "
+                      summary=f"Sample membership from {source}: {totals['primary']:,} primary tumors "
                               f"({layer_counts}).",
                       subchecks=subs, correct_value=correct_from(subs) if v == "contradicted" else None,
-                      files=[FILES[k] for k in FILES if r.has_file(k)], fields=["sample barcode (chars 14–15 = sample type)"],
+                      files=(["sample_manifest.csv"] if source == "sample_manifest.csv" else [])
+                            + (["slide_manifest.csv"] if "slides" in used_layers else [])
+                            + [FILES[k] for k in FILES if r.has_file(k)],
+                      fields=["sample barcode (chars 14–15 = sample type)"]
+                            + ([f"has_{L}" for L in sorted(used_layers) if L != "slides"] if source == "sample_manifest.csv" else [])
+                            + (["slides_for_sample / slide_kind"] if "slides" in used_layers else []),
                       n=totals["primary"], population="Samples in the release (01 = primary tumor)",
                       limitation=" ".join(x for x in [
                           r.membership_note,
+                          r.manifest_note if "slides" in used_layers else "",
                           "Values inside a file may still be missing. Each extra layer you require shrinks the cohort.",
                           redaction_note(r) if "survival" in used_layers else ""] if x),
                       needed=needed,
@@ -756,7 +955,7 @@ class Fallback(Checker):
                       limitation="Unchecked by the tool: this is not a judgement that the data can't answer it.")
 
 
-CHECKERS: list[Checker] = [TreatmentChecker(), NotAClaimChecker(), SlidesChecker(), SurvivalChecker(),
+CHECKERS: list[Checker] = [TreatmentChecker(), ManifestChecker(), NotAClaimChecker(), SurvivalChecker(),
                            ProteinCompareChecker(), SubtypeChecker(), ReceptorShareChecker(), MutationChecker(), AgeChecker(),
                            CohortChecker(), Fallback()]
 

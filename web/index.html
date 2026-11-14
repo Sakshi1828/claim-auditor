@@ -152,6 +152,15 @@ pre{background:var(--code);border:1px solid var(--line);border-radius:9px;paddin
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 
+/* ---------- decision stamp + pill buttons ---------- */
+.stamprow{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.stamp{display:inline-flex;flex-direction:column;align-items:center;font:800 14px var(--sans);letter-spacing:.09em;padding:6px 14px;border-radius:9px;border:2px solid currentColor;transform:rotate(-1.5deg);line-height:1.15}
+.stamp small{font:600 9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+.stamp.s-bad{color:var(--bad);background:var(--bad-bg)} .stamp.s-unk{color:var(--unk);background:var(--unk-bg)}
+.stamp.s-ok{color:var(--ok);background:var(--ok-bg)} .stamp.s-na{color:var(--na);background:var(--na-bg)}
+.pill-btn{border-radius:999px;padding:6px 14px;font-size:13.5px}
+.pill-btn[aria-expanded=true]{background:var(--accent-2);border-color:var(--accent);color:var(--accent)}
+
 /* ---------- plain words ---------- */
 .plain{margin-top:14px;padding:20px 24px}
 .plain .k{font:700 12px var(--sans);color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
@@ -369,7 +378,7 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
 <!-- ============ STORY ============ -->
 <section id="storyWrap" class="hidden" aria-label="Audit summary" style="margin-top:26px">
   <div class="card story" id="story"></div>
-  <div class="card plain" id="plain" aria-label="The audit in plain words"></div>
+  <div class="card plain hidden" id="plain" aria-label="The audit in plain words"></div>
 </section>
 
 <!-- ============ 2. REVIEW ============ -->
@@ -562,6 +571,9 @@ function claims(){ return audit.items.filter(i => i.tool_verdict !== "not_a_clai
 function firstWrong(it){ return it.result.subchecks.find(s => s.ok === false); }
 
 // ---------------------------------------------------------------- render all
+const ROLE_VIEW = {"Program leader": "lead", "Data-use reviewer": "reviewer", "Researcher": "researcher", "Data engineer": "researcher"};
+function setView(v){ view = v; $$("[data-view]").forEach(x => x.setAttribute("aria-pressed", x.dataset.view === v)); if (audit) renderDetail(); }
+$("#role").addEventListener("change", () => setView(ROLE_VIEW[$("#role").value] || "reviewer"));
 $$("[data-view]").forEach(b => b.onclick = () => {
   view = b.dataset.view; $$("[data-view]").forEach(x => x.setAttribute("aria-pressed", x === b)); renderDetail();
 });
@@ -590,6 +602,12 @@ function reasonProblem(r, minWords = 4){
   if (JUNK.has(r.toLowerCase().replace(/[ .!]+$/, "")) || words < minWords || r.length < 15)
     return `“${r}” doesn't explain the decision. Write at least ${minWords} words on what you checked or why.`;
   return null;
+}
+// The suggested decision as a traffic-light stamp. It is the tool's suggestion: a person makes the call in step 3.
+function stamp(d){
+  const m = {"Fix a problem": ["HOLD & REVISE", "bad"], "Narrow the question": ["NARROW THE CLAIMS", "unk"],
+             "Proceed": ["CLEARED TO USE", "ok"], "Stop": ["DO NOT USE", "bad"]}[d] || [d, "na"];
+  return `<span class="stamp s-${m[1]}" title="The tool's suggestion: ${esc(d)}. A person decides in step 3.">${esc(m[0])}<small>suggested</small></span>`;
 }
 function headline(c, n){
   if (!n) return "No checkable claims were found in this report.";
@@ -641,7 +659,7 @@ function renderStory(){
       ? "checked against the report's own numbers" : "checked against release " + esc(audit.release.name)} in ${audit.seconds}s</div>
     ${scopeBox}
     <h2 class="headline" id="storyHead" tabindex="-1">${headline(c, n)}</h2>
-    <p class="dek">${plan ? `<b>Suggested next step: ${esc(plan.decision)}.</b> ${esc(plan.why.replace(/^[^.]*\.\s*/, ""))}` : ""}</p>
+    ${plan ? `<div class="stamprow">${stamp(plan.decision)}<p class="dek"><b>${esc(((plan.plain || audit.plain || {}).bottom_line) || plan.why)}</b></p></div>` : ""}
     <div class="vbar" role="img" aria-label="${c.supported} supported, ${c.contradicted} contradicted, ${c.insufficient_evidence} insufficient evidence, ${c.not_a_claim} not claims">
       ${seg("contradicted")}${seg("insufficient_evidence")}${seg("supported")}${seg("not_a_claim")}</div>
     <div class="legend num">
@@ -649,10 +667,17 @@ function renderStory(){
         `<span><i class="bg-${v}"></i><b>${c[v]}</b> ${LABEL[v].toLowerCase()}</span>`).join("")}
     </div>
     ${fc ? `<div class="top3">${fc}</div>` : ""}
+    <div class="row" style="margin-top:14px;align-items:center">
+      <button class="pill-btn" id="btnPlain" aria-expanded="${!$("#plain").classList.contains("hidden")}" aria-controls="plain">Explain it in plain words</button>
+      ${(((plan && plan.plain) || audit.plain || {}).words || []).length ? `<button class="pill-btn" id="btnGloss" aria-controls="plain">Glossary (${((plan && plan.plain) || audit.plain).words.length})</button>` : ""}
+    </div>
     ${labelled}
     <div class="progress"><div class="meter"><div style="width:${n ? 100 * done / n : 0}%"></div></div>
       <span><b class="num">${done} of ${n}</b> verdicts confirmed by a person${done < n ? " · each one waits for you in step 2" : " · ready to decide"}</span></div>`;
   $$("[data-go]").forEach(b => b.onclick = () => { sel = b.dataset.go; renderReader(); renderDetail(); go("#s2", "#accept"); });
+  $("#btnPlain").onclick = () => { const h = $("#plain").classList.toggle("hidden"); $("#btnPlain").setAttribute("aria-expanded", !h); if (!h) go("#plain"); };
+  if ($("#btnGloss")) $("#btnGloss").onclick = () => { $("#plain").classList.remove("hidden"); $("#btnPlain").setAttribute("aria-expanded", true);
+    const d = $("#gloss"); if (d) { d.open = true; go("#gloss"); } };
   if ($("#btnCompare")) $("#btnCompare").onclick = () => run(true);
   if ($("#btnUncompare")) $("#btnUncompare").onclick = () => run(false);
   renderPlain();
@@ -666,11 +691,10 @@ function renderPlain(){
   const li = x => `<li class="m-${x.mark}"><span class="tag">${esc(x.label)} · ${esc(x.id)}</span><span>${esc(x.text)}</span></li>`;
   $("#plain").innerHTML = `
     <div class="k">In plain words ${srcTag("i")}</div>
-    <div class="bl">${esc(p.bottom_line)}</div>
     <p>${esc(p.what_we_did)} ${esc(p.tally)}</p>
     ${probs.length ? `<ul>${probs.map(li).join("")}</ul>` : ""}
     ${ok.length ? `<details ${probs.length ? "" : "open"}><summary>${ok.length} ${plural(ok.length, "statement that checks out", "statements that check out")}</summary><ul>${ok.map(li).join("")}</ul></details>` : ""}
-    ${p.words.length ? `<details><summary>What the medical words mean (${p.words.length})</summary><dl>${p.words.map(w =>
+    ${p.words.length ? `<details id="gloss"><summary>What the medical words mean (${p.words.length})</summary><dl>${p.words.map(w =>
       `<dt>${esc(w.term)}</dt><dd>${esc(w.meaning)}</dd>`).join("")}</dl></details>` : ""}
     <div class="note">${esc(p.note)}</div>`;
 }
@@ -784,9 +808,9 @@ function renderDetail(){
     if (context.length) h += `<h3>Context from the data</h3><table><tbody>` +
       context.map(s => `<tr><td>${esc(s.label)}</td><td class="num">${esc(s.observed)}<div class="tiny muted">${esc(s.rule)}</div></td></tr>`).join("") + `</tbody></table>`;
     h += `<h3>Source</h3><table><tbody>
-      <tr><th>Release</th><td>${esc(audit.release.name)} <div class="tiny muted">${esc(audit.release.dir)}</div></td></tr>
+      <tr><th>Release</th><td><span title="${esc(audit.release.dir)}">release ${esc(audit.release.name)}</span></td></tr>
       <tr><th>Files</th><td>${r.files.map(f => { const x = audit.release.files.find(z => z.file === f);
-          return `${esc(f)}${x ? `<div class="tiny muted">sha256 ${x.sha256.slice(0, 16)}…</div>` : ""}`; }).join("") || "—"}</td></tr>
+          return `release ${esc(audit.release.name)} / ${esc(f)}${x ? `<div class="tiny muted">sha256 ${x.sha256.slice(0, 16)}…</div>` : ""}`; }).join("") || "—"}</td></tr>
       <tr><th>Fields</th><td>${r.fields.map(esc).join(", ") || "—"}</td></tr>
       <tr><th>Population</th><td>${esc(r.population)}${r.n != null ? ` (n = ${Number(r.n).toLocaleString()})` : ""}</td></tr>
       <tr><th>Checker</th><td>${esc(r.check)}</td></tr></tbody></table>`;

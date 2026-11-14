@@ -436,8 +436,47 @@ svg.empty-art{width:200px;height:100px;flex:none}
 .empty-state p{margin:0;color:var(--ink-2);max-width:60ch}
 @media (max-width:600px){.empty-state{flex-direction:column;text-align:center}}
 .detail-empty{text-align:center;padding:24px 10px} .detail-empty svg{width:180px;height:90px}
+/* ================= PHASE 4: charts (presentation only; every value comes from the app's own results) ======= */
+.viz{margin:12px 0 4px;padding:0}
+.viz-head{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;margin:0 0 10px}
+.viz-title{display:block;font-size:var(--fs-sm);color:var(--ink)}
+.viz-cap{display:block;font-size:var(--fs-xs);color:var(--muted);max-width:60ch;line-height:1.45}
+.viz-toggle{flex:none;font-size:var(--fs-xs);padding:4px 10px;border:1px solid var(--line);border-radius:var(--r-pill);color:var(--accent)}
+.viz-table{display:none} .viz.show-table .viz-table{display:block} .viz.show-table .viz-chart{display:none}
+.viz-table table{font-size:var(--fs-sm)} .viz-table td:first-child{color:var(--ink-2)}
+.axis-title{font-size:var(--fs-xs);color:var(--muted);text-align:center;margin-top:4px}
+.scale .track{background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 25%),var(--line)}
+.bars{background:repeating-linear-gradient(90deg,transparent 0 calc(25% - 1px),var(--line-2) calc(25% - 1px) 25%)}
+.vbar div,.bars .b,.alt .bar div,.complete span{animation:grow-x .7s ease-out both;transform-origin:left center}
+.scale .pt,.gd-mean,.gd-med{animation:fade-in .6s ease-out both}
+@keyframes grow-x{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+.bars .b{background:var(--chart-1)} .bars .b.rep{background:var(--chart-2)} .bars .b.rep.ok{background:var(--chart-3)}
+.alt .bar div{background:var(--chart-1)} .alt.match .bar div{background:var(--chart-2)}
+.gdots{display:grid;gap:10px;margin:4px 0 6px}
+.gd-row{display:grid;grid-template-columns:minmax(90px,.9fr) minmax(0,2fr) auto;gap:10px;align-items:center;font-size:var(--fs-sm)}
+.gd-name{color:var(--ink);font-weight:600}
+.gd-track{position:relative;height:22px;border-radius:999px;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 25%),var(--line-2)}
+.gd-mean,.gd-med{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%}
+.gd-mean{background:var(--chart-1)} .gd-med{border:2.5px solid var(--chart-2);background:var(--paper)}
+.gd-val{font-size:var(--fs-xs);color:var(--muted);white-space:nowrap}
+.gd-axis{display:flex;justify-content:space-between;font-size:var(--fs-xs);color:var(--muted)}
+.gd-key{display:flex;gap:16px;font-size:var(--fs-xs);color:var(--ink-2)}
+.gd-key i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.gd-key .k-mean{background:var(--chart-1)} .gd-key .k-med{border:2px solid var(--chart-2)}
+@media (max-width:600px){.gd-row{grid-template-columns:1fr}.gd-val{white-space:normal}}
+.na-state{display:flex;gap:12px;align-items:flex-start;background:var(--na-bg);color:var(--na);border:1px dashed color-mix(in srgb,var(--na) 45%,transparent);border-radius:var(--r-md);padding:12px 14px;margin:6px 0}
+svg.na-ic{width:22px;height:22px;flex:none}
+.na-state b{display:block;color:var(--ink)} .na-state span{display:block;font-size:var(--fs-sm)} .na-state small{display:block;margin-top:4px}
+.complete{height:8px;border-radius:999px;background:var(--line-2);overflow:hidden;margin:6px 0 2px;max-width:280px}
+.complete span{display:block;height:100%;background:var(--chart-3)}
+ol.tl li::after{background:linear-gradient(var(--accent),var(--line))}
+.cant li{list-style:none;position:relative;padding-left:28px;margin-left:-18px}
+.cant li::before{content:"";position:absolute;left:0;top:3px;width:18px;height:18px;background:var(--unk);-webkit-mask:var(--info-mask) center/contain no-repeat;mask:var(--info-mask) center/contain no-repeat}
+:root{--info-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v6'/%3E%3Ccircle cx='12' cy='7.5' r='.6' fill='black'/%3E%3C/svg%3E")}
+
 /* gentle motion only for people who are fine with motion */
-@media (prefers-reduced-motion:reduce){svg.hero-art,.sk{animation:none}}
+@media (prefers-reduced-motion:reduce){svg.hero-art,.sk,.vbar div,.bars .b,.alt .bar div,.complete span,.scale .pt,.gd-mean,.gd-med{animation:none}}
 </style>
 </head>
 <body>
@@ -910,12 +949,16 @@ function renderStory(){
     ${scopeBox}${relBox()}
     <h2 class="headline" id="storyHead" tabindex="-1">${headline(c, n)}</h2>
     ${plan ? `<div class="stamprow">${stamp(plan.decision)}<p class="dek"><b>${esc(((plan.plain || audit.plain || {}).bottom_line) || plan.why)}</b></p></div>` : ""}
-    <div class="vbar" role="img" aria-label="${c.supported} supported, ${c.contradicted} contradicted, ${c.insufficient_evidence} insufficient evidence, ${c.not_a_claim} not claims">
+    ${vizBox({title: "How the sentences came out", caption: `each part of the bar is one result, sized by how many of the ${total} sentences got it.`,
+      aria: `${c.supported} supported, ${c.contradicted} contradicted, ${c.insufficient_evidence} insufficient evidence, ${c.not_a_claim} not claims, out of ${total} sentences`,
+      head: ["Result", "Sentences", "Share"],
+      rows: ["contradicted", "insufficient_evidence", "supported", "not_a_claim"].map(v => [LABEL[v], c[v], total ? `${Math.round(100 * c[v] / total)}%` : "—"]),
+      chart: `<div class="vbar" role="img" aria-label="${c.supported} supported, ${c.contradicted} contradicted, ${c.insufficient_evidence} insufficient evidence, ${c.not_a_claim} not claims">
       ${seg("contradicted")}${seg("insufficient_evidence")}${seg("supported")}${seg("not_a_claim")}</div>
     <div class="legend num">
       ${["contradicted", "insufficient_evidence", "supported", "not_a_claim"].map(v =>
         `<span><i class="bg-${v}"></i><b>${c[v]}</b> ${LABEL[v].toLowerCase()}</span>`).join("")}
-    </div>
+    </div>`})}
     ${fc ? `<div class="top3">${fc}</div>` : ""}
     <div class="row" style="margin-top:14px;align-items:center">
       <button class="pill-btn" id="btnPlain" aria-expanded="${!$("#plain").classList.contains("hidden")}" aria-controls="plain">Explain it in plain words</button>
@@ -988,7 +1031,11 @@ function analysisPanel(it, r, v){
   if (trace.length) {
     add("Operation", esc(step("6").detail || "(stopped before an operation was chosen)"));
     add("Fields used", esc(step("1").detail || ""));
-    add("Data quality", esc(step("3").detail || ""));
+    const dq = step("3").detail || "", m = dq.match(/([\d,]+) of ([\d,]+) primary tumors have a value/);
+    const have = m ? num(m[1]) : null, all = m ? num(m[2]) : null;
+    add("Data quality", esc(dq) + (m && all ? `<div class="complete" role="img" aria-label="${m[1]} of ${m[2]} tumors have a value"
+        title="${m[1]} of ${m[2]} have a value"><span style="width:${(100 * have / all).toFixed(1)}%"></span></div>
+        <div class="tiny muted">How complete this field is: ${m[1]} of ${m[2]} tumors have a value</div>` : ""));
     add("Population / denominator", esc(step("5").detail || ""));
     add("Calculation " + srcTag("d"), esc(step("7").detail || ""));
     const stop = trace.find(s => !s.ok);
@@ -1024,13 +1071,62 @@ function renderReader(){
 }
 
 // ---------------------------------------------------------------- comparison visuals
+// ---- phase 4: one frame for every chart (title, "what this shows", show table/chart). View-only; values unchanged.
+function vizBox({title, caption, chart, head, rows, aria}){
+  return `<figure class="viz" role="group" aria-label="${esc(aria || title)}">
+    <figcaption class="viz-head"><span><b class="viz-title">${esc(title)}</b><span class="viz-cap">What this shows: ${esc(caption)}</span></span>
+      <button class="ghost viz-toggle" type="button" aria-pressed="false">Show table</button></figcaption>
+    <div class="viz-chart">${chart}</div>
+    <div class="viz-table"><table><thead><tr>${head.map(h => `<th scope="col">${esc(h)}</th>`).join("")}</tr></thead>
+      <tbody>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></figure>`;
+}
+document.addEventListener("click", e => {          // the toggle only switches what is shown
+  const b = e.target.closest(".viz-toggle"); if (!b) return;
+  const box = b.closest(".viz"), t = box.classList.toggle("show-table");
+  b.textContent = t ? "Show chart" : "Show table"; b.setAttribute("aria-pressed", t);
+});
+const NOT_AVAILABLE = /can't count|no \w[\w ]* file in this release|not in this release/i;
+
+// a dot plot for "higher in group A than group B" results, built only from the numbers already in the result text
+function groupDots(sc){
+  const m = sc.observed.match(/mean (-?[\d.]+) vs (-?[\d.]+); median (-?[\d.]+) vs (-?[\d.]+)/);
+  if (!m) return "";
+  const [ma, mb, da, db] = m.slice(1, 5).map(Number);
+  const nn = sc.observed.match(/n = ([\d,]+) vs ([\d,]+)/);
+  let names = (sc.label.split(":").pop().match(/\[([^\]]+)\] vs \[([^\]]+)\]/) || []).slice(1, 3);
+  if (!names.length) { const g = sc.label.match(/ in (.+?) vs (.+)$/); names = g ? [g[1], g[2]] : ["Group 1", "Group 2"]; }
+  const vals = [ma, mb, da, db], lo = Math.min(...vals), hi = Math.max(...vals), pad = (hi - lo || 1) * 0.15;
+  const P = v => `${(100 * (v - (lo - pad)) / ((hi + pad) - (lo - pad))).toFixed(2)}%`;
+  const row = (name, mean, med, n) => `<div class="gd-row"><span class="gd-name">${esc(name)}</span>
+      <div class="gd-track"><span class="gd-mean" style="left:${P(mean)}" title="${esc(name)}: mean ${mean}"></span>
+        <span class="gd-med" style="left:${P(med)}" title="${esc(name)}: median ${med}"></span></div>
+      <span class="gd-val num">mean ${mean} · median ${med}${n ? ` · n ${n}` : ""}</span></div>`;
+  const chart = `<div class="gdots" role="img" aria-label="${esc(names[0])}: mean ${ma}, median ${da}. ${esc(names[1])}: mean ${mb}, median ${db}.">
+      ${row(names[0], ma, da, nn && nn[1])}${row(names[1], mb, db, nn && nn[2])}
+      <div class="gd-axis num"><span>${(lo - pad).toFixed(2)}</span><span>Measured level (as recorded in the data)</span><span>${(hi + pad).toFixed(2)}</span></div>
+      <div class="gd-key"><span><i class="k-mean"></i>mean (average)</span><span><i class="k-med"></i>median (middle value)</span></div></div>`;
+  return vizBox({title: "The two groups side by side", caption: "where each group's average and middle value sit on the same scale.",
+    chart, head: ["Group", "Mean", "Median", "Tumors"], rows: [[names[0], ma, da, nn ? nn[1] : "—"], [names[1], mb, db, nn ? nn[2] : "—"]],
+    aria: `Dot plot comparing ${names[0]} and ${names[1]}`});
+}
+
+function naBox(sc){
+  return `<div class="na-state"><svg class="na-ic" aria-hidden="true"><use href="#ic-uncertain"/></svg>
+      <div><b>Data not available</b><span>${esc(sc.label)}: ${esc(sc.observed)}</span><small>Report says: ${esc(sc.claimed)}</small></div></div>`;
+}
+
 function compare(sc){
   const c = num(sc.claimed), o = num(sc.observed), ok = sc.ok;
   const isPct = /%/.test(sc.claimed) && /%/.test(sc.observed);
   const counts = sc.observed.match(/\(([\d,]+) of ([\d,]+)\)/);
   const lab = `<div class="lab">${esc(sc.label)} <small>· ${esc(sc.rule)}</small></div>`;
+  const table = (extra = []) => ({head: ["", "Value"], rows: [["Report says", sc.claimed], [dataWord() + " says", sc.observed],
+                                                             ["Rule used", sc.rule], ...extra,
+                                                             ["Result", ok == null ? "Not judged" : ok ? "Matches" : "Doesn't match"]]});
+  if (NOT_AVAILABLE.test(sc.observed))              // missing data: say so plainly, never fill the gap
+    return `<div class="cmp">${lab}${naBox(sc)}${vline(ok, "")}</div>`;
   if (c == null || o == null || /rank/.test(sc.claimed))
-    return `<div class="cmp">${lab}<div class="pair"><div><small>Report says</small>${esc(sc.claimed)}</div>
+    return `<div class="cmp">${lab}${groupDots(sc)}<div class="pair"><div><small>Report says</small>${esc(sc.claimed)}</div>
       <div><small>${dataWord()} says</small><b>${esc(sc.observed)}</b></div></div>${vline(ok, "")}</div>`;
   const diff = c - o;
   if (isPct){
@@ -1041,26 +1137,33 @@ function compare(sc){
     const left = Math.min(c, o), right = Math.max(c, o), repUp = true;
     const gapTxt = ok ? `Within the allowed margin (±${tol} points).` :
       `${Math.abs(diff).toFixed(1)} percentage points ${diff > 0 ? "too high" : "too low"}${counts ? `, about ${Math.round(Math.abs(diff) / 100 * num(counts[2])).toLocaleString()} of ${counts[2]} tumors` : ""}.`;
-    return `<div class="cmp">${lab}
+    return `<div class="cmp">${lab}` + vizBox({title: "Report vs data, on one scale",
+      caption: `the report's number and the data's number on the same percentage scale; the shaded band is the allowed margin (±${tol} points) around the data.`,
+      aria: `Report says ${c}%, data says ${o}%, allowed margin plus or minus ${tol} points`, ...table([["Allowed margin", `±${tol} percentage points`]]),
+      chart: `
       <div class="scale" role="img" aria-label="Report says ${c}%, data says ${o}%">
         <div class="track"></div>
         <div class="band" style="left:${P(Math.max(lo, o - tol))};width:calc(${P(Math.min(hi, o + tol))} - ${P(Math.max(lo, o - tol))})"></div>
         ${ok ? "" : `<div class="link" style="left:${P(left)};width:calc(${P(right)} - ${P(left)})"></div>`}
-        <div class="pt data" style="left:${P(o)}"></div><div class="pt rep ${ok ? "ok" : ""}" style="left:${P(c)}"></div>
+        <div class="pt data" style="left:${P(o)}" title="${dataWord()}: ${esc(sc.observed)}"></div><div class="pt rep ${ok ? "ok" : ""}" style="left:${P(c)}" title="Report: ${esc(sc.claimed)}"></div>
         <div class="tag ${Math.abs(c - o) < (hi - lo) * 0.18 ? "dn" : "up"} data" style="left:${P(o)}">${dataWord()} ${o}%</div>
         <div class="tag up rep ${ok ? "ok" : ""}" style="left:${P(c)}">Report ${c}%</div>
       </div>
       <div class="axis num"><span>${lo}%</span><span>${(lo + hi) / 2}%</span><span>${hi}%</span></div>
+      <div class="axis-title">Share of tumors (%)</div>`}) + `
       ${vline(ok, gapTxt)}</div>`;
   }
   const mx = Math.max(Math.abs(c), Math.abs(o)) || 1;
   const unit = (sc.observed.match(/[a-zA-Z]+/) || [""])[0];
   const gapTxt = ok ? (diff === 0 ? "Exact match." : "Within the allowed margin.") :
     `${fmt(Math.abs(diff))} ${diff > 0 ? "too many" : "too few"}${o ? ` (${Math.round(100 * Math.abs(diff) / Math.abs(o))}% off)` : ""}.`;
-  return `<div class="cmp">${lab}<div class="bars num">
-      <span>Report says</span><div class="b rep ${ok ? "ok" : ""}" style="width:${100 * Math.abs(c) / mx}%"></div><span class="v">${esc(sc.claimed)}</span>
-      <span>${dataWord()}</span><div class="b" style="width:${100 * Math.abs(o) / mx}%"></div><span class="v">${fmt(o)}${unit && !/of/.test(unit) ? " " + esc(unit) : ""}</span>
-    </div>${vline(ok, gapTxt)}</div>`;
+  return `<div class="cmp">${lab}` + vizBox({title: "Report vs data, side by side",
+      caption: "two bars on the same scale: the report's number and the number in the data.",
+      aria: `Report says ${sc.claimed}, data says ${sc.observed}`, ...table(),
+      chart: `<div class="bars num">
+      <span>Report says</span><div class="b rep ${ok ? "ok" : ""}" style="width:${100 * Math.abs(c) / mx}%" title="Report: ${esc(sc.claimed)}"></div><span class="v">${esc(sc.claimed)}</span>
+      <span>${dataWord()}</span><div class="b" style="width:${100 * Math.abs(o) / mx}%" title="${dataWord()}: ${esc(sc.observed)}"></div><span class="v">${fmt(o)}${unit && !/of/.test(unit) ? " " + esc(unit) : ""}</span>
+    </div><div class="axis-title">${unit && !/of/.test(unit) ? esc(unit) : "Count"}, starting at zero</div>`}) + `${vline(ok, gapTxt)}</div>`;
 }
 const vline = (ok, t) => ok == null ? "" : `<div class="verdict-line ${ok ? "ok" : "bad"}">${ok ? SVG.supported : SVG.contradicted}<span>${ok ? "Matches." : "Doesn't match."} ${esc(t)}</span></div>`;
 
@@ -1074,7 +1177,13 @@ function alternatives(r, it){
     return `<div class="alt ${match ? "match" : ""}"><span>${esc(def)}${match ? ` <b style="color:var(--unk)">← matches the report</b>` : ""}</span>
       <div class="bar">${v != null && /%/.test(a.value) ? `<div style="width:${Math.min(100, v)}%"></div>` : ""}</div><span class="val num">${esc(a.value)}</span></div>`;
   }).join("");
-  return `<h3>Same question, other reasonable definitions ${srcTag("d")}</h3><p class="small muted" style="margin:-4px 0 8px">If the answer moves a lot here, the report must say which definition it used.</p><div class="alts">${rows}</div>`;
+  const pct = r.alternatives.some(a => /%/.test(a.value));
+  return `<h3>Same question, other reasonable definitions ${srcTag("d")}</h3><p class="small muted" style="margin:-4px 0 8px">If the answer moves a lot here, the report must say which definition it used.</p>`
+    + vizBox({title: "One question, different ways of counting",
+      caption: "each bar answers the same question with a different column or denominator; a highlighted bar matches the report's number.",
+      aria: "Bar chart of alternative definitions: " + r.alternatives.map(a => `${a.definition} ${a.value}`).join("; "),
+      head: ["Definition", "Value"], rows: r.alternatives.map(a => [(a.subtype ? a.subtype + ": " : "") + a.definition, a.value]),
+      chart: `<div class="alts">${rows}</div>${pct ? `<div class="axis-title">Share of tumors (%), 0 to 100</div>` : ""}`});
 }
 
 // ---------------------------------------------------------------- detail
@@ -1137,6 +1246,7 @@ function renderDetail(){
     h += `<div class="callout"><b class="h">Not scored</b>${esc(r.limitation || "Nothing in this sentence can be measured in the data.")}</div>`;
   } else {
     if (judged.length && view !== "lead") tNum += `<h3>${otherData() ? "The claim vs the report's own numbers" : "What the report says vs what the data says"} ${srcTag("d")}</h3>` + judged.map(compare).join("");
+    context.filter(x => NOT_AVAILABLE.test(x.observed)).forEach(x => { tNum += naBox(x); });   // shown again here, plainly
     if (v === "contradicted" && cv) tNum += `<div class="callout bad"><b class="h">${otherData() ? "What the report's own numbers give" : "What the data shows instead"} ${srcTag("d")}</b><span class="big-val num">${esc(cv)}</span></div>`;
     if (r.needed) tNum += `<div class="callout unk"><b class="h">Data that would be needed ${srcTag("i")}</b>${esc(r.needed)}</div>`;
     if (imp) {

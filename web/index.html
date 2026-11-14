@@ -180,6 +180,33 @@ pre{background:var(--code);border:1px solid var(--line);border-radius:9px;paddin
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 
+/* ---------- phase 2: hierarchy and progressive disclosure (presentation only) ---------- */
+.sec-ic{width:26px;height:26px;color:var(--accent);flex:none;align-self:center}
+.sec-h{align-items:center;flex-wrap:wrap}
+details.acc{margin-top:16px;border:1px solid var(--line);border-radius:var(--r-md);padding:10px 14px;background:var(--bg)}
+details.acc > summary{font-weight:600;color:var(--ink);list-style-position:inside}
+details.acc[open] > summary{margin-bottom:4px}
+.acc-help{font-weight:400;color:var(--muted);font-size:var(--fs-sm);margin-left:6px}
+.acc-note{font-size:var(--fs-sm);color:var(--muted);margin:8px 0 0;max-width:70ch}
+details.acc-inline{margin:0 0 12px;display:inline-block;padding:6px 12px}
+details.acc-inline > summary{font-size:var(--fs-sm);color:var(--accent)}
+details.acc-inline .srckey{margin:8px 0 2px}
+.dtabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin:18px 0 12px}
+.dtab{background:none;border:0;border-bottom:3px solid transparent;border-radius:0;padding:8px 12px;color:var(--muted);font-weight:600;font-size:var(--fs-sm)}
+.dtab:hover{color:var(--ink)}
+.dtab[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
+.pane-help{color:var(--muted);font-size:var(--fs-sm);margin:0 0 10px;max-width:70ch}
+.clamp > li:nth-child(n+4){display:none}
+.showall{margin-top:6px}
+.decision-card{border:1.5px solid color-mix(in srgb,var(--accent) 35%,var(--line));box-shadow:var(--shadow-lg)}
+/* readability: comfortable line length and spacing for running text */
+.dek,.summary,.quote,.aft p,.plain p,.plainline,.callout,.rec .small,ol.tl p,.cant li,.corr p,.scope-box,.rel-box{max-width:70ch}
+.aft p,.summary,.plain p{line-height:1.65}
+/* result counts as small stat cards (same numbers, same words) */
+.legend{gap:10px}
+.legend span{background:var(--bg);border:1px solid var(--line);border-radius:var(--r-md);padding:6px 12px}
+.legend b{font-size:20px}
+
 /* ---------- AI reading + analysis trace ---------- */
 .ai-toggle{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:13.5px;color:var(--ink-2);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
 .ai-toggle input{width:auto;margin-top:3px}
@@ -443,25 +470,29 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
 <main id="main" tabindex="-1">
 <!-- ============ 1. LOAD ============ -->
 <section id="s1" aria-labelledby="h1">
-  <div class="sec-h" style="margin-top:6px"><span class="k">Step 1</span><h2 id="h1">Load a report</h2><p>Paste it, upload it, or open a sealed envelope.</p></div>
+  <div class="sec-h" style="margin-top:6px"><svg class="sec-ic" aria-hidden="true"><use href="#ic-evidence"/></svg><span class="k">Step 1</span><h2 id="h1">Load a report</h2><p>Paste it, upload it, or open a sealed envelope.</p></div>
   <div class="load">
     <div class="card pad">
       <label for="report">Report text (Markdown or plain text)</label>
       <textarea id="report" placeholder="Paste a report here, or pick an option on the right…"></textarea>
-      <div class="row" style="margin-top:12px">
-        <div class="field" style="flex:2;min-width:240px"><label for="releaseDir">Data release folder</label><input id="releaseDir"></div>
-        <div class="field"><label for="reviewer">Your name</label><input id="reviewer" placeholder="e.g. A. Reviewer"></div>
-        <div class="field"><label for="role">Your role</label>
-          <select id="role"><option>Data-use reviewer</option><option>Researcher</option><option>Data engineer</option><option>Program leader</option></select></div>
-      </div>
       <div class="row" style="margin-top:14px;align-items:center">
         <button class="primary big" id="btnRun">Check every claim →</button>
         <span class="muted small" id="runNote">Takes a second or two. Nothing leaves this computer.</span>
       </div>
-      <label class="ai-toggle hidden" id="aiWrap" style="margin-top:10px"><input type="checkbox" id="aiOn">
-        <span><b>Also read claims with AI</b> (<span id="aiModel"></span>): the model only describes each claim; code checks
-        it against the data and decides. Sends the report's sentences, not the data, to the provider. Slower (≈30 s).</span></label>
       <div id="status" role="status" aria-live="polite"></div>
+      <details class="acc" id="moreOpts">
+        <summary>Settings <span class="acc-help">your name and role, AI reading, and which data to check against</span></summary>
+        <div class="row" style="margin-top:12px">
+          <div class="field" style="flex:2;min-width:240px"><label for="releaseDir">Data release folder</label><input id="releaseDir"></div>
+          <div class="field"><label for="reviewer">Your name</label><input id="reviewer" placeholder="e.g. A. Reviewer"></div>
+          <div class="field"><label for="role">Your role</label>
+            <select id="role"><option>Data-use reviewer</option><option>Researcher</option><option>Data engineer</option><option>Program leader</option></select></div>
+        </div>
+        <p class="acc-note">Change the data release folder only to check a different release, for example an opened envelope.</p>
+        <label class="ai-toggle hidden" id="aiWrap" style="margin-top:10px"><input type="checkbox" id="aiOn">
+          <span><b>Also read claims with AI</b> (<span id="aiModel"></span>): the model only describes each claim; code checks
+          it against the data and decides. Sends the report's sentences, not the data, to the provider. Slower (≈30 s).</span></label>
+      </details>
     </div>
     <div>
       <button class="opt" id="btnPractice"><span class="ic" aria-hidden="true">★</span><span><b>Use the practice report</b><span>The organizers' practice brief, with one supported, one wrong and one uncheckable claim.</span></span></button>
@@ -483,17 +514,19 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
 
 <!-- ============ STORY ============ -->
 <section id="storyWrap" class="hidden" aria-label="Audit summary" style="margin-top:26px">
+  <div class="sec-h" style="margin-top:0"><svg class="sec-ic" aria-hidden="true"><use href="#ic-info"/></svg><span class="k">Result</span><h2>Key takeaway</h2><p>The main result first. The details are further down.</p></div>
   <div class="card story" id="story"></div>
   <div class="card plain hidden" id="plain" aria-label="The audit in plain words"></div>
 </section>
 
 <!-- ============ 2. REVIEW ============ -->
 <section id="s2" class="hidden" aria-labelledby="h2">
-  <div class="sec-h"><span class="k">Step 2</span><h2 id="h2">Review each claim</h2><p>Click a sentence. Confirm or override what the tool found.</p>
+  <div class="sec-h"><svg class="sec-ic" aria-hidden="true"><use href="#ic-review"/></svg><span class="k">Step 2</span><h2 id="h2">Review each claim</h2><p>Click a sentence. Confirm or override what the tool found.</p>
     <button class="ghost backlink" onclick="go('#storyWrap','#storyHead')">↑ Back to summary</button></div>
+  <details class="acc acc-inline"><summary>What do the coloured labels mean?</summary>
   <p class="srckey"><span class="src d" style="margin:0">From the data</span> measured in the release files ·
     <span class="src i">Interpretation</span> the tool's reasoning: check it ·
-    <span class="src r">From the report</span> quoted from the report · Keyboard: <kbd>j</kbd>/<kbd>k</kbd> next/previous claim</p>
+    <span class="src r">From the report</span> quoted from the report · Keyboard: <kbd>j</kbd>/<kbd>k</kbd> next/previous claim</p></details>
   <div class="toolbar">
     <div class="seg" role="group" aria-label="Show">
       <button data-filter="all" aria-pressed="true">All sentences</button>
@@ -514,23 +547,10 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
 
 <!-- ============ 3. DECIDE ============ -->
 <section id="s3" class="hidden" aria-labelledby="h3">
-  <div class="sec-h"><span class="k">Step 3</span><h2 id="h3">What happens next</h2><p>The tool's plan, its limits, and your decision.</p>
+  <div class="sec-h"><svg class="sec-ic" aria-hidden="true"><use href="#ic-next"/></svg><span class="k">Step 3</span><h2 id="h3">What happens next</h2><p>The tool's plan, its limits, and your decision.</p>
     <button class="ghost backlink" onclick="go('#storyWrap','#storyHead')">↑ Back to summary</button></div>
   <div id="rec" class="rec na"></div>
-  <div class="decide">
-    <div class="card pad">
-      <h3 style="margin-top:0">Do this, in order <span class="src i">Interpretation</span></h3>
-      <ol class="tl" id="steps"></ol>
-      <details id="corrBox" style="margin-top:8px"><summary>Suggested corrected report, for the author</summary>
-        <div class="corr" id="corr" style="margin-top:12px"></div>
-        <button id="btnCorr" style="margin-top:8px">Download corrected_report.md</button></details>
-    </div>
-    <div class="card pad">
-      <h3 style="margin-top:0">What this audit can't tell you <span class="src i">Interpretation</span></h3>
-      <ul class="cant" id="cant" style="padding-left:18px;margin:0"></ul>
-    </div>
-  </div>
-  <div class="card pad" style="margin-top:18px">
+  <div class="card pad decision-card">
     <h3 style="margin-top:0">Your decision</h3>
     <div class="choices" role="group" aria-label="Decision" id="choices"></div>
     <div class="row" style="margin-top:14px">
@@ -543,6 +563,31 @@ ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
       <span id="reviewCount" class="muted small"></span>
     </div>
     <div id="exportOut" class="hidden"></div>
+  </div>
+  <div class="card pad" id="s3tabs" style="margin-top:18px">
+    <div class="dtabs" role="tablist" aria-label="Plan details">
+      <button role="tab" class="dtab" data-dtab="fix" aria-selected="true" tabindex="0">Steps to fix</button>
+      <button role="tab" class="dtab" data-dtab="limits" aria-selected="false" tabindex="-1">What the check can't tell you</button>
+      <button role="tab" class="dtab" data-dtab="corrected" aria-selected="false" tabindex="-1">Corrected report</button>
+    </div>
+    <div class="dpane" role="tabpanel" data-pane="fix">
+      <p class="pane-help">What to do, in order, before the report is used.</p>
+      <h3 style="margin-top:0">Do this, in order <span class="src i">Interpretation</span></h3>
+      <ol class="tl clamp" id="steps"></ol>
+      <button class="ghost showall hidden" data-for="steps">Show all</button>
+    </div>
+    <div class="dpane" role="tabpanel" data-pane="limits" hidden>
+      <p class="pane-help">Things this check cannot prove, so a person should keep them in mind.</p>
+      <h3 style="margin-top:0">What this audit can't tell you <span class="src i">Interpretation</span></h3>
+      <ul class="cant clamp" id="cant" style="padding-left:18px;margin:0"></ul>
+      <button class="ghost showall hidden" data-for="cant">Show all</button>
+    </div>
+    <div class="dpane" role="tabpanel" data-pane="corrected" hidden>
+      <p class="pane-help">The report with the suggested fixes marked, to send to the author.</p>
+      <details id="corrBox" style="margin-top:8px"><summary>Suggested corrected report, for the author</summary>
+        <div class="corr" id="corr" style="margin-top:12px"></div>
+        <button id="btnCorr" style="margin-top:8px">Download corrected_report.md</button></details>
+    </div>
   </div>
   <p class="foot">Research Claim Auditor · Team Cache us if u can · rule-based, reproducible, no AI model or API key · research use only</p>
 </section>
@@ -613,6 +658,7 @@ function updateGuide(){
 // ---------------------------------------------------------------- load
 async function init(){
   layout(); updateGuide();
+  wireTabs($("#s3tabs"), false);
   $("#report").addEventListener("input", () => { if (!audit) updateGuide(); });
   cfg = await api("/api/config");
   $("#releaseDir").value = cfg.release_dir;
@@ -943,6 +989,33 @@ function alternatives(r, it){
 }
 
 // ---------------------------------------------------------------- detail
+// ---- view-only tabs (phase 2): show one group of blocks at a time; every block stays in the page
+let detailTab = "num";
+function detailTabs(tabs){
+  const live = tabs.filter(t => t[3] && t[3].trim());
+  if (!live.length) return "";
+  const active = live.some(t => t[0] === detailTab) ? detailTab : live[0][0];
+  return `<div class="dtabs" role="tablist" aria-label="Claim details">` + live.map(([k, label, help]) =>
+      `<button role="tab" class="dtab" data-dtab="${k}" aria-selected="${k === active}" title="${esc(help)}"
+        tabindex="${k === active ? 0 : -1}">${esc(label)}</button>`).join("") + `</div>`
+    + live.map(([k, , help, html]) => `<div class="dpane" role="tabpanel" data-pane="${k}" ${k === active ? "" : "hidden"}>
+        <p class="pane-help">${esc(help)}</p>${html}</div>`).join("");
+}
+function wireTabs(root, remember = true){
+  const tabs = [...root.querySelectorAll("[data-dtab]")];
+  const show = b => {
+    if (remember) detailTab = b.dataset.dtab;
+    const key = b.dataset.dtab;
+    tabs.forEach(x => { const on = x === b; x.setAttribute("aria-selected", on); x.tabIndex = on ? 0 : -1; });
+    root.querySelectorAll(".dpane").forEach(p => p.hidden = p.dataset.pane !== key);
+  };
+  tabs.forEach((b, i) => {
+    b.onclick = () => show(b);
+    b.onkeydown = e => { const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (d) { const n = tabs[(i + d + tabs.length) % tabs.length]; show(n); n.focus(); e.preventDefault(); } };
+  });
+}
+
 function renderDetail(){
   const it = audit && audit.items.find(i => i.id === sel);
   if (!it) { $("#detail").innerHTML = `<p class="muted">Select a sentence on the left.</p>`; return; }
@@ -959,14 +1032,16 @@ function renderDetail(){
     ${pt && pt.text && v !== "not_a_claim" ? `<div class="plainline"><b>In plain words:</b> ${esc(pt.text.replace(/^“[^”]*”\s*/, "").replace(/^(goes|isn't|is |matches|doesn't)/, m => "This " + m))}${srcTag("i")}</div>` : ""}
     ${it.evidence_cited ? `<div class="callout"><b class="h" style="color:var(--accent)">Evidence the report cites ${srcTag("r")}</b>${esc(it.evidence_cited)}</div>` : ""}
     <p class="summary">${esc(r.summary)} ${srcTag(judged.length ? "d" : "i")}</p>`;
+  // Phase 2: the same blocks, grouped into tabs (numbers / what to do / how it was checked). Nothing removed.
+  let tNum = "", tTodo = "", tHow = "";
   if (v === "not_a_claim") {
     h += `<div class="callout"><b class="h">Not scored</b>${esc(r.limitation || "Nothing in this sentence can be measured in the data.")}</div>`;
   } else {
-    if (judged.length && view !== "lead") h += `<h3>${otherData() ? "The claim vs the report's own numbers" : "What the report says vs what the data says"} ${srcTag("d")}</h3>` + judged.map(compare).join("");
-    if (v === "contradicted" && cv) h += `<div class="callout bad"><b class="h">${otherData() ? "What the report's own numbers give" : "What the data shows instead"} ${srcTag("d")}</b><span class="big-val num">${esc(cv)}</span></div>`;
-    if (r.needed) h += `<div class="callout unk"><b class="h">Data that would be needed ${srcTag("i")}</b>${esc(r.needed)}</div>`;
+    if (judged.length && view !== "lead") tNum += `<h3>${otherData() ? "The claim vs the report's own numbers" : "What the report says vs what the data says"} ${srcTag("d")}</h3>` + judged.map(compare).join("");
+    if (v === "contradicted" && cv) tNum += `<div class="callout bad"><b class="h">${otherData() ? "What the report's own numbers give" : "What the data shows instead"} ${srcTag("d")}</b><span class="big-val num">${esc(cv)}</span></div>`;
+    if (r.needed) tNum += `<div class="callout unk"><b class="h">Data that would be needed ${srcTag("i")}</b>${esc(r.needed)}</div>`;
     if (imp) {
-      h += `<div class="after">
+      tTodo += `<div class="after">
         <div class="aft"><span class="ic">${SVG.why}</span><h4>Why it matters ${srcTag("i")}</h4><p>${esc(imp.why_it_matters)}</p></div>
         <div class="aft"><span class="ic">${SVG.next}</span><h4>What to do next ${srcTag("i")}</h4><p>${esc(imp.next_step)}</p>
           ${imp.suggested_text ? `<span class="sugg">${esc(imp.suggested_text)}</span>
@@ -975,24 +1050,27 @@ function renderDetail(){
         <div class="aft"><span class="ic">${SVG.cant}</span><h4>What the tool can't tell you ${srcTag("i")}</h4><ul>${imp.cant_tell.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
       </div>`;
     }
-    if (view !== "lead") h += alternatives(r, it);
+    if (view !== "lead") tNum += alternatives(r, it);
   }
-  h += analysisPanel(it, r, v);
+  tHow += analysisPanel(it, r, v);
   if (view !== "lead") {
-    h += `<details class="ev" ${view === "researcher" ? "open" : ""}><summary>Show the evidence: files, fields, calculation</summary>`;
-    if (context.length) h += `<h3>Context from the data</h3><table><tbody>` +
+    tHow += `<details class="ev" ${view === "researcher" ? "open" : ""}><summary>Show the evidence: files, fields, calculation</summary>`;
+    if (context.length) tHow += `<h3>Context from the data</h3><table><tbody>` +
       context.map(s => `<tr><td>${esc(s.label)}</td><td class="num">${esc(s.observed)}<div class="tiny muted">${esc(s.rule)}</div></td></tr>`).join("") + `</tbody></table>`;
-    h += `<h3>Source</h3><table><tbody>
+    tHow += `<h3>Source</h3><table><tbody>
       <tr><th>Release</th><td><span title="${esc(audit.release.dir)}">release ${esc(audit.release.name)}</span></td></tr>
       <tr><th>Files</th><td>${r.files.map(f => { const x = audit.release.files.find(z => z.file === f);
           return `release ${esc(audit.release.name)} / ${esc(f)}${x ? `<div class="tiny muted">sha256 ${x.sha256.slice(0, 16)}…</div>` : ""}`; }).join("") || "—"}</td></tr>
       <tr><th>Fields</th><td>${r.fields.map(esc).join(", ") || "—"}</td></tr>
       <tr><th>Population</th><td>${esc(r.population)}${r.n != null ? ` (n = ${Number(r.n).toLocaleString()})` : ""}</td></tr>
       <tr><th>Checker</th><td>${esc(r.check)}</td></tr></tbody></table>`;
-    if (r.code) h += `<h3>Reproduce it (pandas)</h3><pre>${esc(r.code)}</pre>`;
-    if (r.n_sample_ids) h += `<details style="margin-top:8px"><summary class="small">Sample IDs used (${r.n_sample_ids.toLocaleString()}, first ${r.sample_ids.length} shown)</summary><pre>${esc(r.sample_ids.join("\n"))}</pre></details>`;
-    h += `</details>`;
+    if (r.code) tHow += `<h3>Reproduce it (pandas)</h3><pre>${esc(r.code)}</pre>`;
+    if (r.n_sample_ids) tHow += `<details style="margin-top:8px"><summary class="small">Sample IDs used (${r.n_sample_ids.toLocaleString()}, first ${r.sample_ids.length} shown)</summary><pre>${esc(r.sample_ids.join("\n"))}</pre></details>`;
+    tHow += `</details>`;
   }
+  h += detailTabs([["num", "The numbers", "What the report says and what the data shows", tNum],
+                   ["todo", "What to do", "Why it matters, the next step, and the limits", tTodo],
+                   ["how", "How it was checked", "The method, the files and the calculation", tHow]]);
   h += `<div class="rev"><h3 style="margin-top:0">Your review</h3>
     <div class="row"><button class="primary" id="accept">Confirm: ${LABEL[tv]}</button><button id="ovr">Override…</button>
       ${it.review ? `<button class="ghost" id="clear">Undo</button>` : ""}<button class="ghost" id="nextBtn" style="margin-left:auto">Next claim →</button></div>
@@ -1006,6 +1084,7 @@ function renderDetail(){
   $("#detail").innerHTML = h;
   $("#detail").scrollTop = 0;
   $("#backSum").onclick = () => go("#storyWrap", "#storyHead");
+  wireTabs($("#detail"));
   const who = () => ({reviewer: $("#reviewer").value || "unnamed reviewer", reviewer_role: $("#role").value, at: new Date().toISOString().slice(0, 16).replace("T", " ")});
   $("#accept").onclick = () => { it.review = {decision:"accept", verdict: tv, ...who()}; next(); };
   $("#ovr").onclick = () => { $("#ovrBox").classList.toggle("hidden"); $("#ovrR").focus(); };
@@ -1076,6 +1155,21 @@ function renderPlan(){
   const cl = claims(), left = cl.filter(i => !i.review).length;
   $("#reviewCount").textContent = left ? `${left} ${plural(left, "claim", "claims")} not yet confirmed: exported as needing human review.` : "Every claim confirmed by a person.";
   renderNav();
+  clampLists();
+}
+
+// ---- view-only: long lists show their first items, with "Show all (N)" to reveal the rest
+const CLAMP = 3;
+function clampLists(){
+  $$(".showall").forEach(b => {
+    const list = $("#" + b.dataset.for), n = list.children.length;
+    const open = list.dataset.open === "1";
+    b.classList.toggle("hidden", n <= CLAMP);
+    list.classList.toggle("clamp", !open && n > CLAMP);
+    b.textContent = open ? "Show fewer" : `Show all (${n})`;
+    b.setAttribute("aria-expanded", open);
+    b.onclick = () => { list.dataset.open = open ? "" : "1"; clampLists(); };
+  });
 }
 $("#btnCorr").onclick = () => {
   if (!audit || !plan) return;

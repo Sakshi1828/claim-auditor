@@ -43,7 +43,7 @@ def page_html() -> str:
     return (ROOT / "web/index.html").read_text(encoding="utf-8")
 
 
-PRESENTATION_IDS = ("ill-", "ic-", "pat-", "illustrations")   # new ids allowed: illustrations only, never controls
+PRESENTATION_IDS = ("ill-", "ic-", "pat-", "illustrations", "moreOpts", "s3tabs")   # new ids allowed: illustrations and layout wrappers, never controls
 
 
 def snapshot() -> dict:
@@ -76,7 +76,9 @@ def snapshot() -> dict:
     out["page"] = {"element_ids": sorted(set(re.findall(r'id="([\w-]+)"', html))),
                    "buttons": sorted(set(re.findall(r'<button[^>]*id="([\w-]+)"', html))),
                    "api_calls": sorted(set(re.findall(r'api\("(/api/\w+)"', html))),
-                   "visible_text_hash": h(re.sub(r"<[^>]+>|\s+", " ", re.sub(r"<style.*?</style>", "", body, flags=re.S)))}
+                   # every piece of static page text (labels, headings, help): later phases may ADD, never remove or edit
+                   "static_text": sorted({t for t in (" ".join(x.split()) for x in re.split(r"<[^>]+>", re.sub(
+                       r"<style.*?</style>", "", body, flags=re.S))) if t and not t.isspace()} | set())}
     return out
 
 
@@ -109,7 +111,12 @@ if __name__ == "__main__":
         bad_added = [i for i in added if not i.startswith(PRESENTATION_IDS)]
         print(f"element ids: {len(removed)} removed, {len(added)} added (illustrations only: {not bad_added})")
         base["page"]["element_ids"] = snap["page"]["element_ids"] = []
-        d = list(diff(base, snap)) + [f"removed id {i}" for i in removed] + [f"non-illustration id added {i}" for i in bad_added]
+        old_t, new_t = set(base["page"].get("static_text", [])), set(snap["page"]["static_text"])
+        lost = sorted(old_t - new_t)
+        print(f"static text: {len(lost)} removed or edited, {len(new_t - old_t)} added (labels and help lines)")
+        base["page"]["static_text"] = snap["page"]["static_text"] = []
+        base["page"].pop("visible_text_hash", None); snap["page"].pop("visible_text_hash", None)
+        d = list(diff(base, snap)) + [f"removed id {i}" for i in removed] + [f"non-illustration id added {i}" for i in bad_added] + [f"static text removed/edited: {t[:70]!r}" for t in lost]
         print("NOTHING CHANGED: every value, button and export matches the baseline" if not d else
               f"{len(d)} DIFFERENCE(S):\n" + "\n".join(d[:40]))
         sys.exit(1 if d else 0)

@@ -108,7 +108,7 @@ Validate the output:
 ```bash
 python oncosys-hackathon-challenge/format/validate.py claim-auditor/outputs/audit.json
 ```
-Regression tests:
+Regression tests (5 reports, 61 sentences, including 20 claims in real-world phrasing: ranges, "one in five", "more than half", subgroups like "80% of basal-like tumors"):
 ```bash
 python claim-auditor/tests/run_tests.py
 ```

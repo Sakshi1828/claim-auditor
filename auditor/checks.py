@@ -65,13 +65,27 @@ def fmt_pct(num: int, den: int) -> str:
 
 def matches(claim: Number, observed: float, is_pct: bool) -> tuple[bool, str]:
     """Is the stated number consistent with the data? Returns (ok, rule text)."""
+    unit = " percentage points" if is_pct else ""
+    if claim.lo is not None:                      # a range: "10-15%", "between 15% and 20%"
+        slack = 0.5 if is_pct else 0
+        return (claim.lo - slack <= observed <= claim.hi + slack,
+                f"inside the stated range {claim.lo:g}–{claim.hi:g}{'%' if is_pct else ''}"
+                f"{f' (±{slack:g}{unit} for rounding)' if slack else ''}")
+    if claim.cmp:                                 # "more than 1,000", "fewer than 800", "more than half"
+        ok = {">": observed > claim.value, ">=": observed >= claim.value,
+              "<": observed < claim.value, "<=": observed <= claim.value}[claim.cmp]
+        words = {">": "more than", ">=": "at least", "<": "less than", "<=": "at most"}[claim.cmp]
+        return ok, f"{words} {claim.value:g}{'%' if is_pct else ''}, as the claim says"
     if is_pct:
+        if claim.word:                            # "a third", "one in five": inherently loose
+            tol = max(2.5, 0.10 * claim.value)
+            return abs(claim.value - observed) <= tol, f"within ±{tol:.1f}{unit} (claim is written as a fraction)"
         decimals = len(claim.text.split(".")[1].rstrip("% percnt")) if "." in claim.text else 0
         tol = max(1.5, 0.05 * claim.value) if claim.approx else (0.5 if decimals == 0 else 0.15)
-        return abs(claim.value - observed) <= tol, f"within ±{tol:.1f} percentage points{' (claim says about)' if claim.approx else ''}"
+        return abs(claim.value - observed) <= tol, f"within ±{tol:.1f}{unit}{' (claim says about)' if claim.approx else ''}"
     if claim.approx:
-        tol = max(1.0, 0.03 * observed)
-        return abs(claim.value - observed) <= tol, f"within ±3%{' (claim says about)'}"
+        tol = max(1.0, 0.05 * observed)
+        return abs(claim.value - observed) <= tol, "within ±5% (claim says about)"
     return claim.value == round(observed), "exact count"
 
 
@@ -234,7 +248,7 @@ class NotAClaimChecker(Checker):
     name = "not_a_claim"
 
     RECO = r"\bwe (?:recommend|suggest|propose|plan|hope)|\bshould\b|future work|could (?:help|guide|be used)|\bmay be useful|\bmerits?\b"
-    MEASURABLE = (UP + "|" + DOWN + r"|worse|better|poorer|shorter|longer|surviv|prognos|largest|smallest|most (?:common|frequent)|majority|minority|\bhalf\b|\ball\b|\bnone\b|\bno\b \w+ (?:have|has)|differ|disagree|agree|match")
+    MEASURABLE = (UP + "|" + DOWN + r"|\bcommon\b|\brare\b|\bfrequent|worse|better|poorer|shorter|longer|surviv|prognos|largest|smallest|most (?:common|frequent)|majority|minority|\bhalf\b|\ball\b|\bnone\b|\bno\b \w+ (?:have|has)|differ|disagree|agree|match")
 
     def applies(self, s, r):
         t = s.lower
@@ -643,6 +657,8 @@ class ReceptorShareChecker(Checker):
                 den = len(definite)
                 label = "Triple-negative (ER-, PR-, HER2- by IHC)"
                 fields.update(cols)
+                alts.append({"definition": f"Triple-negative, denominator = all {len(c):,} primary tumors",
+                             "value": fmt_pct(obs, len(c))})
             else:
                 col = RECEPTOR_COLS[key][1 if use_2012 else 0]
                 if col not in c:
@@ -658,8 +674,12 @@ class ReceptorShareChecker(Checker):
             if num.is_percent:
                 ok, rule = matches(num, pct(obs, den), True)
                 ok_alt = matches(num, pct(obs, len(c)), True)[0]
+                # Judge by the main definition. If the number only fits another denominator, say so: the reviewer
+                # must ask which one the author meant (the next-step logic turns this into "ask the author").
                 subs.append(SubCheck(f"{label} share of tumors with a definite result", num.text, fmt_pct(obs, den),
-                                     ok or ok_alt, rule + ("; matches only with all primary tumors as denominator" if ok_alt and not ok else "")))
+                                     ok, rule + (f"; it would match with all {len(c):,} primary tumors as the denominator "
+                                                 f"({fmt_pct(obs, len(c))}), so ask which one the author used"
+                                                 if ok_alt and not ok else "")))
             else:
                 ok, rule = matches(num, obs, False)
                 subs.append(SubCheck(f"{label} tumors", num.text, f"{obs:,}", ok, rule))
@@ -684,42 +704,79 @@ class MutationChecker(Checker):
         return [g for g in re.findall(r"\b[A-Z][A-Z0-9]{1,9}\b", s.text) if g in toks and g in r.mutation.index]
 
     def applies(self, s, r):
-        return bool(re.search(r"mutat", s.lower)) and r.has_file("mutation") and bool(re.search(r"\b[A-Z][A-Z0-9]{1,9}\b", s.text)) \
-            and bool(self._genes(s, r))
+        return bool(re.search(r"mutat|\baltered\b|alteration", s.lower)) and r.has_file("mutation") \
+            and bool(re.search(r"\b[A-Z][A-Z0-9]{1,9}\b", s.text)) and bool(self._genes(s, r))
+
+    # "in 80% of basal-like tumors", "of ER-positive cases": the group the percentage is taken within
+    GROUP_TAIL = r"(?:\s+(?:breast\s+)?(?:tumou?rs|cases|samples|cancers|patients))"
+
+    def subgroup(self, text, r):
+        t = text.lower()
+        c = r.clinical_primary
+        use_2012 = bool(re.search(r"2012|nature|pam50_mrna", t))
+        for key, (pat, lab_rna, lab_2012) in SUBTYPES.items():
+            if re.search(r"\b(?:of|in|among)\s+(?:all\s+|the\s+)?(?:" + pat + r")" + self.GROUP_TAIL, t):
+                col, lab = ("PAM50_mRNA_nature2012", lab_2012) if use_2012 else ("PAM50Call_RNAseq", lab_rna)
+                return f"{SUBTYPE_NAMES[key]} ({col})", set(c.index[c[col] == lab]), col
+        if re.search(r"\b(?:of|in|among)\s+(?:all\s+|the\s+)?(?:" + TRIPLE_NEG + r")" + self.GROUP_TAIL, t):
+            cols = [RECEPTOR_COLS[k][0] for k in ("ER", "PR", "HER2")]
+            return "triple-negative", set(c.index[(c[cols] == "Negative").all(axis=1)]), ", ".join(cols)
+        for key, pat in RECEPTORS.items():
+            m = re.search(r"\b(?:of|in|among)\s+(?:all\s+|the\s+)?" + pat.replace(r"(?!\w)", "") + self.GROUP_TAIL, t)
+            if m:
+                col = RECEPTOR_COLS[key][0]
+                val = "Positive" if m.group(1) in ("positive", "+") else "Negative"
+                return f"{key}-{val.lower()}", set(c.index[c[col] == val]), col
+        return None
 
     def run(self, s, r):
         M = r.mutation
         cols = [x for x in M.columns if is_primary(x)]
+        grp = self.subgroup(s.text, r)
+        group_note = ""
+        if grp:
+            label, ids, gcol = grp
+            cols = [x for x in cols if x in ids]
+            group_note = f" among {label} primary tumors with mutation data"
         mut = M[cols] > 0
         den = len(cols)
         genes = list(dict.fromkeys(self._genes(s, r)))
         spans = [(m.start(), m.group(0)) for m in re.finditer(r"\b[A-Z][A-Z0-9]{1,9}\b", s.text) if m.group(0) in genes]
         subs = []
         freq = mut.sum(axis=1)
+        each = len(genes) > 1 and bool(re.search(r"\beach\b|\bboth\b|\brespectively\b", s.lower))
         for num in s.numbers:
-            g = nearest(num.start, spans)
-            if g is None:
-                continue
-            obs = int(freq[g])
-            if num.is_percent:
-                ok, rule = matches(num, pct(obs, den), True)
-                subs.append(SubCheck(f"{g} mutated", num.text, fmt_pct(obs, den), ok, rule))
-            else:
-                ok, rule = matches(num, obs, False)
-                subs.append(SubCheck(f"Tumors with a {g} mutation", num.text, f"{obs:,}", ok, rule))
+            targets = genes if (each and num.is_percent) else [nearest(num.start, spans)]
+            for g in targets:
+                if g is None:
+                    continue
+                obs = int(freq[g])
+                if num.is_percent:
+                    ok, rule = matches(num, pct(obs, den), True)
+                    subs.append(SubCheck(f"{g} mutated{group_note}", num.text, fmt_pct(obs, den), ok, rule))
+                else:
+                    ok, rule = matches(num, obs, False)
+                    subs.append(SubCheck(f"Tumors with a {g} mutation{group_note}", num.text, f"{obs:,}", ok, rule))
         top = freq.sort_values(ascending=False)
-        if re.search(r"most (?:frequently|commonly|often) mutated|top mutated|most common mutation", s.lower):
-            g = genes[0]
-            rank = int((top > top[g]).sum()) + 1
-            subs.append(SubCheck(f"{g} is the most frequently mutated gene", "rank 1",
-                                 f"rank {rank}; top genes: " + ", ".join(f"{k} {fmt_pct(int(v), den)}" for k, v in top.head(3).items()),
-                                 rank == 1, "rank by number of mutated primary tumors"))
+        m = re.search(r"(?:the\s+)?(?:\b(two|three|four|five|2|3|4|5)\s+)?(?:most (?:frequently|commonly|often) "
+                      r"(?:mutated|altered)|top(?:\s+\w+)? mutated|most common(?:ly)? mutat\w*)", s.lower)
+        if m:
+            k = {"two": 2, "three": 3, "four": 4, "five": 5}.get(m.group(1) or "", int(m.group(1)) if (m.group(1) or "").isdigit() else 0)
+            k = k or 1
+            named = genes[:max(k, 1)] if k > 1 else genes[:1]
+            for g in named:
+                rank = int((top > top[g]).sum()) + 1
+                subs.append(SubCheck(f"{g} is among the {k} most frequently mutated genes{group_note}" if k > 1
+                                     else f"{g} is the most frequently mutated gene{group_note}",
+                                     f"rank <= {k}" if k > 1 else "rank 1",
+                                     f"rank {rank}; top genes: " + ", ".join(f"{kk} {fmt_pct(int(v), den)}" for kk, v in top.head(max(3, k)).items()),
+                                     rank <= k, "rank by number of mutated primary tumors"))
         v = verdict_from(subs)
         return Result(verdict=v, check=self.name,
                       summary="; ".join(f"{g}: mutated in {fmt_pct(int(freq[g]), den)} primary tumors with mutation data" for g in genes) + ".",
                       subchecks=subs, correct_value=correct_from(subs) if v == "contradicted" else None,
                       files=[FILES["mutation"]], fields=[f"gene row {g}" for g in genes], n=den,
-                      population="Primary tumors in mutation_gene_level.tsv.gz",
+                      population="Primary tumors in mutation_gene_level.tsv.gz" + (group_note and f", restricted to {grp[0]} tumors (field {grp[2]})"),
                       limitation=f"Only {den:,} primary tumors have mutation data. A value > 0 counts as mutated "
                                  "(gene-level non-silent calls); the file does not say which variants.",
                       alternatives=[{"definition": f"{g}, denominator = all {len(r.primary_ids):,} primary tumors",
@@ -773,7 +830,10 @@ class SurvivalChecker(Checker):
             return False
         # "survival" used as the name of a data layer ("535 have survival, mutation and RNA data") is a coverage claim
         n_layers = sum(bool(re.search(p, t)) for p in LAYER_PATTERNS.values())
-        if n_layers >= 2 or re.search(r"survival (?:data|records|information|layer)", t):
+        if n_layers >= 2:
+            return False
+        # "...with survival data had a recorded death": the deaths are the claim, survival data is the population
+        if re.search(r"survival (?:data|records|information|layer)", t) and not re.search(r"\bdied\b|\bdeaths?\b|deceased|mortality", t):
             return False
         return True
 
@@ -955,8 +1015,10 @@ class Fallback(Checker):
                       limitation="Unchecked by the tool: this is not a judgement that the data can't answer it.")
 
 
+# Mutation runs before subtype/receptor shares: "TP53 is mutated in 80% of basal-like tumors" is a mutation rate
+# within a subtype, not a claim about how common basal-like tumors are.
 CHECKERS: list[Checker] = [TreatmentChecker(), ManifestChecker(), NotAClaimChecker(), SurvivalChecker(),
-                           ProteinCompareChecker(), SubtypeChecker(), ReceptorShareChecker(), MutationChecker(), AgeChecker(),
+                           ProteinCompareChecker(), MutationChecker(), SubtypeChecker(), ReceptorShareChecker(), AgeChecker(),
                            CohortChecker(), Fallback()]
 
 

@@ -29,6 +29,13 @@ EXPECT = {
          "supported", "contradicted", "supported", "supported", "contradicted", "supported"],
     HERE / "next_steps_report.md":
         ["contradicted", "contradicted", "contradicted", "contradicted", "insufficient_evidence", "insufficient_evidence"],
+    # Real-world phrasing: ranges, word fractions, "more than / fewer than", subgroups, two genes at once.
+    # Answers computed independently with pandas (not with the auditor): TP53 84.9% of 106 basal-like, PIK3CA 48.5%
+    # of 301 luminal A, HER2+ 22.5% of 728, TNBC 16.1% of 722, deaths 13.8% of 1,097, ER+ 77.2% of 1,046.
+    HERE / "real_world_report.md":
+        ["supported", "supported", "supported", "contradicted", "contradicted", "contradicted", "contradicted",
+         "contradicted", "contradicted", "contradicted", "supported", "supported", "supported", "contradicted",
+         "supported", "supported", "insufficient_evidence", "insufficient_evidence", "insufficient_evidence", "supported"],
 }
 
 # What should happen after each verdict (action, and the corrected sentence where the tool can write one)
@@ -40,6 +47,14 @@ ACTIONS = {
         ("fix_number", "The median age at diagnosis was 58.0 years."),
         ("remove_or_reword", None),
         ("check_by_hand", None),
+    ],
+    HERE / "real_world_report.md": [
+        ("keep", None), (None, None), ("keep", None),
+        ("fix_number", "TP53 is mutated in 84.9% (90 of 106) of basal-like tumors."),            # within the subgroup
+        ("fix_number", "PIK3CA mutations are found in 48.5% (146 of 301) of luminal A tumors."),
+        ("state_definition", None),   # 15-20% fits only "of all primary tumors": ask which denominator
+        (None, None),
+        ("state_definition", None),
     ],
     CH / "products/research-claim-auditor/practice_brief.md": [
         (None, None), ("keep", None),

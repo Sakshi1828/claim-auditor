@@ -1,0 +1,86 @@
+{
+ "other_files_changed": {
+  "mutation_gene_level.tsv.gz": {
+   "top_genes_pct": {
+    "first": {
+     "PIK3CA": 34.5,
+     "TP53": 33.4,
+     "TTN": 17.3,
+     "CDH1": 12.9,
+     "GATA3": 12.3,
+     "MUC16": 9.9,
+     "KMT2C": 9.7,
+     "MAP3K1": 8.3,
+     "SYNE1": 6.3,
+     "PTEN": 6.1,
+     "RYR2": 5.9,
+     "FLG": 5.4,
+     "HMCN1": 5.4,
+     "SPTA1": 5.3,
+     "USH2A": 5.2,
+     "DMD": 5.1,
+     "NEB": 4.9,
+     "OBSCN": 4.8,
+     "NCOR1": 4.8,
+     "ZFHX4": 4.8,
+     "CSMD3": 4.4,
+     "LRP2": 4.0,
+     "RUNX1": 4.0,
+     "MUC4": 4.0,
+     "MAP2K4": 4.0
+    },
+    "second": {
+     "PIK3CA": 35.4,
+     "TP53": 33.2,
+     "TTN": 17.6,
+     "CDH1": 13.0,
+     "GATA3": 11.6,
+     "MUC16": 10.0,
+     "KMT2C": 9.7,
+     "MAP3K1": 8.6,
+     "SYNE1": 6.3,
+     "PTEN": 6.3,
+     "RYR2": 5.9,
+     "HMCN1": 5.4,
+     "FLG": 5.3,
+     "SPTA1": 5.3,
+     "USH2A": 5.1,
+     "NCOR1": 5.1,
+     "DMD": 5.1,
+     "ZFHX4": 4.9,
+     "NEB": 4.9,
+     "OBSCN": 4.8,
+     "CSMD3": 4.3,
+     "MAP2K4": 4.2,
+     "LRP2": 4.0,
+     "MUC4": 4.0,
+     "NF1": 4.0
+    }
+   }
+  }
+ },
+ "files_only_in_first": [],
+ "files_only_in_second": [],
+ "primary_tumors": [
+  1101,
+  1101
+ ],
+ "columns_with_changed_values": [
+  {
+   "column": "PAM50Call_RNAseq",
+   "changes": {
+    "Basal": 40,
+    "LumA": -20,
+    "LumB": -16,
+    "Her2": -4
+   }
+  },
+  {
+   "column": "breast_carcinoma_estrogen_receptor_status",
+   "changes": {
+    "Positive": -60,
+    "Negative": 60
+   }
+  }
+ ]
+}

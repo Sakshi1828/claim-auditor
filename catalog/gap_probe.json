@@ -1,0 +1,751 @@
+[
+ {
+  "capability": "share:AJCC_Stage_nature2012",
+  "claim": "32.4% of primary tumors with a recorded AJCC Stage (2012 study) are Stage IIA.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:CN_Clusters_nature2012",
+  "claim": "27.4% of primary tumors with a recorded CN Clusters (2012 study) are 2.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:Converted_Stage_nature2012",
+  "claim": "30.7% of primary tumors with a recorded Converted Stage (2012 study) are Stage IIA.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:ER_Status_nature2012",
+  "claim": "77.1% of primary tumors with a recorded ER Status (2012 study) are Positive.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:Gender_nature2012",
+  "claim": "99.0% of primary tumors with a recorded Gender (2012 study) are FEMALE.",
+  "verdict": "supported",
+  "checker": "clinical_category",
+  "outcome": "verified"
+ },
+ {
+  "capability": "share:HER2_Final_Status_nature2012",
+  "claim": "84.0% of primary tumors with a recorded HER2 Final Status (2012 study) are Negative.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:Integrated_Clusters_no_exp__nature2012",
+  "claim": "35.1% of primary tumors with a recorded Integrated Clusters no exp  (2012 study) are 3.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:Integrated_Clusters_unsup_exp__nature2012",
+  "claim": "39.9% of primary tumors with a recorded Integrated Clusters unsup exp  (2012 study) are 3.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:Integrated_Clusters_with_PAM50__nature2012",
+  "claim": "46.3% of primary tumors with a recorded Integrated Clusters with PAM50  (2012 study) are 3.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:Metastasis_Coded_nature2012",
+  "claim": "98.2% of primary tumors with a recorded Metastasis Coded (2012 study) are Negative.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:Metastasis_nature2012",
+  "claim": "98.2% of primary tumors with a recorded Metastasis (2012 study) are M0.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:Node_Coded_nature2012",
+  "claim": "51.3% of primary tumors with a recorded Node Coded (2012 study) are Positive.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:Node_nature2012",
+  "claim": "48.7% of primary tumors with a recorded Node (2012 study) are N0.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:OS_event_nature2012",
+  "claim": "88.6% of primary tumors with a recorded OS event (2012 study) are 0.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:PAM50Call_RNAseq",
+  "claim": "49.9% of primary tumors with a recorded PAM50Call RNAseq are LumA.",
+  "verdict": "supported",
+  "checker": "subtype_share",
+  "outcome": "verified"
+ },
+ {
+  "capability": "share:PAM50_mRNA_nature2012",
+  "claim": "44.3% of primary tumors with a recorded PAM50 mRNA (2012 study) are Luminal A.",
+  "verdict": "supported",
+  "checker": "subtype_share",
+  "outcome": "verified"
+ },
+ {
+  "capability": "share:PR_Status_nature2012",
+  "claim": "67.2% of primary tumors with a recorded PR Status (2012 study) are Positive.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:RPPA_Clusters_nature2012",
+  "claim": "21.6% of primary tumors with a recorded RPPA Clusters (2012 study) are Basal.",
+  "verdict": "contradicted",
+  "checker": "subtype_share",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:Survival_Data_Form_nature2012",
+  "claim": "71.4% of primary tumors with a recorded Survival Data Form (2012 study) are enrollment.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:Tumor_T1_Coded_nature2012",
+  "claim": "73.4% of primary tumors with a recorded Tumor T1 Coded (2012 study) are T_Other.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:Tumor_nature2012",
+  "claim": "59.5% of primary tumors with a recorded Tumor (2012 study) are T2.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:Vital_Status_nature2012",
+  "claim": "88.6% of primary tumors with a recorded Vital Status (2012 study) are LIVING.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:_PANCAN_CNA_PANCAN_K8",
+  "claim": "36.8% of primary tumors with a recorded PANCAN CNA PANCAN K8 are High.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:_PANCAN_Cluster_Cluster_PANCAN",
+  "claim": "82.5% of primary tumors with a recorded PANCAN Cluster Cluster PANCAN are C3-BRCA/Luminal.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:_PANCAN_DNAMethyl_BRCA",
+  "claim": "30.4% of primary tumors with a recorded PANCAN DNAMethyl BRCA are cluster 4.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:_PANCAN_DNAMethyl_PANCAN",
+  "claim": "40.4% of primary tumors with a recorded PANCAN DNAMethyl PANCAN are BRCA non-CIMP c9.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:_PANCAN_RPPA_PANCAN_K8",
+  "claim": "65.5% of primary tumors with a recorded PANCAN RPPA PANCAN K8 are BRCA nonbasal-like c8.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:_PANCAN_UNC_RNAseq_PANCAN_K16",
+  "claim": "83.3% of primary tumors with a recorded PANCAN UNC RNAseq PANCAN K16 are BRCA nonbasal-like c7.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:_PANCAN_miRNA_PANCAN",
+  "claim": "36.2% of primary tumors with a recorded PANCAN miRNA PANCAN are miRNA cluster 4.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:_PANCAN_mirna_BRCA",
+  "claim": "31.6% of primary tumors with a recorded PANCAN mirna BRCA are cluster 4.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:_PANCAN_mutation_PANCAN",
+  "claim": "34.1% of primary tumors with a recorded PANCAN mutation PANCAN are mutation c1uster 9.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:additional_pharmaceutical_therapy",
+  "claim": "62.4% of primary tumors with a recorded additional pharmaceutical therapy are YES.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:additional_radiation_therapy",
+  "claim": "65.5% of primary tumors with a recorded additional radiation therapy are NO.",
+  "verdict": "contradicted",
+  "checker": "clinical_category",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:additional_surgery_locoregional_procedure",
+  "claim": "65.5% of primary tumors with a recorded additional surgery locoregional procedure are NO.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "numeric:age_at_initial_pathologic_diagnosis",
+  "claim": "The median age at initial pathologic diagnosis is 58.",
+  "verdict": "supported",
+  "checker": "age",
+  "outcome": "verified"
+ },
+ {
+  "capability": "share:breast_cancer_surgery_margin_status",
+  "claim": "94.9% of primary tumors with a recorded breast cancer surgery margin status are Negative.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:breast_carcinoma_estrogen_receptor_status",
+  "claim": "77.2% of primary tumors with a recorded breast carcinoma estrogen receptor status are Positive.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:breast_carcinoma_immunohistochemistry_er_pos_finding_scale",
+  "claim": "88.4% of primary tumors with a recorded breast carcinoma immunohistochemistry er pos finding scale are 3 Point Scale.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:breast_carcinoma_immunohistochemistry_pos_cell_score",
+  "claim": "41.8% of primary tumors with a recorded breast carcinoma immunohistochemistry pos cell score are 3+.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:breast_carcinoma_immunohistochemistry_prgstrn_rcptr_ps_fndng_scl",
+  "claim": "88.7% of primary tumors with a recorded breast carcinoma immunohistochemistry prgstrn rcptr ps fndng scl are 3 Point Scale.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:breast_carcinoma_primary_surgical_procedure_name",
+  "claim": "32.7% of primary tumors with a recorded breast carcinoma primary surgical procedure name are Mastectomy NOS.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:breast_carcinoma_progesterone_receptor_status",
+  "claim": "67.0% of primary tumors with a recorded breast carcinoma progesterone receptor status are Positive.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:breast_carcinoma_surgical_procedure_name",
+  "claim": "30.9% of primary tumors with a recorded breast carcinoma surgical procedure name are Modified Radical Mastectomy.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "numeric:days_to_birth",
+  "claim": "The median days to birth is -21560.5.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:distant_metastasis_present_ind2",
+  "claim": "96.9% of primary tumors with a recorded distant metastasis present ind2 are NO.",
+  "verdict": "contradicted",
+  "checker": "clinical_category",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:er_level_cell_percentage_category",
+  "claim": "52.1% of primary tumors with a recorded er level cell percentage category are 90-99%.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "numeric:fluorescence_in_st_hybrdztn_dgnstc_prcdr_chrmsm_17_sgnl_rslt_rng",
+  "claim": "The median fluorescence in st hybrdztn dgnstc prcdr chrmsm 17 sgnl rslt rng is 2.65.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:followup_case_report_form_submission_reason",
+  "claim": "99.2% of primary tumors with a recorded followup case report form submission reason are Scheduled Follow-up Submission.",
+  "verdict": "contradicted",
+  "checker": "survival",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:gender",
+  "claim": "98.9% of primary tumors with a recorded gender are FEMALE.",
+  "verdict": "supported",
+  "checker": "clinical_category",
+  "outcome": "verified"
+ },
+ {
+  "capability": "share:her2_erbb_pos_finding_cell_percent_category",
+  "claim": "58.7% of primary tumors with a recorded her2 erbb pos finding cell percent category are <10%.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:her2_erbb_pos_finding_fluorescence_n_st_hybrdztn_clcltn_mthd_txt",
+  "claim": "18.0% of primary tumors with a recorded her2 erbb pos finding fluorescence n st hybrdztn clcltn mthd txt are >=2.0 Positive.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:her2_immunohistochemistry_level_result",
+  "claim": "43.4% of primary tumors with a recorded her2 immunohistochemistry level result are 1+.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "numeric:her2_neu_and_centromere_17_copy_number_analysis_npt_ttl_nmbr_cnt",
+  "claim": "The median her2 neu and centromere 17 copy number analysis npt ttl nmbr cnt is 40.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "numeric:her2_neu_chromosone_17_signal_ratio_value",
+  "claim": "The median her2 neu chromosone 17 signal ratio value is 1.2.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:histological_type",
+  "claim": "71.5% of primary tumors with a recorded histological type are Infiltrating Ductal Carcinoma.",
+  "verdict": "supported",
+  "checker": "clinical_category",
+  "outcome": "verified"
+ },
+ {
+  "capability": "share:histological_type_other",
+  "claim": "36.7% of primary tumors with a recorded histological type other are Infiltrating ductal and lobular carcinoma.",
+  "verdict": "contradicted",
+  "checker": "clinical_category",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:history_of_neoadjuvant_treatment",
+  "claim": "98.8% of primary tumors with a recorded history of neoadjuvant treatment are No.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:immunohistochemistry_positive_cell_score",
+  "claim": "56.5% of primary tumors with a recorded immunohistochemistry positive cell score are 3+.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "numeric:initial_weight",
+  "claim": "The median initial weight is 220.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:lab_proc_her2_neu_immunohistochemistry_receptor_status",
+  "claim": "62.2% of primary tumors with a recorded lab proc her2 neu immunohistochemistry receptor status are Negative.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:lab_procedure_her2_neu_in_situ_hybrid_outcome_type",
+  "claim": "80.0% of primary tumors with a recorded lab procedure her2 neu in situ hybrid outcome type are Negative.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:lost_follow_up",
+  "claim": "89.6% of primary tumors with a recorded lost follow up are NO.",
+  "verdict": "contradicted",
+  "checker": "survival",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "numeric:lymph_node_examined_count",
+  "claim": "The median lymph node examined count is 9.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:margin_status",
+  "claim": "89.3% of primary tumors with a recorded margin status are Negative.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:menopause_status",
+  "claim": "72.5% of primary tumors with a recorded menopause status are Post (prior bilateral ovariectomy OR >12 mo since LMP with no prior hysterectomy).",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:metastatic_breast_carcinom_lb_prc_hr2_n_mmnhstchmstry_rcptr_stts",
+  "claim": "73.3% of primary tumors with a recorded metastatic breast carcinom lb prc hr2 n mmnhstchmstry rcptr stts are Negative.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:metastatic_breast_carcinoma_estrogen_receptor_status",
+  "claim": "63.6% of primary tumors with a recorded metastatic breast carcinoma estrogen receptor status are Positive.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:metastatic_breast_carcinoma_progesterone_receptor_status",
+  "claim": "57.1% of primary tumors with a recorded metastatic breast carcinoma progesterone receptor status are Negative.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:methylation_Clusters_nature2012",
+  "claim": "30.4% of primary tumors with a recorded methylation Clusters (2012 study) are 4.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:miRNA_Clusters_nature2012",
+  "claim": "31.6% of primary tumors with a recorded miRNA Clusters (2012 study) are 4.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:new_neoplasm_event_occurrence_anatomic_site",
+  "claim": "39.4% of primary tumors with a recorded new neoplasm event occurrence anatomic site are Other, specify.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:new_neoplasm_event_type",
+  "claim": "60.8% of primary tumors with a recorded new neoplasm event type are Distant Metastasis.",
+  "verdict": "contradicted",
+  "checker": "clinical_category",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:new_neoplasm_occurrence_anatomic_site_text",
+  "claim": "9.8% of primary tumors with a recorded new neoplasm occurrence anatomic site text are Breast.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:new_tumor_event_additional_surgery_procedure",
+  "claim": "57.9% of primary tumors with a recorded new tumor event additional surgery procedure are NO.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:new_tumor_event_after_initial_treatment",
+  "claim": "89.1% of primary tumors with a recorded new tumor event after initial treatment are NO.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "numeric:number_of_lymphnodes_positive_by_he",
+  "claim": "The median number of lymphnodes positive by he is 1.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:number_of_lymphnodes_positive_by_ihc",
+  "claim": "82.3% of primary tumors with a recorded number of lymphnodes positive by ihc are 0.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:pathologic_M",
+  "claim": "97.0% of primary tumors with a recorded pathologic M are M0.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:pathologic_N",
+  "claim": "30.9% of primary tumors with a recorded pathologic N are N0.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:pathologic_T",
+  "claim": "57.9% of primary tumors with a recorded pathologic T are T2.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:pathologic_stage",
+  "claim": "33.3% of primary tumors with a recorded pathologic stage are Stage IIA.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "share:person_neoplasm_cancer_status",
+  "claim": "88.1% of primary tumors with a recorded person neoplasm cancer status are TUMOR FREE.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:postoperative_rx_tx",
+  "claim": "79.9% of primary tumors with a recorded postoperative rx tx are YES.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:progesterone_receptor_level_cell_percent_category",
+  "claim": "32.1% of primary tumors with a recorded progesterone receptor level cell percent category are <10%.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:radiation_therapy",
+  "claim": "55.4% of primary tumors with a recorded radiation therapy are YES.",
+  "verdict": "supported",
+  "checker": "clinical_category",
+  "outcome": "verified"
+ },
+ {
+  "capability": "share:targeted_molecular_therapy",
+  "claim": "92.0% of primary tumors with a recorded targeted molecular therapy are YES.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "share:vital_status",
+  "claim": "86.1% of primary tumors with a recorded vital status are LIVING.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "mutation:frequency",
+  "claim": "PIK3CA is mutated in 34.5% of tumors with mutation data.",
+  "verdict": "supported",
+  "checker": "mutation_frequency",
+  "outcome": "verified"
+ },
+ {
+  "capability": "mutation:frequency",
+  "claim": "TP53 is mutated in 33.4% of tumors with mutation data.",
+  "verdict": "supported",
+  "checker": "mutation_frequency",
+  "outcome": "verified"
+ },
+ {
+  "capability": "mutation:frequency",
+  "claim": "TTN is mutated in 17.3% of tumors with mutation data.",
+  "verdict": "supported",
+  "checker": "mutation_frequency",
+  "outcome": "verified"
+ },
+ {
+  "capability": "mutation:frequency",
+  "claim": "CDH1 is mutated in 12.9% of tumors with mutation data.",
+  "verdict": "supported",
+  "checker": "mutation_frequency",
+  "outcome": "verified"
+ },
+ {
+  "capability": "mutation:frequency",
+  "claim": "GATA3 is mutated in 12.3% of tumors with mutation data.",
+  "verdict": "supported",
+  "checker": "mutation_frequency",
+  "outcome": "verified"
+ },
+ {
+  "capability": "mutation:frequency",
+  "claim": "MUC16 is mutated in 9.9% of tumors with mutation data.",
+  "verdict": "supported",
+  "checker": "mutation_frequency",
+  "outcome": "verified"
+ },
+ {
+  "capability": "copy_number:frequency",
+  "claim": "PVT1 is amplified in 21.2% of tumors with copy number data.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "copy_number:frequency",
+  "claim": "MYC is amplified in 21.2% of tumors with copy number data.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "copy_number:frequency",
+  "claim": "CASC8 is amplified in 21.0% of tumors with copy number data.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "copy_number:frequency",
+  "claim": "CSMD1 is deeply deleted in 9.6% of tumors with copy number data.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "copy_number:frequency",
+  "claim": "RNA5SP251 is deeply deleted in 7.2% of tumors with copy number data.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "protein:levels",
+  "claim": "ERALPHA protein levels are higher in Luminal A tumors than in Basal-like tumors.",
+  "verdict": "supported",
+  "checker": "protein_comparison",
+  "outcome": "verified"
+ },
+ {
+  "capability": "protein:levels",
+  "claim": "HER2 protein levels are higher in Luminal A tumors than in Basal-like tumors.",
+  "verdict": "contradicted",
+  "checker": "protein_comparison",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "protein:levels",
+  "claim": "PR protein levels are higher in Luminal A tumors than in Basal-like tumors.",
+  "verdict": "supported",
+  "checker": "protein_comparison",
+  "outcome": "verified"
+ },
+ {
+  "capability": "protein:levels",
+  "claim": "AR protein levels are higher in Luminal A tumors than in Basal-like tumors.",
+  "verdict": "insufficient_evidence",
+  "checker": "subtype_share",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "protein:levels",
+  "claim": "GATA3 protein levels are higher in Luminal A tumors than in Basal-like tumors.",
+  "verdict": "insufficient_evidence",
+  "checker": "subtype_share",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "rna:expression",
+  "claim": "ESR1 expression is higher in ER-positive tumors than in ER-negative tumors.",
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
+ },
+ {
+  "capability": "survival:descriptive",
+  "claim": "13.2% of primary tumors with survival data had a progression event.",
+  "verdict": "contradicted",
+  "checker": "cohort_coverage",
+  "outcome": "false alarm (true claim marked wrong)"
+ },
+ {
+  "capability": "survival:descriptive",
+  "claim": "The median overall survival follow-up time was 843 days.",
+  "verdict": "supported",
+  "checker": "survival",
+  "outcome": "verified"
+ },
+ {
+  "capability": "coverage:layers",
+  "claim": "1080 primary tumors have copy number data.",
+  "verdict": "supported",
+  "checker": "cohort_coverage",
+  "outcome": "verified"
+ }
+]

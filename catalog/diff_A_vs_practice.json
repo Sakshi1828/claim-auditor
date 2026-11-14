@@ -1,0 +1,12 @@
+{
+ "other_files_changed": {},
+ "files_only_in_first": [
+  "rna_hiseq.tsv.gz"
+ ],
+ "files_only_in_second": [],
+ "primary_tumors": [
+  1101,
+  1101
+ ],
+ "columns_with_changed_values": []
+}

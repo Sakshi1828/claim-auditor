@@ -1,0 +1,263 @@
+{
+ "A": [
+  {
+   "check": "clinical row count",
+   "ok": true,
+   "detail": "1247 vs 1247"
+  },
+  {
+   "check": "primary tumor count",
+   "ok": true,
+   "detail": "1101 vs 1101"
+  },
+  {
+   "check": "every clinical column profiled",
+   "ok": true,
+   "detail": "193 of 193"
+  },
+  {
+   "check": "column missingness and category counts re-derived independently",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "every capability points at a real column",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "every capability has n >= 30",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "mutation: primary sample count",
+   "ok": true,
+   "detail": "791 vs 791"
+  },
+  {
+   "check": "copy_number: primary sample count",
+   "ok": true,
+   "detail": "1080 vs 1080"
+  },
+  {
+   "check": "protein: primary sample count",
+   "ok": true,
+   "detail": "742 vs 742"
+  },
+  {
+   "check": "mutation frequency PIK3CA re-derived",
+   "ok": true,
+   "detail": "34.5 vs 34.5"
+  },
+  {
+   "check": "mutation frequency TP53 re-derived",
+   "ok": true,
+   "detail": "33.4 vs 33.4"
+  },
+  {
+   "check": "mutation frequency TTN re-derived",
+   "ok": true,
+   "detail": "17.3 vs 17.3"
+  },
+  {
+   "check": "OS events re-derived",
+   "ok": true,
+   "detail": "151 vs 151"
+  },
+  {
+   "check": "layer overlaps never exceed either layer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "no sample or patient identifiers in the profile",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "association p-values within [0, 1]",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "chi-square p-value implementation (3.841, df 1 -> 0.050)",
+   "ok": true,
+   "detail": "0.0500"
+  }
+ ],
+ "practice": [
+  {
+   "check": "clinical row count",
+   "ok": true,
+   "detail": "1247 vs 1247"
+  },
+  {
+   "check": "primary tumor count",
+   "ok": true,
+   "detail": "1101 vs 1101"
+  },
+  {
+   "check": "every clinical column profiled",
+   "ok": true,
+   "detail": "193 of 193"
+  },
+  {
+   "check": "column missingness and category counts re-derived independently",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "every capability points at a real column",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "every capability has n >= 30",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "mutation: primary sample count",
+   "ok": true,
+   "detail": "791 vs 791"
+  },
+  {
+   "check": "copy_number: primary sample count",
+   "ok": true,
+   "detail": "1080 vs 1080"
+  },
+  {
+   "check": "protein: primary sample count",
+   "ok": true,
+   "detail": "742 vs 742"
+  },
+  {
+   "check": "mutation frequency PIK3CA re-derived",
+   "ok": true,
+   "detail": "34.5 vs 34.5"
+  },
+  {
+   "check": "mutation frequency TP53 re-derived",
+   "ok": true,
+   "detail": "33.4 vs 33.4"
+  },
+  {
+   "check": "mutation frequency TTN re-derived",
+   "ok": true,
+   "detail": "17.3 vs 17.3"
+  },
+  {
+   "check": "OS events re-derived",
+   "ok": true,
+   "detail": "151 vs 151"
+  },
+  {
+   "check": "layer overlaps never exceed either layer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "no sample or patient identifiers in the profile",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "association p-values within [0, 1]",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "chi-square p-value implementation (3.841, df 1 -> 0.050)",
+   "ok": true,
+   "detail": "0.0500"
+  }
+ ],
+ "random-test": [
+  {
+   "check": "clinical row count",
+   "ok": true,
+   "detail": "1247 vs 1247"
+  },
+  {
+   "check": "primary tumor count",
+   "ok": true,
+   "detail": "1101 vs 1101"
+  },
+  {
+   "check": "every clinical column profiled",
+   "ok": true,
+   "detail": "193 of 193"
+  },
+  {
+   "check": "column missingness and category counts re-derived independently",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "every capability points at a real column",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "every capability has n >= 30",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "mutation: primary sample count",
+   "ok": true,
+   "detail": "791 vs 791"
+  },
+  {
+   "check": "copy_number: primary sample count",
+   "ok": true,
+   "detail": "1080 vs 1080"
+  },
+  {
+   "check": "protein: primary sample count",
+   "ok": true,
+   "detail": "742 vs 742"
+  },
+  {
+   "check": "mutation frequency PIK3CA re-derived",
+   "ok": true,
+   "detail": "35.4 vs 35.4"
+  },
+  {
+   "check": "mutation frequency TP53 re-derived",
+   "ok": true,
+   "detail": "33.2 vs 33.2"
+  },
+  {
+   "check": "mutation frequency TTN re-derived",
+   "ok": true,
+   "detail": "17.6 vs 17.6"
+  },
+  {
+   "check": "OS events re-derived",
+   "ok": true,
+   "detail": "151 vs 151"
+  },
+  {
+   "check": "layer overlaps never exceed either layer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "no sample or patient identifiers in the profile",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "association p-values within [0, 1]",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "chi-square p-value implementation (3.841, df 1 -> 0.050)",
+   "ok": true,
+   "detail": "0.0500"
+  }
+ ]
+}

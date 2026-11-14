@@ -1,0 +1,7749 @@
+{
+ "profile_version": "1.0",
+ "release": "random-test",
+ "min_n": 30,
+ "min_group": 20,
+ "capabilities": [
+  {
+   "field": "clinical.AJCC_Stage_nature2012",
+   "role": "annotation",
+   "n": 769,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:AJCC_Stage_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Stage IIA",
+    "Stage IIB",
+    "Stage IIIA",
+    "Stage IA",
+    "Stage I",
+    "Stage II",
+    "Stage IIIC",
+    "Stage IIIB",
+    "Stage III",
+    "Stage IV",
+    "Stage IB"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.AJCC_Stage_nature2012",
+   "role": "annotation",
+   "n": 769,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:AJCC_Stage_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Stage IIA",
+    "Stage IIB",
+    "Stage IIIA",
+    "Stage IA",
+    "Stage I",
+    "Stage II",
+    "Stage IIIC",
+    "Stage IIIB",
+    "Stage III",
+    "Stage IV",
+    "Stage IB"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.Age_at_Initial_Pathologic_Diagnosis_nature2012",
+   "role": "annotation",
+   "n": 818,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:Age_at_Initial_Pathologic_Diagnosis_nature2012",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 818,
+    "min": 26.0,
+    "q1": 48.0,
+    "median": 58.0,
+    "mean": 58.04,
+    "q3": 67.0,
+    "max": 90.0
+   },
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.CN_Clusters_nature2012",
+   "role": "annotation",
+   "n": 773,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:CN_Clusters_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "2",
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.CN_Clusters_nature2012",
+   "role": "annotation",
+   "n": 773,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:CN_Clusters_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "2",
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.Converted_Stage_nature2012",
+   "role": "annotation",
+   "n": 791,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Converted_Stage_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Stage IIA",
+    "No_Conversion",
+    "Stage I",
+    "Stage IIB",
+    "Stage IIIA",
+    "Stage IIIC",
+    "Stage IIIB",
+    "Stage IV",
+    "Stage"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.Converted_Stage_nature2012",
+   "role": "annotation",
+   "n": 791,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:Converted_Stage_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Stage IIA",
+    "No_Conversion",
+    "Stage I",
+    "Stage IIB",
+    "Stage IIIA",
+    "Stage IIIC",
+    "Stage IIIB",
+    "Stage IV",
+    "Stage"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.Days_to_Date_of_Last_Contact_nature2012",
+   "role": "outcome",
+   "n": 779,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:Days_to_Date_of_Last_Contact_nature2012",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 779,
+    "min": 0.0,
+    "q1": 166.5,
+    "median": 515.0,
+    "mean": 846.249,
+    "q3": 1216.0,
+    "max": 7125.0
+   },
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient."
+   ]
+  },
+  {
+   "field": "clinical.Days_to_date_of_Death_nature2012",
+   "role": "outcome",
+   "n": 93,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:Days_to_date_of_Death_nature2012",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 93,
+    "min": 157.0,
+    "q1": 811.0,
+    "median": 1563.0,
+    "mean": 1743.753,
+    "q3": 2520.0,
+    "max": 4456.0
+   },
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient.",
+    "91.6% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.ER_Status_nature2012",
+   "role": "annotation",
+   "n": 780,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:ER_Status_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Positive",
+    "Negative"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.ER_Status_nature2012",
+   "role": "annotation",
+   "n": 780,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:ER_Status_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Positive",
+    "Negative"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.Gender_nature2012",
+   "role": "annotation",
+   "n": 818,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Gender_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "FEMALE",
+    "MALE"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.HER2_Final_Status_nature2012",
+   "role": "annotation",
+   "n": 776,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:HER2_Final_Status_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Negative",
+    "Positive",
+    "Equivocal"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.HER2_Final_Status_nature2012",
+   "role": "annotation",
+   "n": 776,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:HER2_Final_Status_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Negative",
+    "Positive",
+    "Equivocal"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.Integrated_Clusters_no_exp__nature2012",
+   "role": "annotation",
+   "n": 348,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Integrated_Clusters_no_exp__nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "3",
+    "1",
+    "2",
+    "4",
+    "5"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "68.4% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.Integrated_Clusters_no_exp__nature2012",
+   "role": "annotation",
+   "n": 348,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:Integrated_Clusters_no_exp__nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "3",
+    "1",
+    "2",
+    "4",
+    "5"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "68.4% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.Integrated_Clusters_unsup_exp__nature2012",
+   "role": "annotation",
+   "n": 348,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Integrated_Clusters_unsup_exp__nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "3",
+    "2",
+    "4",
+    "1",
+    "5"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "68.4% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.Integrated_Clusters_unsup_exp__nature2012",
+   "role": "annotation",
+   "n": 348,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:Integrated_Clusters_unsup_exp__nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "3",
+    "2",
+    "4",
+    "1",
+    "5"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "68.4% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.Integrated_Clusters_with_PAM50__nature2012",
+   "role": "annotation",
+   "n": 348,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Integrated_Clusters_with_PAM50__nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "3",
+    "4",
+    "2",
+    "1"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "68.4% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.Integrated_Clusters_with_PAM50__nature2012",
+   "role": "annotation",
+   "n": 348,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:Integrated_Clusters_with_PAM50__nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "3",
+    "4",
+    "2",
+    "1"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "68.4% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.Metastasis_Coded_nature2012",
+   "role": "annotation",
+   "n": 785,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Metastasis_Coded_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Negative",
+    "Positive"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.Metastasis_nature2012",
+   "role": "annotation",
+   "n": 785,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Metastasis_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "M0",
+    "M1"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.Node_Coded_nature2012",
+   "role": "annotation",
+   "n": 791,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Node_Coded_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Positive",
+    "Negative"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.Node_Coded_nature2012",
+   "role": "annotation",
+   "n": 791,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:Node_Coded_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Positive",
+    "Negative"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.Node_nature2012",
+   "role": "annotation",
+   "n": 791,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Node_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "N0",
+    "N1",
+    "N2",
+    "N3"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.Node_nature2012",
+   "role": "annotation",
+   "n": 791,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:Node_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "N0",
+    "N1",
+    "N2",
+    "N3"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.OS_Time_nature2012",
+   "role": "outcome",
+   "n": 818,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:OS_Time_nature2012",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 818,
+    "min": 0.0,
+    "q1": 178.0,
+    "median": 544.0,
+    "mean": 912.26,
+    "q3": 1293.25,
+    "max": 7125.0
+   },
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient."
+   ]
+  },
+  {
+   "field": "clinical.OS_event_nature2012",
+   "role": "outcome",
+   "n": 818,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:OS_event_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "0",
+    "1"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient."
+   ]
+  },
+  {
+   "field": "clinical.PAM50Call_RNAseq",
+   "role": "annotation",
+   "n": 844,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "share:PAM50Call_RNAseq",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "LumA",
+    "Basal",
+    "LumB",
+    "Her2",
+    "Normal"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.PAM50Call_RNAseq",
+   "role": "annotation",
+   "n": 844,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "subgroup:PAM50Call_RNAseq",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "LumA",
+    "Basal",
+    "LumB",
+    "Her2",
+    "Normal"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.PAM50_mRNA_nature2012",
+   "role": "annotation",
+   "n": 522,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:PAM50_mRNA_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Luminal A",
+    "Luminal B",
+    "Basal-like",
+    "HER2-enriched",
+    "Normal-like"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "52.6% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.PAM50_mRNA_nature2012",
+   "role": "annotation",
+   "n": 522,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:PAM50_mRNA_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Luminal A",
+    "Luminal B",
+    "Basal-like",
+    "HER2-enriched",
+    "Normal-like"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "52.6% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.PR_Status_nature2012",
+   "role": "annotation",
+   "n": 777,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:PR_Status_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Positive",
+    "Negative"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.PR_Status_nature2012",
+   "role": "annotation",
+   "n": 777,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:PR_Status_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Positive",
+    "Negative"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.RPPA_Clusters_nature2012",
+   "role": "annotation",
+   "n": 403,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:RPPA_Clusters_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Basal",
+    "LumA/B",
+    "ReacI",
+    "LumA",
+    "Her2",
+    "ReacII",
+    "X"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "63.4% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.RPPA_Clusters_nature2012",
+   "role": "annotation",
+   "n": 403,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:RPPA_Clusters_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Basal",
+    "LumA/B",
+    "ReacI",
+    "LumA",
+    "Her2",
+    "ReacII",
+    "X"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "63.4% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.SigClust_Intrinsic_mRNA_nature2012",
+   "role": "annotation",
+   "n": 522,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:SigClust_Intrinsic_mRNA_nature2012",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 522,
+    "min": -13.0,
+    "q1": -12.0,
+    "median": -5.0,
+    "mean": -6.764,
+    "q3": -2.0,
+    "max": 0.0
+   },
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "52.6% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.SigClust_Unsupervised_mRNA_nature2012",
+   "role": "annotation",
+   "n": 522,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:SigClust_Unsupervised_mRNA_nature2012",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 522,
+    "min": -12.0,
+    "q1": -7.0,
+    "median": -3.0,
+    "mean": -4.789,
+    "q3": -3.0,
+    "max": 0.0
+   },
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "52.6% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.Survival_Data_Form_nature2012",
+   "role": "outcome",
+   "n": 818,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Survival_Data_Form_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "enrollment",
+    "followup"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient."
+   ]
+  },
+  {
+   "field": "clinical.Tumor_T1_Coded_nature2012",
+   "role": "annotation",
+   "n": 788,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Tumor_T1_Coded_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "T_Other",
+    "T1"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.Tumor_T1_Coded_nature2012",
+   "role": "annotation",
+   "n": 788,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:Tumor_T1_Coded_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "T_Other",
+    "T1"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.Tumor_nature2012",
+   "role": "annotation",
+   "n": 788,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Tumor_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "T2",
+    "T1",
+    "T3",
+    "T4"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.Tumor_nature2012",
+   "role": "annotation",
+   "n": 788,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:Tumor_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "T2",
+    "T1",
+    "T3",
+    "T4"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.Vital_Status_nature2012",
+   "role": "outcome",
+   "n": 818,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:Vital_Status_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "LIVING",
+    "DECEASED"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_CNA_PANCAN_K8",
+   "role": "annotation",
+   "n": 872,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:_PANCAN_CNA_PANCAN_K8",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "High",
+    "BRCA-LUAD+",
+    "Iq",
+    "Kirc+",
+    "Squamous",
+    "Quiet",
+    "COAD-READ"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_CNA_PANCAN_K8",
+   "role": "annotation",
+   "n": 872,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:_PANCAN_CNA_PANCAN_K8",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "High",
+    "BRCA-LUAD+",
+    "Iq",
+    "Kirc+",
+    "Squamous",
+    "Quiet",
+    "COAD-READ"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_Cluster_Cluster_PANCAN",
+   "role": "annotation",
+   "n": 834,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:_PANCAN_Cluster_Cluster_PANCAN",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "C3-BRCA/Luminal",
+    "C4-BRCA/Basal",
+    "C5-KIRC",
+    "C8-BLCA",
+    "C1-LUAD-enriched",
+    "C13-AML",
+    "C2-Squamous-like"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_Cluster_Cluster_PANCAN",
+   "role": "annotation",
+   "n": 834,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:_PANCAN_Cluster_Cluster_PANCAN",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "C3-BRCA/Luminal",
+    "C4-BRCA/Basal",
+    "C5-KIRC",
+    "C8-BLCA",
+    "C1-LUAD-enriched",
+    "C13-AML",
+    "C2-Squamous-like"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_DNAMethyl_BRCA",
+   "role": "annotation",
+   "n": 799,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:_PANCAN_DNAMethyl_BRCA",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "cluster 4",
+    "cluster 2",
+    "cluster 5",
+    "cluster 1",
+    "cluster 3"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_DNAMethyl_BRCA",
+   "role": "annotation",
+   "n": 799,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:_PANCAN_DNAMethyl_BRCA",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "cluster 4",
+    "cluster 2",
+    "cluster 5",
+    "cluster 1",
+    "cluster 3"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_DNAMethyl_PANCAN",
+   "role": "annotation",
+   "n": 888,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "share:_PANCAN_DNAMethyl_PANCAN",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "BRCA non-CIMP c9",
+    "BRCA CIMP c7",
+    "BRCA basal-like c8",
+    "Low purity c2",
+    "Cluster 5",
+    "OV-like c1",
+    "Cluster 6",
+    "KIRC-like c17"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_DNAMethyl_PANCAN",
+   "role": "annotation",
+   "n": 888,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "subgroup:_PANCAN_DNAMethyl_PANCAN",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "BRCA non-CIMP c9",
+    "BRCA CIMP c7",
+    "BRCA basal-like c8",
+    "Low purity c2",
+    "Cluster 5",
+    "OV-like c1",
+    "Cluster 6",
+    "KIRC-like c17"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_RPPA_PANCAN_K8",
+   "role": "annotation",
+   "n": 747,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:_PANCAN_RPPA_PANCAN_K8",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "BRCA nonbasal-like c8",
+    "BRCA basal-like c6",
+    "KIRC-like c1",
+    "squamous c3",
+    "OV-like c4"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "32.2% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_RPPA_PANCAN_K8",
+   "role": "annotation",
+   "n": 747,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:_PANCAN_RPPA_PANCAN_K8",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "BRCA nonbasal-like c8",
+    "BRCA basal-like c6",
+    "KIRC-like c1",
+    "squamous c3",
+    "OV-like c4"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "32.2% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_UNC_RNAseq_PANCAN_K16",
+   "role": "annotation",
+   "n": 840,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "share:_PANCAN_UNC_RNAseq_PANCAN_K16",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "BRCA nonbasal-like c7",
+    "BRCA basal-like c8",
+    "GBM-like c6",
+    "squamous-like c4"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_UNC_RNAseq_PANCAN_K16",
+   "role": "annotation",
+   "n": 840,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "subgroup:_PANCAN_UNC_RNAseq_PANCAN_K16",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "BRCA nonbasal-like c7",
+    "BRCA basal-like c8",
+    "GBM-like c6",
+    "squamous-like c4"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_miRNA_PANCAN",
+   "role": "annotation",
+   "n": 868,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "share:_PANCAN_miRNA_PANCAN",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "miRNA cluster 4",
+    "miRNA cluster 14",
+    "miRNA cluster 12",
+    "miRNA cluster 6",
+    "miRNA cluster 7",
+    "miRNA cluster 13",
+    "miRNA c1uster 10",
+    "miRNA cluster 5",
+    "miRNA c1uster 9",
+    "miRNA cluster 3",
+    "miRNA cluster 11",
+    "miRNA cluster 2",
+    "miRNA cluster 1",
+    "miRNA cluster 15"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_miRNA_PANCAN",
+   "role": "annotation",
+   "n": 868,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "subgroup:_PANCAN_miRNA_PANCAN",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "miRNA cluster 4",
+    "miRNA cluster 14",
+    "miRNA cluster 12",
+    "miRNA cluster 6",
+    "miRNA cluster 7",
+    "miRNA cluster 13",
+    "miRNA c1uster 10",
+    "miRNA cluster 5",
+    "miRNA c1uster 9",
+    "miRNA cluster 3",
+    "miRNA cluster 11",
+    "miRNA cluster 2",
+    "miRNA cluster 1",
+    "miRNA cluster 15"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_mirna_BRCA",
+   "role": "annotation",
+   "n": 694,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "share:_PANCAN_mirna_BRCA",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "cluster 4",
+    "cluster 6",
+    "cluster 5",
+    "cluster 2",
+    "cluster 3",
+    "cluster 7",
+    "cluster 1"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "37.0% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_mirna_BRCA",
+   "role": "annotation",
+   "n": 694,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "subgroup:_PANCAN_mirna_BRCA",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "cluster 4",
+    "cluster 6",
+    "cluster 5",
+    "cluster 2",
+    "cluster 3",
+    "cluster 7",
+    "cluster 1"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "37.0% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_mutation_PANCAN",
+   "role": "annotation",
+   "n": 771,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:_PANCAN_mutation_PANCAN",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "mutation c1uster 9",
+    "mutation cluster 4",
+    "mutation cluster 5",
+    "mutation cluster 3",
+    "mutation cluster 2",
+    "mutation cluster 8",
+    "mutation cluster 14",
+    "mutation cluster 13",
+    "mutation cluster 12",
+    "mutation c1uster 10",
+    "mutation cluster 1",
+    "mutation cluster 6",
+    "mutation cluster 11"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical._PANCAN_mutation_PANCAN",
+   "role": "annotation",
+   "n": 771,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:_PANCAN_mutation_PANCAN",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "mutation c1uster 9",
+    "mutation cluster 4",
+    "mutation cluster 5",
+    "mutation cluster 3",
+    "mutation cluster 2",
+    "mutation cluster 8",
+    "mutation cluster 14",
+    "mutation cluster 13",
+    "mutation cluster 12",
+    "mutation c1uster 10",
+    "mutation cluster 1",
+    "mutation cluster 6",
+    "mutation cluster 11"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.additional_pharmaceutical_therapy",
+   "role": "predictor",
+   "n": 85,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:additional_pharmaceutical_therapy",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "YES",
+    "NO"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "92.3% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.additional_pharmaceutical_therapy",
+   "role": "predictor",
+   "n": 85,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:additional_pharmaceutical_therapy",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "YES",
+    "NO"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "92.3% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.additional_radiation_therapy",
+   "role": "predictor",
+   "n": 84,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:additional_radiation_therapy",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "NO",
+    "YES"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "92.4% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.additional_radiation_therapy",
+   "role": "predictor",
+   "n": 84,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:additional_radiation_therapy",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "NO",
+    "YES"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "92.4% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.additional_surgery_locoregional_procedure",
+   "role": "predictor",
+   "n": 58,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:additional_surgery_locoregional_procedure",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "NO",
+    "YES"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "94.7% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.additional_surgery_locoregional_procedure",
+   "role": "predictor",
+   "n": 58,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:additional_surgery_locoregional_procedure",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "NO",
+    "YES"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "94.7% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.age_at_initial_pathologic_diagnosis",
+   "role": "predictor",
+   "n": 1097,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:age_at_initial_pathologic_diagnosis",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 1097,
+    "min": 26.0,
+    "q1": 49.0,
+    "median": 58.0,
+    "mean": 58.463,
+    "q3": 67.0,
+    "max": 90.0
+   },
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.anatomic_neoplasm_subdivision",
+   "role": "metadata",
+   "n": 1097,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:anatomic_neoplasm_subdivision",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Left Upper Outer Quadrant",
+    "Left",
+    "Right Upper Outer Quadrant",
+    "Right",
+    "Left Upper Inner Quadrant",
+    "Right Upper Inner Quadrant",
+    "Right Lower Outer Quadrant",
+    "Left Lower Outer Quadrant",
+    "Left Upper Outer Quadrant|Left",
+    "Right Upper Outer Quadrant|Right",
+    "Left Lower Inner Quadrant",
+    "Right Lower Inner Quadrant",
+    "Right Upper Inner Quadrant|Right",
+    "Left|Left Upper Outer Quadrant",
+    "Left Upper Inner Quadrant|Left Upper Outer Quadrant",
+    "Right|Right Upper Outer Quadrant",
+    "Left Upper Inner Quadrant|Left Upper Outer Quadrant|Left",
+    "Right|Right Upper Inner Quadrant",
+    "Left Upper Outer Quadrant|Left Lower Outer Quadrant",
+    "Right Upper Inner Quadrant|Right Upper Outer Quadrant|Right",
+    "Left Lower Outer Quadrant|Left",
+    "Right Upper Inner Quadrant|Right Upper Outer Quadrant",
+    "Right Upper Inner Quadrant|Right Upper Outer Quadrant|Right Lower Inner Quadrant|Right Lower Outer Quadrant|Right",
+    "Right Lower Inner Quadrant|Right Lower Outer Quadrant|Right",
+    "Right Lower Outer Quadrant|Right"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.axillary_lymph_node_stage_method_type",
+   "role": "metadata",
+   "n": 881,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:axillary_lymph_node_stage_method_type",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Axillary lymph node dissection alone",
+    "Sentinel node biopsy alone",
+    "Sentinel lymph node biopsy plus axillary dissection",
+    "No axillary staging",
+    "Other (specify)"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.breast_cancer_surgery_margin_status",
+   "role": "predictor",
+   "n": 59,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:breast_cancer_surgery_margin_status",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Negative",
+    "Positive",
+    "Close"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "94.6% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.breast_carcinoma_estrogen_receptor_status",
+   "role": "predictor",
+   "n": 1046,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "share:breast_carcinoma_estrogen_receptor_status",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Positive",
+    "Negative"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.breast_carcinoma_estrogen_receptor_status",
+   "role": "predictor",
+   "n": 1046,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "subgroup:breast_carcinoma_estrogen_receptor_status",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Positive",
+    "Negative"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.breast_carcinoma_immunohistochemistry_er_pos_finding_scale",
+   "role": "predictor",
+   "n": 147,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:breast_carcinoma_immunohistochemistry_er_pos_finding_scale",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "3 Point Scale",
+    "4 Point Scale"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "86.6% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.breast_carcinoma_immunohistochemistry_pos_cell_score",
+   "role": "predictor",
+   "n": 208,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:breast_carcinoma_immunohistochemistry_pos_cell_score",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "3+",
+    "2+",
+    "1+",
+    "0",
+    "4+"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "81.1% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.breast_carcinoma_immunohistochemistry_pos_cell_score",
+   "role": "predictor",
+   "n": 208,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:breast_carcinoma_immunohistochemistry_pos_cell_score",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "3+",
+    "2+",
+    "1+",
+    "0",
+    "4+"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "81.1% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.breast_carcinoma_immunohistochemistry_prgstrn_rcptr_ps_fndng_scl",
+   "role": "predictor",
+   "n": 142,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:breast_carcinoma_immunohistochemistry_prgstrn_rcptr_ps_fndng_scl",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "3 Point Scale",
+    "4 Point Scale"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "87.1% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.breast_carcinoma_primary_surgical_procedure_name",
+   "role": "predictor",
+   "n": 55,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:breast_carcinoma_primary_surgical_procedure_name",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Mastectomy NOS",
+    "Other",
+    "Modified radical mastectomy",
+    "Lumpectomy"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "95.0% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.breast_carcinoma_progesterone_receptor_status",
+   "role": "predictor",
+   "n": 1043,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:breast_carcinoma_progesterone_receptor_status",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Positive",
+    "Negative"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.breast_carcinoma_progesterone_receptor_status",
+   "role": "predictor",
+   "n": 1043,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:breast_carcinoma_progesterone_receptor_status",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Positive",
+    "Negative"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.breast_carcinoma_surgical_procedure_name",
+   "role": "predictor",
+   "n": 1041,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:breast_carcinoma_surgical_procedure_name",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Modified Radical Mastectomy",
+    "Other",
+    "Lumpectomy",
+    "Simple Mastectomy"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.breast_carcinoma_surgical_procedure_name",
+   "role": "predictor",
+   "n": 1041,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:breast_carcinoma_surgical_procedure_name",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Modified Radical Mastectomy",
+    "Other",
+    "Lumpectomy",
+    "Simple Mastectomy"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.cytokeratin_immunohistochemistry_staining_method_mcrmtstss_ndctr",
+   "role": "metadata",
+   "n": 730,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:cytokeratin_immunohistochemistry_staining_method_mcrmtstss_ndctr",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "NO",
+    "YES"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims.",
+    "33.7% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.days_to_birth",
+   "role": "predictor",
+   "n": 1082,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:days_to_birth",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 1082,
+    "min": -32873.0,
+    "q1": -24868.75,
+    "median": -21560.5,
+    "mean": -21586.844,
+    "q3": -18028.25,
+    "max": -9706.0
+   },
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.days_to_collection",
+   "role": "metadata",
+   "n": 928,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "numeric:days_to_collection",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 928,
+    "min": 16.0,
+    "q1": 140.75,
+    "median": 415.0,
+    "mean": 1025.902,
+    "q3": 1325.75,
+    "max": 7820.0
+   },
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.days_to_death",
+   "role": "outcome",
+   "n": 151,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:days_to_death",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 151,
+    "min": 116.0,
+    "q1": 700.5,
+    "median": 1272.0,
+    "mean": 1644.669,
+    "q3": 2367.0,
+    "max": 7455.0
+   },
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient.",
+    "86.3% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.days_to_last_followup",
+   "role": "outcome",
+   "n": 993,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:days_to_last_followup",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 993,
+    "min": -31.0,
+    "q1": 434.0,
+    "median": 760.0,
+    "mean": 1183.952,
+    "q3": 1572.0,
+    "max": 8605.0
+   },
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient."
+   ]
+  },
+  {
+   "field": "clinical.days_to_new_tumor_event_after_initial_treatment",
+   "role": "outcome",
+   "n": 111,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:days_to_new_tumor_event_after_initial_treatment",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 111,
+    "min": 21.0,
+    "q1": 445.0,
+    "median": 834.0,
+    "mean": 1155.072,
+    "q3": 1511.0,
+    "max": 5117.0
+   },
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient.",
+    "89.9% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.distant_metastasis_present_ind2",
+   "role": "predictor",
+   "n": 393,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:distant_metastasis_present_ind2",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "NO",
+    "YES"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "64.3% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.er_level_cell_percentage_category",
+   "role": "predictor",
+   "n": 470,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:er_level_cell_percentage_category",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "90-99%",
+    "<10%",
+    "70-79%",
+    "80-89%",
+    "10-19%",
+    "50-59%",
+    "60-69%",
+    "20-29%",
+    "40-49%",
+    "30-39%"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "57.3% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.er_level_cell_percentage_category",
+   "role": "predictor",
+   "n": 470,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:er_level_cell_percentage_category",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "90-99%",
+    "<10%",
+    "70-79%",
+    "80-89%",
+    "10-19%",
+    "50-59%",
+    "60-69%",
+    "20-29%",
+    "40-49%",
+    "30-39%"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "57.3% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.fluorescence_in_st_hybrdztn_dgnstc_prcdr_chrmsm_17_sgnl_rslt_rng",
+   "role": "predictor",
+   "n": 106,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:fluorescence_in_st_hybrdztn_dgnstc_prcdr_chrmsm_17_sgnl_rslt_rng",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 105,
+    "min": 1.0,
+    "q1": 2.0,
+    "median": 2.65,
+    "mean": 20.877,
+    "q3": 39.0,
+    "max": 160.0
+   },
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "90.4% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.followup_case_report_form_submission_reason",
+   "role": "outcome",
+   "n": 513,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:followup_case_report_form_submission_reason",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Scheduled Follow-up Submission",
+    "Additional New Tumor Event"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient.",
+    "53.4% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.gender",
+   "role": "predictor",
+   "n": 1097,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:gender",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "FEMALE",
+    "MALE"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.her2_erbb_method_calculation_method_text",
+   "role": "metadata",
+   "n": 90,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:her2_erbb_method_calculation_method_text",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "3+ Positive",
+    "3+ POSITIVE",
+    "dextran coated charcoal",
+    "Hecep Test TM DAKO",
+    "DAKOHercepTest TM",
+    "Venten",
+    "CAP scoring guideline 2010",
+    "Hercep Test  TM Dako",
+    "CAP SCORING GUIDELINE 2010",
+    "Dako Hercept test",
+    "CISH",
+    "No membrane staining or incomplete membrane staining in <10% of tumor cells is negative",
+    "Dako Hecept Test",
+    "DAKO Hercep Test TM",
+    "Dako Hercept Test",
+    "Hercep Test TM DAKO",
+    "HerceptTest TM Dako",
+    "HercepTest TM Dako",
+    "+ or -",
+    "CAP scoring guidelines 2010"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims.",
+    "91.8% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.her2_erbb_pos_finding_cell_percent_category",
+   "role": "predictor",
+   "n": 208,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:her2_erbb_pos_finding_cell_percent_category",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "<10%",
+    "10-19%",
+    "90-99%",
+    "30-39%",
+    "20-29%",
+    "40-49%",
+    "60-69%",
+    "70-79%",
+    "50-59%",
+    "80-89%"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "81.1% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.her2_erbb_pos_finding_cell_percent_category",
+   "role": "predictor",
+   "n": 208,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:her2_erbb_pos_finding_cell_percent_category",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "<10%",
+    "10-19%",
+    "90-99%",
+    "30-39%",
+    "20-29%",
+    "40-49%",
+    "60-69%",
+    "70-79%",
+    "50-59%",
+    "80-89%"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "81.1% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.her2_erbb_pos_finding_fluorescence_n_st_hybrdztn_clcltn_mthd_txt",
+   "role": "predictor",
+   "n": 50,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:her2_erbb_pos_finding_fluorescence_n_st_hybrdztn_clcltn_mthd_txt",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    ">=2.0 Positive",
+    "PathVysion HER-2 D Probe Kit",
+    "RATIO > = 2.0",
+    "CAP scoring guideline 2010",
+    "PathVysion HER-2 D probe kit.",
+    ">= 2.0 Positive",
+    "Enumerate 60 tumor cells; ratio of HER2/Centromere 17 >= 2.1 is amplified",
+    "Path Vysion HER2 D Probe Kit",
+    "PathVysion",
+    "Enumerate 60 tumor cells; Ratio of HER2/Centromere 17 >=2.1 is amplified",
+    "Enumerate 60 tumor cells; ratio of HER2/Centromere >=2.1 is amplified",
+    "Enumerate 60 tumor cells; ratio HER2/Centromer 17 >= 2.1 is amplified",
+    "Enumerate 60 tumor cells; ratio HER2/Centromere 17 >= 2.1 is amplified",
+    "PathVysion HER-2 D Probe kit",
+    "Pathvysion HER-2 D Probe Kit",
+    "Path Vysion HER-2 D probe kit",
+    "PathVysion Her-2 D",
+    "Pathvysion HER2 D Probe Kit",
+    "Ratio >=2.0",
+    "RATIO > 2.2",
+    "> = 2.0",
+    "Ratio >=2.2",
+    "RATIO >EQUAL 2.0",
+    ">2.2 Positive",
+    "Positive >2.2"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "95.5% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.her2_immunohistochemistry_level_result",
+   "role": "predictor",
+   "n": 622,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:her2_immunohistochemistry_level_result",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "1+",
+    "2+",
+    "3+",
+    "0"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "43.5% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.her2_immunohistochemistry_level_result",
+   "role": "predictor",
+   "n": 622,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:her2_immunohistochemistry_level_result",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "1+",
+    "2+",
+    "3+",
+    "0"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "43.5% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.her2_neu_and_centromere_17_copy_number_analysis_npt_ttl_nmbr_cnt",
+   "role": "predictor",
+   "n": 104,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:her2_neu_and_centromere_17_copy_number_analysis_npt_ttl_nmbr_cnt",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 104,
+    "min": 20.0,
+    "q1": 30.0,
+    "median": 40.0,
+    "mean": 93.346,
+    "q3": 60.0,
+    "max": 569.0
+   },
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "90.6% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.her2_neu_chromosone_17_signal_ratio_value",
+   "role": "predictor",
+   "n": 233,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:her2_neu_chromosone_17_signal_ratio_value",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 233,
+    "min": 0.42,
+    "q1": 1.08,
+    "median": 1.2,
+    "mean": 1.728,
+    "q3": 1.46,
+    "max": 16.3
+   },
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "78.8% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.histological_type",
+   "role": "predictor",
+   "n": 1096,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:histological_type",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Infiltrating Ductal Carcinoma",
+    "Infiltrating Lobular Carcinoma",
+    "Other, specify",
+    "Mixed Histology (please specify)",
+    "Mucinous Carcinoma",
+    "Metaplastic Carcinoma",
+    "Medullary Carcinoma",
+    "Infiltrating Carcinoma NOS"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.histological_type",
+   "role": "predictor",
+   "n": 1096,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:histological_type",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Infiltrating Ductal Carcinoma",
+    "Infiltrating Lobular Carcinoma",
+    "Other, specify",
+    "Mixed Histology (please specify)",
+    "Mucinous Carcinoma",
+    "Metaplastic Carcinoma",
+    "Medullary Carcinoma",
+    "Infiltrating Carcinoma NOS"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.histological_type_other",
+   "role": "predictor",
+   "n": 30,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:histological_type_other",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Infiltrating ductal and lobular carcinoma",
+    "Mixed invasive ductal and invasive lobular",
+    "Lobular/Ductal",
+    "lobular/ductal",
+    "ductal and lobular",
+    "Lobular carcinoma with ductal features",
+    "invasive ductal and lobular carcinoma",
+    "Mixed infiltrating lobular and grade 1 ductal carcinoma",
+    "Ductal/Lobular",
+    "ductal/lobular",
+    "with ductal and lobular phenotypes",
+    "Infiltrating ductal & lobular",
+    "ductal and lobular features",
+    "Infiltrating Tubulo-Lobular Carcinoma",
+    "Invasive ductal and lobular carcinoma",
+    "Invasive mixed ductal and lobular carcinoma"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "97.3% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.history_of_neoadjuvant_treatment",
+   "role": "predictor",
+   "n": 1096,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:history_of_neoadjuvant_treatment",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "No",
+    "Yes"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.icd_10",
+   "role": "metadata",
+   "n": 1097,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:icd_10",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "C50.9",
+    "C50.3",
+    "C50.2",
+    "C50.8",
+    "C50.4",
+    "C50.5",
+    "C50.919"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.icd_o_3_histology",
+   "role": "metadata",
+   "n": 1097,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:icd_o_3_histology",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "8500/3",
+    "8520/3",
+    "8522/3",
+    "8523/3",
+    "8480/3",
+    "8575/3",
+    "8524/3",
+    "8510/3",
+    "8503/3",
+    "8507/3",
+    "8022/3",
+    "8541/3",
+    "8050/3",
+    "9020/3",
+    "8200/3",
+    "8010/3",
+    "8401/3",
+    "8013/3",
+    "8502/3",
+    "8201/3",
+    "8211/3",
+    "8090/3"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.icd_o_3_site",
+   "role": "metadata",
+   "n": 1097,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:icd_o_3_site",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "C50.9",
+    "C50.3",
+    "C50.8",
+    "C50.2",
+    "C50.4",
+    "C50.5"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.immunohistochemistry_positive_cell_score",
+   "role": "predictor",
+   "n": 214,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:immunohistochemistry_positive_cell_score",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "3+",
+    "2+",
+    "4+",
+    "1+",
+    "0"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "80.6% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.immunohistochemistry_positive_cell_score",
+   "role": "predictor",
+   "n": 214,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:immunohistochemistry_positive_cell_score",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "3+",
+    "2+",
+    "4+",
+    "1+",
+    "0"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "80.6% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.init_pathology_dx_method_other",
+   "role": "metadata",
+   "n": 64,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:init_pathology_dx_method_other",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Pateys Surgery",
+    "Biopsy, NOS",
+    "intraoperative examination",
+    "Lumpectomy",
+    "Modified Radical Masectomy",
+    "SKIN BIOPSY",
+    "biopsy, NOS",
+    "Wide local incision",
+    "Biopsy not specified",
+    "Skin biopsy",
+    "Pateys Suregery",
+    "stereotactic biopsy",
+    "Ultrasound-guided mammotome biopsy",
+    "Ultrasound-guided biopsy"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims.",
+    "94.2% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.initial_pathologic_diagnosis_method",
+   "role": "metadata",
+   "n": 999,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:initial_pathologic_diagnosis_method",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Core needle biopsy",
+    "Tumor resection",
+    "Fine needle aspiration biopsy",
+    "Other method, specify:",
+    "Excisional Biopsy",
+    "Cytology (e.g. Peritoneal or pleural fluid)",
+    "Incisional Biopsy"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.initial_weight",
+   "role": "predictor",
+   "n": 931,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "numeric:initial_weight",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 931,
+    "min": 10.0,
+    "q1": 140.0,
+    "median": 220.0,
+    "mean": 305.661,
+    "q3": 380.0,
+    "max": 2190.0
+   },
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "role": "predictor",
+   "n": 907,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Negative",
+    "Equivocal",
+    "Positive"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "role": "predictor",
+   "n": 907,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Negative",
+    "Equivocal",
+    "Positive"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.lab_procedure_her2_neu_in_situ_hybrid_outcome_type",
+   "role": "predictor",
+   "n": 416,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:lab_procedure_her2_neu_in_situ_hybrid_outcome_type",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Negative",
+    "Positive",
+    "Equivocal"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "61.9% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.lab_procedure_her2_neu_in_situ_hybrid_outcome_type",
+   "role": "predictor",
+   "n": 416,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:lab_procedure_her2_neu_in_situ_hybrid_outcome_type",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Negative",
+    "Positive",
+    "Equivocal"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "61.9% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.lost_follow_up",
+   "role": "outcome",
+   "n": 613,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:lost_follow_up",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "NO",
+    "YES"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient.",
+    "44.3% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.lymph_node_examined_count",
+   "role": "predictor",
+   "n": 971,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:lymph_node_examined_count",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 971,
+    "min": 0.0,
+    "q1": 3.0,
+    "median": 9.0,
+    "mean": 10.647,
+    "q3": 16.0,
+    "max": 44.0
+   },
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.margin_status",
+   "role": "predictor",
+   "n": 1029,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:margin_status",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Negative",
+    "Positive",
+    "Close"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.margin_status",
+   "role": "predictor",
+   "n": 1029,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:margin_status",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Negative",
+    "Positive",
+    "Close"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.menopause_status",
+   "role": "predictor",
+   "n": 973,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:menopause_status",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Post (prior bilateral ovariectomy OR >12 mo since LMP with no prior hysterectomy)",
+    "Pre (<6 months since LMP AND no prior bilateral ovariectomy AND not on estrogen replacement)",
+    "Peri (6-12 months since last menstrual period)"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.menopause_status",
+   "role": "predictor",
+   "n": 973,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:menopause_status",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Post (prior bilateral ovariectomy OR >12 mo since LMP with no prior hysterectomy)",
+    "Pre (<6 months since LMP AND no prior bilateral ovariectomy AND not on estrogen replacement)",
+    "Peri (6-12 months since last menstrual period)"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.metastatic_breast_carcinom_lb_prc_hr2_n_mmnhstchmstry_rcptr_stts",
+   "role": "predictor",
+   "n": 30,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:metastatic_breast_carcinom_lb_prc_hr2_n_mmnhstchmstry_rcptr_stts",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Negative",
+    "Equivocal",
+    "Positive"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "97.3% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.metastatic_breast_carcinoma_estrogen_receptor_status",
+   "role": "predictor",
+   "n": 44,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:metastatic_breast_carcinoma_estrogen_receptor_status",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Positive",
+    "Negative"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "96.0% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.metastatic_breast_carcinoma_progesterone_receptor_status",
+   "role": "predictor",
+   "n": 42,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:metastatic_breast_carcinoma_progesterone_receptor_status",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Negative",
+    "Positive"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "96.2% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.methylation_Clusters_nature2012",
+   "role": "annotation",
+   "n": 799,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:methylation_Clusters_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "4",
+    "2",
+    "5",
+    "1",
+    "3"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed."
+   ]
+  },
+  {
+   "field": "clinical.methylation_Clusters_nature2012",
+   "role": "annotation",
+   "n": 799,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:methylation_Clusters_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "4",
+    "2",
+    "5",
+    "1",
+    "3"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.miRNA_Clusters_nature2012",
+   "role": "annotation",
+   "n": 694,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:miRNA_Clusters_nature2012",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "4",
+    "6",
+    "5",
+    "2",
+    "3",
+    "7",
+    "1"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "37.0% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.miRNA_Clusters_nature2012",
+   "role": "annotation",
+   "n": 694,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:miRNA_Clusters_nature2012",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "4",
+    "6",
+    "5",
+    "2",
+    "3",
+    "7",
+    "1"
+   ],
+   "limitations": [
+    "A derived research label (2012 publication, Pan-Cancer clusters, PAM50 calls). Only covers the samples that study analysed.",
+    "37.0% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.new_neoplasm_event_occurrence_anatomic_site",
+   "role": "outcome",
+   "n": 94,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:new_neoplasm_event_occurrence_anatomic_site",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Other, specify",
+    "Bone",
+    "Lung",
+    "Liver",
+    "Brain"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient.",
+    "91.5% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.new_neoplasm_event_type",
+   "role": "outcome",
+   "n": 102,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:new_neoplasm_event_type",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Distant Metastasis",
+    "New Primary Tumor",
+    "Locoregional Recurrence",
+    "Locoregional Disease"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient.",
+    "90.7% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.new_neoplasm_occurrence_anatomic_site_text",
+   "role": "predictor",
+   "n": 41,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:new_neoplasm_occurrence_anatomic_site_text",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Breast",
+    "Liver",
+    "Chest Wall",
+    "Left Cervical Lymph Node",
+    "LEFT BREAST",
+    "Axilla",
+    "Lung, Bone, Liver, Brain and Skin Nodules",
+    "Skin lesion-Basal Cell Left Lower Lateral Back",
+    "Left Breast",
+    "Rectum",
+    "Left Chest Wall",
+    "Bone Marrow",
+    "Renal",
+    "Contralateral Breast",
+    "Endometrium",
+    "Malignant melanoma",
+    "Liver, bone, chest wall, adrenal glands",
+    "Skin and bone",
+    "Skin, right leg",
+    "Pectoral muscle",
+    "lung, bone, liver",
+    "bone, brain",
+    "Right Breast",
+    "right breast cancer contralateral",
+    "Liver and Pleura and Bone"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "96.3% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.new_tumor_event_additional_surgery_procedure",
+   "role": "outcome",
+   "n": 38,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:new_tumor_event_additional_surgery_procedure",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "NO",
+    "YES"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient.",
+    "96.5% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.new_tumor_event_after_initial_treatment",
+   "role": "outcome",
+   "n": 916,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:new_tumor_event_after_initial_treatment",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "NO",
+    "YES"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient."
+   ]
+  },
+  {
+   "field": "clinical.number_of_lymphnodes_positive_by_he",
+   "role": "predictor",
+   "n": 929,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:number_of_lymphnodes_positive_by_he",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 929,
+    "min": 0.0,
+    "q1": 0.0,
+    "median": 1.0,
+    "mean": 2.363,
+    "q3": 2.0,
+    "max": 35.0
+   },
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.number_of_lymphnodes_positive_by_ihc",
+   "role": "predictor",
+   "n": 345,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:number_of_lymphnodes_positive_by_ihc",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "0",
+    "1",
+    "2",
+    "4",
+    "3",
+    "8"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "68.7% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.number_of_lymphnodes_positive_by_ihc",
+   "role": "predictor",
+   "n": 345,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:number_of_lymphnodes_positive_by_ihc",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "0",
+    "1",
+    "2",
+    "4",
+    "3",
+    "8"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "68.7% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.oct_embedded",
+   "role": "metadata",
+   "n": 932,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "share:oct_embedded",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "true",
+    "false"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.other_dx",
+   "role": "metadata",
+   "n": 1096,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:other_dx",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "No",
+    "Yes"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.pathologic_M",
+   "role": "predictor",
+   "n": 934,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:pathologic_M",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "M0",
+    "M1",
+    "cM0 (i+)"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.pathologic_M",
+   "role": "predictor",
+   "n": 934,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:pathologic_M",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "M0",
+    "M1",
+    "cM0 (i+)"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.pathologic_N",
+   "role": "predictor",
+   "n": 1077,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:pathologic_N",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "N0",
+    "N1a",
+    "N0 (i-)",
+    "N1",
+    "N2a",
+    "N2",
+    "N3a",
+    "N1mi",
+    "N1b",
+    "N0 (i+)",
+    "N3",
+    "N3b",
+    "N1c",
+    "N3c",
+    "N0 (mol+)"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.pathologic_N",
+   "role": "predictor",
+   "n": 1077,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:pathologic_N",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "N0",
+    "N1a",
+    "N0 (i-)",
+    "N1",
+    "N2a",
+    "N2",
+    "N3a",
+    "N1mi",
+    "N1b",
+    "N0 (i+)",
+    "N3",
+    "N3b",
+    "N1c",
+    "N3c",
+    "N0 (mol+)"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.pathologic_T",
+   "role": "predictor",
+   "n": 1094,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:pathologic_T",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "T2",
+    "T1c",
+    "T3",
+    "T1",
+    "T4b",
+    "T1b",
+    "T4",
+    "T4d",
+    "T2b",
+    "T1a",
+    "T3a",
+    "T2a"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.pathologic_T",
+   "role": "predictor",
+   "n": 1094,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:pathologic_T",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "T2",
+    "T1c",
+    "T3",
+    "T1",
+    "T4b",
+    "T1b",
+    "T4",
+    "T4d",
+    "T2b",
+    "T1a",
+    "T3a",
+    "T2a"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.pathologic_stage",
+   "role": "predictor",
+   "n": 1075,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:pathologic_stage",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Stage IIA",
+    "Stage IIB",
+    "Stage IIIA",
+    "Stage I",
+    "Stage IA",
+    "Stage IIIC",
+    "Stage IIIB",
+    "Stage IV",
+    "Stage IB",
+    "Stage II",
+    "Stage III"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.pathologic_stage",
+   "role": "predictor",
+   "n": 1075,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:pathologic_stage",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "Stage IIA",
+    "Stage IIB",
+    "Stage IIIA",
+    "Stage I",
+    "Stage IA",
+    "Stage IIIC",
+    "Stage IIIB",
+    "Stage IV",
+    "Stage IB",
+    "Stage II",
+    "Stage III"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.person_neoplasm_cancer_status",
+   "role": "outcome",
+   "n": 1061,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:person_neoplasm_cancer_status",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "TUMOR FREE",
+    "WITH TUMOR"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient."
+   ]
+  },
+  {
+   "field": "clinical.postoperative_rx_tx",
+   "role": "predictor",
+   "n": 601,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:postoperative_rx_tx",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "YES",
+    "NO"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "45.4% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.postoperative_rx_tx",
+   "role": "predictor",
+   "n": 601,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:postoperative_rx_tx",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "YES",
+    "NO"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "45.4% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.primary_lymph_node_presentation_assessment",
+   "role": "metadata",
+   "n": 720,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:primary_lymph_node_presentation_assessment",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "YES",
+    "NO"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims.",
+    "34.6% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.progesterone_receptor_level_cell_percent_category",
+   "role": "predictor",
+   "n": 430,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:progesterone_receptor_level_cell_percent_category",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "<10%",
+    "90-99%",
+    "70-79%",
+    "10-19%",
+    "80-89%",
+    "40-49%",
+    "60-69%",
+    "30-39%",
+    "50-59%",
+    "20-29%"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "60.9% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.progesterone_receptor_level_cell_percent_category",
+   "role": "predictor",
+   "n": 430,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:progesterone_receptor_level_cell_percent_category",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "<10%",
+    "90-99%",
+    "70-79%",
+    "10-19%",
+    "80-89%",
+    "40-49%",
+    "60-69%",
+    "30-39%",
+    "50-59%",
+    "20-29%"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "60.9% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.radiation_therapy",
+   "role": "predictor",
+   "n": 1000,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:radiation_therapy",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "YES",
+    "NO"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response)."
+   ]
+  },
+  {
+   "field": "clinical.radiation_therapy",
+   "role": "predictor",
+   "n": 1000,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:radiation_therapy",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "YES",
+    "NO"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.sample_type",
+   "role": "metadata",
+   "n": 1101,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "share:sample_type",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "Primary Tumor"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.sample_type_id",
+   "role": "metadata",
+   "n": 1101,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "share:sample_type_id",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "01"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.system_version",
+   "role": "metadata",
+   "n": 956,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:system_version",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "6th",
+    "7th",
+    "5th",
+    "4th",
+    "3rd"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.targeted_molecular_therapy",
+   "role": "predictor",
+   "n": 576,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:targeted_molecular_therapy",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "YES",
+    "NO"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "47.7% of primary tumors have no value: shares depend on the denominator."
+   ]
+  },
+  {
+   "field": "clinical.targeted_molecular_therapy",
+   "role": "predictor",
+   "n": 576,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "subgroup:targeted_molecular_therapy",
+   "analysis": [
+    "subgroup filter",
+    "group comparison"
+   ],
+   "values": [
+    "YES",
+    "NO"
+   ],
+   "limitations": [
+    "A characteristic of the patient or tumor at diagnosis, or a treatment given (yes/no, not response).",
+    "47.7% of primary tumors have no value: shares depend on the denominator.",
+    "Comparisons are descriptive; significance needs a pre-specified test (see associations)."
+   ]
+  },
+  {
+   "field": "clinical.tissue_prospective_collection_indicator",
+   "role": "metadata",
+   "n": 1093,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:tissue_prospective_collection_indicator",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "NO",
+    "YES"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.tissue_retrospective_collection_indicator",
+   "role": "metadata",
+   "n": 1093,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:tissue_retrospective_collection_indicator",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "YES",
+    "NO"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.tissue_source_site",
+   "role": "metadata",
+   "n": 1097,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:tissue_source_site",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "BH",
+    "A2",
+    "E2",
+    "A8",
+    "D8",
+    "AR",
+    "E9",
+    "B6",
+    "C8",
+    "AC",
+    "AO",
+    "EW",
+    "A7",
+    "AN",
+    "OL",
+    "GM",
+    "LL",
+    "A1",
+    "S3",
+    "AQ",
+    "LD",
+    "PL",
+    "3C",
+    "PE",
+    "WT"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.vial_number",
+   "role": "metadata",
+   "n": 932,
+   "population": "primary tumors with an informative value",
+   "granularity": "sample",
+   "id": "share:vial_number",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "A",
+    "B"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "field": "clinical.vital_status",
+   "role": "outcome",
+   "n": 1097,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "share:vital_status",
+   "analysis": [
+    "count",
+    "percentage",
+    "distribution",
+    "rank"
+   ],
+   "values": [
+    "LIVING",
+    "DECEASED"
+   ],
+   "alt_denominator": "all primary tumors",
+   "limitations": [
+    "Something observed after diagnosis (vital status, events, follow-up). Descriptive rates only: the release has no pre-specified survival analysis, and follow-up differs by patient."
+   ]
+  },
+  {
+   "field": "clinical.year_of_initial_pathologic_diagnosis",
+   "role": "metadata",
+   "n": 1095,
+   "population": "primary tumors with an informative value",
+   "granularity": "patient",
+   "id": "numeric:year_of_initial_pathologic_diagnosis",
+   "analysis": [
+    "mean",
+    "median",
+    "range",
+    "quartiles",
+    "share above/below a threshold",
+    "compare by group"
+   ],
+   "summary": {
+    "n": 1095,
+    "min": 1988.0,
+    "q1": 2007.0,
+    "median": 2009.0,
+    "mean": 2007.873,
+    "q3": 2010.0,
+    "max": 2013.0
+   },
+   "limitations": [
+    "Describes how a sample or record was collected or coded, not the patient or tumor. Shares are computable but rarely scientific claims."
+   ]
+  },
+  {
+   "id": "mutation:frequency",
+   "field": "mutation.<gene>",
+   "role": "predictor",
+   "n": 791,
+   "population": "primary tumors with mutation calls",
+   "analysis": [
+    "percentage mutated",
+    "count",
+    "rank genes",
+    "within a subgroup",
+    "co-occurrence of two genes"
+   ],
+   "genes_available": 40543,
+   "examples": [
+    "PIK3CA",
+    "TP53",
+    "TTN",
+    "CDH1",
+    "GATA3",
+    "MUC16",
+    "KMT2C",
+    "MAP3K1",
+    "SYNE1",
+    "PTEN"
+   ],
+   "valid_subgroups": [
+    "clinical.AJCC_Stage_nature2012",
+    "clinical.CN_Clusters_nature2012",
+    "clinical.Converted_Stage_nature2012",
+    "clinical.ER_Status_nature2012",
+    "clinical.HER2_Final_Status_nature2012",
+    "clinical.Integrated_Clusters_no_exp__nature2012",
+    "clinical.Integrated_Clusters_unsup_exp__nature2012",
+    "clinical.Integrated_Clusters_with_PAM50__nature2012",
+    "clinical.Node_Coded_nature2012",
+    "clinical.Node_nature2012",
+    "clinical.PAM50Call_RNAseq",
+    "clinical.PAM50_mRNA_nature2012",
+    "clinical.PR_Status_nature2012",
+    "clinical.RPPA_Clusters_nature2012",
+    "clinical.Tumor_T1_Coded_nature2012",
+    "clinical.Tumor_nature2012",
+    "clinical._PANCAN_CNA_PANCAN_K8",
+    "clinical._PANCAN_Cluster_Cluster_PANCAN",
+    "clinical._PANCAN_DNAMethyl_BRCA",
+    "clinical._PANCAN_DNAMethyl_PANCAN",
+    "clinical._PANCAN_RPPA_PANCAN_K8",
+    "clinical._PANCAN_UNC_RNAseq_PANCAN_K16",
+    "clinical._PANCAN_miRNA_PANCAN",
+    "clinical._PANCAN_mirna_BRCA",
+    "clinical._PANCAN_mutation_PANCAN",
+    "clinical.additional_pharmaceutical_therapy",
+    "clinical.additional_radiation_therapy",
+    "clinical.additional_surgery_locoregional_procedure",
+    "clinical.breast_carcinoma_estrogen_receptor_status",
+    "clinical.breast_carcinoma_immunohistochemistry_pos_cell_score",
+    "clinical.breast_carcinoma_progesterone_receptor_status",
+    "clinical.breast_carcinoma_surgical_procedure_name",
+    "clinical.er_level_cell_percentage_category",
+    "clinical.her2_erbb_pos_finding_cell_percent_category",
+    "clinical.her2_immunohistochemistry_level_result",
+    "clinical.histological_type",
+    "clinical.immunohistochemistry_positive_cell_score",
+    "clinical.lab_proc_her2_neu_immunohistochemistry_receptor_status",
+    "clinical.lab_procedure_her2_neu_in_situ_hybrid_outcome_type",
+    "clinical.margin_status",
+    "clinical.menopause_status",
+    "clinical.methylation_Clusters_nature2012",
+    "clinical.miRNA_Clusters_nature2012",
+    "clinical.number_of_lymphnodes_positive_by_ihc",
+    "clinical.pathologic_M",
+    "clinical.pathologic_N",
+    "clinical.pathologic_T",
+    "clinical.pathologic_stage",
+    "clinical.postoperative_rx_tx",
+    "clinical.progesterone_receptor_level_cell_percent_category",
+    "clinical.radiation_therapy",
+    "clinical.targeted_molecular_therapy"
+   ],
+   "limitations": [
+    "Gene-level calls only (no variant, position or allele frequency).",
+    "A gene absent from the file cannot be checked; 0% means no call among sequenced tumors."
+   ]
+  },
+  {
+   "id": "copy_number:frequency",
+   "field": "copy_number.<gene>",
+   "role": "predictor",
+   "n": 1080,
+   "population": "primary tumors with copy-number calls",
+   "analysis": [
+    "percentage amplified (2)",
+    "percentage deeply deleted (-2)",
+    "gain/loss (+1/-1)",
+    "within a subgroup",
+    "rank genes"
+   ],
+   "examples_amplified": [
+    "PVT1",
+    "MYC",
+    "CASC8",
+    "POU5F1B",
+    "MIR1208",
+    "MIR1205",
+    "TMEM75",
+    "RN7SKP226"
+   ],
+   "valid_subgroups": [
+    "clinical.AJCC_Stage_nature2012",
+    "clinical.CN_Clusters_nature2012",
+    "clinical.Converted_Stage_nature2012",
+    "clinical.ER_Status_nature2012",
+    "clinical.HER2_Final_Status_nature2012",
+    "clinical.Integrated_Clusters_no_exp__nature2012",
+    "clinical.Integrated_Clusters_unsup_exp__nature2012",
+    "clinical.Integrated_Clusters_with_PAM50__nature2012",
+    "clinical.Node_Coded_nature2012",
+    "clinical.Node_nature2012",
+    "clinical.PAM50Call_RNAseq",
+    "clinical.PAM50_mRNA_nature2012",
+    "clinical.PR_Status_nature2012",
+    "clinical.RPPA_Clusters_nature2012",
+    "clinical.Tumor_T1_Coded_nature2012",
+    "clinical.Tumor_nature2012",
+    "clinical._PANCAN_CNA_PANCAN_K8",
+    "clinical._PANCAN_Cluster_Cluster_PANCAN",
+    "clinical._PANCAN_DNAMethyl_BRCA",
+    "clinical._PANCAN_DNAMethyl_PANCAN",
+    "clinical._PANCAN_RPPA_PANCAN_K8",
+    "clinical._PANCAN_UNC_RNAseq_PANCAN_K16",
+    "clinical._PANCAN_miRNA_PANCAN",
+    "clinical._PANCAN_mirna_BRCA",
+    "clinical._PANCAN_mutation_PANCAN",
+    "clinical.additional_pharmaceutical_therapy",
+    "clinical.additional_radiation_therapy",
+    "clinical.additional_surgery_locoregional_procedure",
+    "clinical.breast_carcinoma_estrogen_receptor_status",
+    "clinical.breast_carcinoma_immunohistochemistry_pos_cell_score",
+    "clinical.breast_carcinoma_progesterone_receptor_status",
+    "clinical.breast_carcinoma_surgical_procedure_name",
+    "clinical.er_level_cell_percentage_category",
+    "clinical.her2_erbb_pos_finding_cell_percent_category",
+    "clinical.her2_immunohistochemistry_level_result",
+    "clinical.histological_type",
+    "clinical.immunohistochemistry_positive_cell_score",
+    "clinical.lab_proc_her2_neu_immunohistochemistry_receptor_status",
+    "clinical.lab_procedure_her2_neu_in_situ_hybrid_outcome_type",
+    "clinical.margin_status",
+    "clinical.menopause_status",
+    "clinical.methylation_Clusters_nature2012",
+    "clinical.miRNA_Clusters_nature2012",
+    "clinical.number_of_lymphnodes_positive_by_ihc",
+    "clinical.pathologic_M",
+    "clinical.pathologic_N",
+    "clinical.pathologic_T",
+    "clinical.pathologic_stage",
+    "clinical.postoperative_rx_tx",
+    "clinical.progesterone_receptor_level_cell_percent_category",
+    "clinical.radiation_therapy",
+    "clinical.targeted_molecular_therapy"
+   ],
+   "limitations": [
+    "GISTIC thresholds are estimates; +1/-1 are low-level and noisy.",
+    "Copy number is not expression: amplification does not prove the gene is overexpressed."
+   ]
+  },
+  {
+   "id": "protein:levels",
+   "field": "protein.<name>",
+   "role": "predictor",
+   "n": 742,
+   "population": "primary tumors with RPPA data",
+   "analysis": [
+    "mean/median by group",
+    "compare two groups (higher/lower)",
+    "correlate with another protein"
+   ],
+   "proteins_available": 131,
+   "valid_subgroups": [
+    "clinical.AJCC_Stage_nature2012",
+    "clinical.CN_Clusters_nature2012",
+    "clinical.Converted_Stage_nature2012",
+    "clinical.ER_Status_nature2012",
+    "clinical.HER2_Final_Status_nature2012",
+    "clinical.Integrated_Clusters_no_exp__nature2012",
+    "clinical.Integrated_Clusters_unsup_exp__nature2012",
+    "clinical.Integrated_Clusters_with_PAM50__nature2012",
+    "clinical.Node_Coded_nature2012",
+    "clinical.Node_nature2012",
+    "clinical.PAM50Call_RNAseq",
+    "clinical.PAM50_mRNA_nature2012",
+    "clinical.PR_Status_nature2012",
+    "clinical.RPPA_Clusters_nature2012",
+    "clinical.Tumor_T1_Coded_nature2012",
+    "clinical.Tumor_nature2012",
+    "clinical._PANCAN_CNA_PANCAN_K8",
+    "clinical._PANCAN_Cluster_Cluster_PANCAN",
+    "clinical._PANCAN_DNAMethyl_BRCA",
+    "clinical._PANCAN_DNAMethyl_PANCAN",
+    "clinical._PANCAN_RPPA_PANCAN_K8",
+    "clinical._PANCAN_UNC_RNAseq_PANCAN_K16",
+    "clinical._PANCAN_miRNA_PANCAN",
+    "clinical._PANCAN_mirna_BRCA",
+    "clinical._PANCAN_mutation_PANCAN",
+    "clinical.additional_pharmaceutical_therapy",
+    "clinical.additional_radiation_therapy",
+    "clinical.additional_surgery_locoregional_procedure",
+    "clinical.breast_carcinoma_estrogen_receptor_status",
+    "clinical.breast_carcinoma_immunohistochemistry_pos_cell_score",
+    "clinical.breast_carcinoma_progesterone_receptor_status",
+    "clinical.breast_carcinoma_surgical_procedure_name",
+    "clinical.er_level_cell_percentage_category",
+    "clinical.her2_erbb_pos_finding_cell_percent_category",
+    "clinical.her2_immunohistochemistry_level_result",
+    "clinical.histological_type",
+    "clinical.immunohistochemistry_positive_cell_score",
+    "clinical.lab_proc_her2_neu_immunohistochemistry_receptor_status",
+    "clinical.lab_procedure_her2_neu_in_situ_hybrid_outcome_type",
+    "clinical.margin_status",
+    "clinical.menopause_status",
+    "clinical.methylation_Clusters_nature2012",
+    "clinical.miRNA_Clusters_nature2012",
+    "clinical.number_of_lymphnodes_positive_by_ihc",
+    "clinical.pathologic_M",
+    "clinical.pathologic_N",
+    "clinical.pathologic_T",
+    "clinical.pathologic_stage",
+    "clinical.postoperative_rx_tx",
+    "clinical.progesterone_receptor_level_cell_percent_category",
+    "clinical.radiation_therapy",
+    "clinical.targeted_molecular_therapy"
+   ],
+   "limitations": [
+    "Relative, normalized levels: 'higher in group A than B' is checkable; absolute amounts are not.",
+    "Only 131 antibodies; many proteins are not measured."
+   ]
+  },
+  {
+   "id": "rna:expression",
+   "field": "rna.<gene>",
+   "role": "predictor",
+   "n": 1097,
+   "population": "primary tumors with RNA-seq",
+   "analysis": [
+    "mean/median by group",
+    "compare two groups",
+    "correlate with protein or copy number"
+   ],
+   "genes_available": 20530,
+   "valid_subgroups": [
+    "clinical.AJCC_Stage_nature2012",
+    "clinical.CN_Clusters_nature2012",
+    "clinical.Converted_Stage_nature2012",
+    "clinical.ER_Status_nature2012",
+    "clinical.HER2_Final_Status_nature2012",
+    "clinical.Integrated_Clusters_no_exp__nature2012",
+    "clinical.Integrated_Clusters_unsup_exp__nature2012",
+    "clinical.Integrated_Clusters_with_PAM50__nature2012",
+    "clinical.Node_Coded_nature2012",
+    "clinical.Node_nature2012",
+    "clinical.PAM50Call_RNAseq",
+    "clinical.PAM50_mRNA_nature2012",
+    "clinical.PR_Status_nature2012",
+    "clinical.RPPA_Clusters_nature2012",
+    "clinical.Tumor_T1_Coded_nature2012",
+    "clinical.Tumor_nature2012",
+    "clinical._PANCAN_CNA_PANCAN_K8",
+    "clinical._PANCAN_Cluster_Cluster_PANCAN",
+    "clinical._PANCAN_DNAMethyl_BRCA",
+    "clinical._PANCAN_DNAMethyl_PANCAN",
+    "clinical._PANCAN_RPPA_PANCAN_K8",
+    "clinical._PANCAN_UNC_RNAseq_PANCAN_K16",
+    "clinical._PANCAN_miRNA_PANCAN",
+    "clinical._PANCAN_mirna_BRCA",
+    "clinical._PANCAN_mutation_PANCAN",
+    "clinical.additional_pharmaceutical_therapy",
+    "clinical.additional_radiation_therapy",
+    "clinical.additional_surgery_locoregional_procedure",
+    "clinical.breast_carcinoma_estrogen_receptor_status",
+    "clinical.breast_carcinoma_immunohistochemistry_pos_cell_score",
+    "clinical.breast_carcinoma_progesterone_receptor_status",
+    "clinical.breast_carcinoma_surgical_procedure_name",
+    "clinical.er_level_cell_percentage_category",
+    "clinical.her2_erbb_pos_finding_cell_percent_category",
+    "clinical.her2_immunohistochemistry_level_result",
+    "clinical.histological_type",
+    "clinical.immunohistochemistry_positive_cell_score",
+    "clinical.lab_proc_her2_neu_immunohistochemistry_receptor_status",
+    "clinical.lab_procedure_her2_neu_in_situ_hybrid_outcome_type",
+    "clinical.margin_status",
+    "clinical.menopause_status",
+    "clinical.methylation_Clusters_nature2012",
+    "clinical.miRNA_Clusters_nature2012",
+    "clinical.number_of_lymphnodes_positive_by_ihc",
+    "clinical.pathologic_M",
+    "clinical.pathologic_N",
+    "clinical.pathologic_T",
+    "clinical.pathologic_stage",
+    "clinical.postoperative_rx_tx",
+    "clinical.progesterone_receptor_level_cell_percent_category",
+    "clinical.radiation_therapy",
+    "clinical.targeted_molecular_therapy"
+   ],
+   "limitations": [
+    "Not present in envelope releases.",
+    "Relative expression only."
+   ]
+  },
+  {
+   "id": "survival:descriptive",
+   "field": "survival.{OS,DSS,DFI,PFI}",
+   "role": "outcome",
+   "n": 1097,
+   "population": "primary tumors with survival rows",
+   "analysis": [
+    "event count and percentage",
+    "median follow-up time",
+    "events by group (descriptive)"
+   ],
+   "endpoints": {
+    "OS": {
+     "n_with_status": 1097,
+     "events": 151,
+     "event_pct": 13.8,
+     "median_time_days": 843.0
+    },
+    "DSS": {
+     "n_with_status": 1078,
+     "events": 83,
+     "event_pct": 7.7,
+     "median_time_days": 843.0
+    },
+    "DFI": {
+     "n_with_status": 953,
+     "events": 84,
+     "event_pct": 8.8,
+     "median_time_days": 763.5
+    },
+    "PFI": {
+     "n_with_status": 1097,
+     "events": 145,
+     "event_pct": 13.2,
+     "median_time_days": 773.0
+    }
+   },
+   "limitations": [
+    "Follow-up length varies: raw event percentages are not survival probabilities.",
+    "No hazard ratios, Kaplan-Meier comparisons or significance without a pre-specified analysis; treatment effects cannot be inferred.",
+    "6 rows are marked Redacted."
+   ]
+  },
+  {
+   "id": "coverage:layers",
+   "field": "membership",
+   "role": "metadata",
+   "n": 1101,
+   "population": "primary tumors",
+   "analysis": [
+    "count with each layer",
+    "overlap of layers",
+    "count with all layers"
+   ],
+   "values": {
+    "clinical": 1101,
+    "survival": 1097,
+    "mutation": 791,
+    "copy_number": 1080,
+    "rna": 1097,
+    "protein": 742
+   },
+   "limitations": [
+    "Release A uses sample_manifest.csv; other releases use their own files."
+   ]
+  },
+  {
+   "id": "slides:manifest",
+   "field": "slide_manifest.*",
+   "role": "metadata",
+   "n": 3111,
+   "population": "slides",
+   "analysis": [
+    "count by kind",
+    "slides per sample/patient",
+    "size",
+    "magnification"
+   ],
+   "limitations": [
+    "Slides are images only: no image-derived measurements are in the release."
+   ]
+  }
+ ],
+ "groupings": [
+  {
+   "field": "clinical.AJCC_Stage_nature2012",
+   "role": "annotation",
+   "groups": {
+    "Stage IIA": 249,
+    "Stage IIB": 157,
+    "Stage IIIA": 102,
+    "Stage IA": 64,
+    "Stage I": 58,
+    "Stage II": 40,
+    "Stage IIIC": 32,
+    "Stage IIIB": 23
+   }
+  },
+  {
+   "field": "clinical.CN_Clusters_nature2012",
+   "role": "annotation",
+   "groups": {
+    "2": 212,
+    "1": 170,
+    "3": 167,
+    "4": 118,
+    "5": 106
+   }
+  },
+  {
+   "field": "clinical.Converted_Stage_nature2012",
+   "role": "annotation",
+   "groups": {
+    "Stage IIA": 243,
+    "No_Conversion": 178,
+    "Stage I": 124,
+    "Stage IIB": 115,
+    "Stage IIIA": 85,
+    "Stage IIIC": 31
+   }
+  },
+  {
+   "field": "clinical.ER_Status_nature2012",
+   "role": "annotation",
+   "groups": {
+    "Positive": 601,
+    "Negative": 179
+   }
+  },
+  {
+   "field": "clinical.HER2_Final_Status_nature2012",
+   "role": "annotation",
+   "groups": {
+    "Negative": 652,
+    "Positive": 114
+   }
+  },
+  {
+   "field": "clinical.Integrated_Clusters_no_exp__nature2012",
+   "role": "annotation",
+   "groups": {
+    "3": 122,
+    "1": 115,
+    "2": 82,
+    "4": 26
+   }
+  },
+  {
+   "field": "clinical.Integrated_Clusters_unsup_exp__nature2012",
+   "role": "annotation",
+   "groups": {
+    "3": 139,
+    "2": 89,
+    "4": 60,
+    "1": 54
+   }
+  },
+  {
+   "field": "clinical.Integrated_Clusters_with_PAM50__nature2012",
+   "role": "annotation",
+   "groups": {
+    "3": 161,
+    "4": 76,
+    "2": 72,
+    "1": 39
+   }
+  },
+  {
+   "field": "clinical.Node_Coded_nature2012",
+   "role": "annotation",
+   "groups": {
+    "Positive": 406,
+    "Negative": 385
+   }
+  },
+  {
+   "field": "clinical.Node_nature2012",
+   "role": "annotation",
+   "groups": {
+    "N0": 385,
+    "N1": 264,
+    "N2": 99,
+    "N3": 43
+   }
+  },
+  {
+   "field": "clinical.OS_event_nature2012",
+   "role": "outcome",
+   "groups": {
+    "0": 725,
+    "1": 93
+   }
+  },
+  {
+   "field": "clinical.PAM50Call_RNAseq",
+   "role": "annotation",
+   "groups": {
+    "LumA": 401,
+    "Basal": 181,
+    "LumB": 176,
+    "Her2": 63,
+    "Normal": 23
+   }
+  },
+  {
+   "field": "clinical.PAM50_mRNA_nature2012",
+   "role": "annotation",
+   "groups": {
+    "Luminal A": 231,
+    "Luminal B": 127,
+    "Basal-like": 98,
+    "HER2-enriched": 58
+   }
+  },
+  {
+   "field": "clinical.PR_Status_nature2012",
+   "role": "annotation",
+   "groups": {
+    "Positive": 522,
+    "Negative": 255
+   }
+  },
+  {
+   "field": "clinical.RPPA_Clusters_nature2012",
+   "role": "annotation",
+   "groups": {
+    "Basal": 87,
+    "LumA/B": 81,
+    "ReacI": 68,
+    "LumA": 55,
+    "Her2": 51,
+    "ReacII": 48
+   }
+  },
+  {
+   "field": "clinical.Survival_Data_Form_nature2012",
+   "role": "outcome",
+   "groups": {
+    "enrollment": 584,
+    "followup": 234
+   }
+  },
+  {
+   "field": "clinical.Tumor_T1_Coded_nature2012",
+   "role": "annotation",
+   "groups": {
+    "T_Other": 578,
+    "T1": 210
+   }
+  },
+  {
+   "field": "clinical.Tumor_nature2012",
+   "role": "annotation",
+   "groups": {
+    "T2": 469,
+    "T1": 210,
+    "T3": 79,
+    "T4": 30
+   }
+  },
+  {
+   "field": "clinical.Vital_Status_nature2012",
+   "role": "outcome",
+   "groups": {
+    "LIVING": 725,
+    "DECEASED": 93
+   }
+  },
+  {
+   "field": "clinical._PANCAN_CNA_PANCAN_K8",
+   "role": "annotation",
+   "groups": {
+    "High": 321,
+    "BRCA-LUAD+": 168,
+    "Iq": 146,
+    "Kirc+": 103,
+    "Squamous": 102,
+    "Quiet": 24
+   }
+  },
+  {
+   "field": "clinical._PANCAN_Cluster_Cluster_PANCAN",
+   "role": "annotation",
+   "groups": {
+    "C3-BRCA/Luminal": 688,
+    "C4-BRCA/Basal": 135
+   }
+  },
+  {
+   "field": "clinical._PANCAN_DNAMethyl_BRCA",
+   "role": "annotation",
+   "groups": {
+    "cluster 4": 243,
+    "cluster 2": 172,
+    "cluster 5": 146,
+    "cluster 1": 137,
+    "cluster 3": 101
+   }
+  },
+  {
+   "field": "clinical._PANCAN_DNAMethyl_PANCAN",
+   "role": "annotation",
+   "groups": {
+    "BRCA non-CIMP c9": 359,
+    "BRCA CIMP c7": 341,
+    "BRCA basal-like c8": 113,
+    "Low purity c2": 40,
+    "Cluster 5": 29
+   }
+  },
+  {
+   "field": "clinical._PANCAN_RPPA_PANCAN_K8",
+   "role": "annotation",
+   "groups": {
+    "BRCA nonbasal-like c8": 489,
+    "BRCA basal-like c6": 181,
+    "KIRC-like c1": 63
+   }
+  },
+  {
+   "field": "clinical._PANCAN_UNC_RNAseq_PANCAN_K16",
+   "role": "annotation",
+   "groups": {
+    "BRCA nonbasal-like c7": 700,
+    "BRCA basal-like c8": 136
+   }
+  },
+  {
+   "field": "clinical._PANCAN_miRNA_PANCAN",
+   "role": "annotation",
+   "groups": {
+    "miRNA cluster 4": 314,
+    "miRNA cluster 14": 130,
+    "miRNA cluster 12": 84,
+    "miRNA cluster 6": 78,
+    "miRNA cluster 7": 76,
+    "miRNA cluster 13": 47,
+    "miRNA c1uster 10": 34,
+    "miRNA cluster 5": 32,
+    "miRNA c1uster 9": 27,
+    "miRNA cluster 3": 23
+   }
+  },
+  {
+   "field": "clinical._PANCAN_mirna_BRCA",
+   "role": "annotation",
+   "groups": {
+    "cluster 4": 219,
+    "cluster 6": 123,
+    "cluster 5": 100,
+    "cluster 2": 92,
+    "cluster 3": 58,
+    "cluster 7": 54,
+    "cluster 1": 48
+   }
+  },
+  {
+   "field": "clinical._PANCAN_mutation_PANCAN",
+   "role": "annotation",
+   "groups": {
+    "mutation c1uster 9": 263,
+    "mutation cluster 4": 209,
+    "mutation cluster 5": 151,
+    "mutation cluster 3": 57
+   }
+  },
+  {
+   "field": "clinical.additional_pharmaceutical_therapy",
+   "role": "predictor",
+   "groups": {
+    "YES": 53,
+    "NO": 32
+   }
+  },
+  {
+   "field": "clinical.additional_radiation_therapy",
+   "role": "predictor",
+   "groups": {
+    "NO": 55,
+    "YES": 29
+   }
+  },
+  {
+   "field": "clinical.additional_surgery_locoregional_procedure",
+   "role": "predictor",
+   "groups": {
+    "NO": 38,
+    "YES": 20
+   }
+  },
+  {
+   "field": "clinical.anatomic_neoplasm_subdivision",
+   "role": "metadata",
+   "groups": {
+    "Left Upper Outer Quadrant": 191,
+    "Left": 170,
+    "Right Upper Outer Quadrant": 158,
+    "Right": 153,
+    "Left Upper Inner Quadrant": 52,
+    "Right Upper Inner Quadrant": 49,
+    "Right Lower Outer Quadrant": 45,
+    "Left Lower Outer Quadrant": 35,
+    "Left Upper Outer Quadrant|Left": 28,
+    "Right Upper Outer Quadrant|Right": 26,
+    "Left Lower Inner Quadrant": 20,
+    "Right Lower Inner Quadrant": 20
+   }
+  },
+  {
+   "field": "clinical.axillary_lymph_node_stage_method_type",
+   "role": "metadata",
+   "groups": {
+    "Axillary lymph node dissection alone": 320,
+    "Sentinel node biopsy alone": 265,
+    "Sentinel lymph node biopsy plus axillary dissection": 239,
+    "No axillary staging": 37,
+    "Other (specify)": 20
+   }
+  },
+  {
+   "field": "clinical.breast_carcinoma_estrogen_receptor_status",
+   "role": "predictor",
+   "groups": {
+    "Positive": 748,
+    "Negative": 298
+   }
+  },
+  {
+   "field": "clinical.breast_carcinoma_immunohistochemistry_pos_cell_score",
+   "role": "predictor",
+   "groups": {
+    "3+": 87,
+    "2+": 44,
+    "1+": 35,
+    "0": 33
+   }
+  },
+  {
+   "field": "clinical.breast_carcinoma_progesterone_receptor_status",
+   "role": "predictor",
+   "groups": {
+    "Positive": 699,
+    "Negative": 344
+   }
+  },
+  {
+   "field": "clinical.breast_carcinoma_surgical_procedure_name",
+   "role": "predictor",
+   "groups": {
+    "Modified Radical Mastectomy": 322,
+    "Other": 272,
+    "Lumpectomy": 247,
+    "Simple Mastectomy": 200
+   }
+  },
+  {
+   "field": "clinical.cytokeratin_immunohistochemistry_staining_method_mcrmtstss_ndctr",
+   "role": "metadata",
+   "groups": {
+    "NO": 467,
+    "YES": 263
+   }
+  },
+  {
+   "field": "clinical.er_level_cell_percentage_category",
+   "role": "predictor",
+   "groups": {
+    "90-99%": 245,
+    "<10%": 71,
+    "70-79%": 49,
+    "80-89%": 31,
+    "10-19%": 24
+   }
+  },
+  {
+   "field": "clinical.her2_erbb_pos_finding_cell_percent_category",
+   "role": "predictor",
+   "groups": {
+    "<10%": 122,
+    "10-19%": 26
+   }
+  },
+  {
+   "field": "clinical.her2_immunohistochemistry_level_result",
+   "role": "predictor",
+   "groups": {
+    "1+": 270,
+    "2+": 199,
+    "3+": 90,
+    "0": 63
+   }
+  },
+  {
+   "field": "clinical.histological_type",
+   "role": "predictor",
+   "groups": {
+    "Infiltrating Ductal Carcinoma": 784,
+    "Infiltrating Lobular Carcinoma": 203,
+    "Other, specify": 46,
+    "Mixed Histology (please specify)": 30
+   }
+  },
+  {
+   "field": "clinical.icd_o_3_histology",
+   "role": "metadata",
+   "groups": {
+    "8500/3": 778,
+    "8520/3": 201,
+    "8522/3": 28
+   }
+  },
+  {
+   "field": "clinical.immunohistochemistry_positive_cell_score",
+   "role": "predictor",
+   "groups": {
+    "3+": 121,
+    "2+": 38,
+    "4+": 22
+   }
+  },
+  {
+   "field": "clinical.initial_pathologic_diagnosis_method",
+   "role": "metadata",
+   "groups": {
+    "Core needle biopsy": 605,
+    "Tumor resection": 164,
+    "Fine needle aspiration biopsy": 97,
+    "Other method, specify:": 66,
+    "Excisional Biopsy": 29,
+    "Cytology (e.g. Peritoneal or pleural fluid)": 22
+   }
+  },
+  {
+   "field": "clinical.lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "role": "predictor",
+   "groups": {
+    "Negative": 564,
+    "Equivocal": 179,
+    "Positive": 164
+   }
+  },
+  {
+   "field": "clinical.lab_procedure_her2_neu_in_situ_hybrid_outcome_type",
+   "role": "predictor",
+   "groups": {
+    "Negative": 333,
+    "Positive": 78
+   }
+  },
+  {
+   "field": "clinical.lost_follow_up",
+   "role": "outcome",
+   "groups": {
+    "NO": 549,
+    "YES": 64
+   }
+  },
+  {
+   "field": "clinical.margin_status",
+   "role": "predictor",
+   "groups": {
+    "Negative": 919,
+    "Positive": 79,
+    "Close": 31
+   }
+  },
+  {
+   "field": "clinical.menopause_status",
+   "role": "predictor",
+   "groups": {
+    "Post (prior bilateral ovariectomy OR >12 mo since LMP with no prior hysterectomy)": 705,
+    "Pre (<6 months since LMP AND no prior bilateral ovariectomy AND not on estrogen replacement)": 229,
+    "Peri (6-12 months since last menstrual period)": 39
+   }
+  },
+  {
+   "field": "clinical.methylation_Clusters_nature2012",
+   "role": "annotation",
+   "groups": {
+    "4": 243,
+    "2": 172,
+    "5": 146,
+    "1": 137,
+    "3": 101
+   }
+  },
+  {
+   "field": "clinical.miRNA_Clusters_nature2012",
+   "role": "annotation",
+   "groups": {
+    "4": 219,
+    "6": 123,
+    "5": 100,
+    "2": 92,
+    "3": 58,
+    "7": 54,
+    "1": 48
+   }
+  },
+  {
+   "field": "clinical.new_neoplasm_event_occurrence_anatomic_site",
+   "role": "outcome",
+   "groups": {
+    "Other, specify": 37,
+    "Bone": 32
+   }
+  },
+  {
+   "field": "clinical.new_tumor_event_after_initial_treatment",
+   "role": "outcome",
+   "groups": {
+    "NO": 816,
+    "YES": 100
+   }
+  },
+  {
+   "field": "clinical.number_of_lymphnodes_positive_by_ihc",
+   "role": "predictor",
+   "groups": {
+    "0": 284,
+    "1": 45
+   }
+  },
+  {
+   "field": "clinical.oct_embedded",
+   "role": "metadata",
+   "groups": {
+    "true": 578,
+    "false": 354
+   }
+  },
+  {
+   "field": "clinical.other_dx",
+   "role": "metadata",
+   "groups": {
+    "No": 1028,
+    "Yes": 68
+   }
+  },
+  {
+   "field": "clinical.pathologic_M",
+   "role": "predictor",
+   "groups": {
+    "M0": 906,
+    "M1": 22
+   }
+  },
+  {
+   "field": "clinical.pathologic_N",
+   "role": "predictor",
+   "groups": {
+    "N0": 333,
+    "N1a": 167,
+    "N0 (i-)": 154,
+    "N1": 126,
+    "N2a": 64,
+    "N2": 56,
+    "N3a": 47,
+    "N1mi": 37,
+    "N1b": 32,
+    "N0 (i+)": 28,
+    "N3": 26
+   }
+  },
+  {
+   "field": "clinical.pathologic_T",
+   "role": "predictor",
+   "groups": {
+    "T2": 633,
+    "T1c": 223,
+    "T3": 137,
+    "T1": 41,
+    "T4b": 28
+   }
+  },
+  {
+   "field": "clinical.pathologic_stage",
+   "role": "predictor",
+   "groups": {
+    "Stage IIA": 358,
+    "Stage IIB": 258,
+    "Stage IIIA": 156,
+    "Stage I": 90,
+    "Stage IA": 86,
+    "Stage IIIC": 65,
+    "Stage IIIB": 27,
+    "Stage IV": 20
+   }
+  },
+  {
+   "field": "clinical.person_neoplasm_cancer_status",
+   "role": "outcome",
+   "groups": {
+    "TUMOR FREE": 935,
+    "WITH TUMOR": 126
+   }
+  },
+  {
+   "field": "clinical.postoperative_rx_tx",
+   "role": "predictor",
+   "groups": {
+    "YES": 480,
+    "NO": 121
+   }
+  },
+  {
+   "field": "clinical.primary_lymph_node_presentation_assessment",
+   "role": "metadata",
+   "groups": {
+    "YES": 692,
+    "NO": 28
+   }
+  },
+  {
+   "field": "clinical.progesterone_receptor_level_cell_percent_category",
+   "role": "predictor",
+   "groups": {
+    "<10%": 138,
+    "90-99%": 105,
+    "70-79%": 41,
+    "10-19%": 30,
+    "80-89%": 30,
+    "40-49%": 21
+   }
+  },
+  {
+   "field": "clinical.radiation_therapy",
+   "role": "predictor",
+   "groups": {
+    "YES": 554,
+    "NO": 446
+   }
+  },
+  {
+   "field": "clinical.system_version",
+   "role": "metadata",
+   "groups": {
+    "6th": 445,
+    "7th": 417,
+    "5th": 57,
+    "4th": 29
+   }
+  },
+  {
+   "field": "clinical.targeted_molecular_therapy",
+   "role": "predictor",
+   "groups": {
+    "YES": 530,
+    "NO": 46
+   }
+  },
+  {
+   "field": "clinical.tissue_prospective_collection_indicator",
+   "role": "metadata",
+   "groups": {
+    "NO": 731,
+    "YES": 362
+   }
+  },
+  {
+   "field": "clinical.tissue_retrospective_collection_indicator",
+   "role": "metadata",
+   "groups": {
+    "YES": 731,
+    "NO": 362
+   }
+  },
+  {
+   "field": "clinical.tissue_source_site",
+   "role": "metadata",
+   "groups": {
+    "BH": 150,
+    "A2": 102,
+    "E2": 90,
+    "A8": 84,
+    "D8": 78,
+    "AR": 70,
+    "E9": 62,
+    "B6": 58,
+    "C8": 49,
+    "AC": 48,
+    "AO": 47,
+    "EW": 43,
+    "A7": 42,
+    "AN": 39,
+    "OL": 23,
+    "GM": 21
+   }
+  },
+  {
+   "field": "clinical.vital_status",
+   "role": "outcome",
+   "groups": {
+    "LIVING": 945,
+    "DECEASED": 152
+   }
+  }
+ ],
+ "associations": [
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "breast_carcinoma_estrogen_receptor_status",
+   "test": "chi-square",
+   "statistic": 358.693,
+   "df": 4,
+   "p": 2.33e-76,
+   "n": 803,
+   "min_expected": 6.14,
+   "valid": true,
+   "bonferroni_p": 3.98e-74,
+   "significant_after_correction": true
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "breast_carcinoma_progesterone_receptor_status",
+   "test": "chi-square",
+   "statistic": 324.232,
+   "df": 4,
+   "p": 6.4e-69,
+   "n": 800,
+   "min_expected": 7.18,
+   "valid": true,
+   "bonferroni_p": 1.09e-66,
+   "significant_after_correction": true
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "test": "chi-square",
+   "statistic": 121.018,
+   "df": 8,
+   "p": 2.04e-22,
+   "n": 706,
+   "min_expected": 3.53,
+   "valid": true,
+   "bonferroni_p": 3.49e-20,
+   "significant_after_correction": true
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "histological_type",
+   "test": "chi-square",
+   "statistic": 54.421,
+   "df": 12,
+   "p": 2.3e-07,
+   "n": 826,
+   "min_expected": 0.7,
+   "valid": false,
+   "bonferroni_p": 3.93e-05,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "pathologic_stage",
+   "test": "chi-square",
+   "statistic": 30.79,
+   "df": 12,
+   "p": 0.00212,
+   "n": 821,
+   "min_expected": 0.39,
+   "valid": false,
+   "bonferroni_p": 0.363,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "pathologic_N",
+   "test": "chi-square",
+   "statistic": 20.176,
+   "df": 12,
+   "p": 0.0638,
+   "n": 827,
+   "min_expected": 1.36,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "menopause_status",
+   "test": "chi-square",
+   "statistic": 2.865,
+   "df": 8,
+   "p": 0.943,
+   "n": 758,
+   "min_expected": 0.79,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "margin_status",
+   "test": "chi-square",
+   "statistic": 9.322,
+   "df": 8,
+   "p": 0.316,
+   "n": 790,
+   "min_expected": 0.61,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "radiation_therapy",
+   "test": "chi-square",
+   "statistic": 3.769,
+   "df": 4,
+   "p": 0.438,
+   "n": 757,
+   "min_expected": 8.48,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "PIK3CA_mutated",
+   "test": "chi-square",
+   "statistic": 52.048,
+   "df": 4,
+   "p": 1.35e-10,
+   "n": 592,
+   "min_expected": 7.03,
+   "valid": true,
+   "bonferroni_p": 2.31e-08,
+   "significant_after_correction": true
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "TP53_mutated",
+   "test": "chi-square",
+   "statistic": 187.066,
+   "df": 4,
+   "p": 2.26e-39,
+   "n": 592,
+   "min_expected": 6.58,
+   "valid": true,
+   "bonferroni_p": 3.86e-37,
+   "significant_after_correction": true
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "TTN_mutated",
+   "test": "chi-square",
+   "statistic": 9.509,
+   "df": 4,
+   "p": 0.0496,
+   "n": 592,
+   "min_expected": 3.4,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 17.207,
+   "df": 4,
+   "p": 0.00176,
+   "n": 592,
+   "min_expected": 1.73,
+   "valid": true,
+   "bonferroni_p": 0.301,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 35.172,
+   "df": 4,
+   "p": 4.28e-07,
+   "n": 592,
+   "min_expected": 2.21,
+   "valid": true,
+   "bonferroni_p": 7.32e-05,
+   "significant_after_correction": true
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 1.743,
+   "df": 4,
+   "p": 0.783,
+   "n": 592,
+   "min_expected": 2.09,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 6.288,
+   "df": 4,
+   "p": 0.179,
+   "n": 592,
+   "min_expected": 1.89,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 16.971,
+   "df": 4,
+   "p": 0.00196,
+   "n": 592,
+   "min_expected": 1.64,
+   "valid": true,
+   "bonferroni_p": 0.335,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PAM50Call_RNAseq",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "LumA",
+    "Basal"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 40521.0,
+   "z": 2.422,
+   "p": 0.0154,
+   "n": 580,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "breast_carcinoma_progesterone_receptor_status",
+   "test": "chi-square",
+   "statistic": 374.968,
+   "df": 1,
+   "p": 1.55e-83,
+   "n": 1041,
+   "min_expected": 97.53,
+   "valid": true,
+   "bonferroni_p": 2.65e-81,
+   "significant_after_correction": true
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "test": "chi-square",
+   "statistic": 2.264,
+   "df": 2,
+   "p": 0.322,
+   "n": 905,
+   "min_expected": 45.21,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "histological_type",
+   "test": "chi-square",
+   "statistic": 35.685,
+   "df": 4,
+   "p": 3.36e-07,
+   "n": 1031,
+   "min_expected": 4.44,
+   "valid": true,
+   "bonferroni_p": 5.75e-05,
+   "significant_after_correction": true
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "pathologic_stage",
+   "test": "chi-square",
+   "statistic": 4.889,
+   "df": 3,
+   "p": 0.18,
+   "n": 1025,
+   "min_expected": 5.13,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "pathologic_N",
+   "test": "chi-square",
+   "statistic": 7.542,
+   "df": 3,
+   "p": 0.0565,
+   "n": 1028,
+   "min_expected": 21.6,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "menopause_status",
+   "test": "chi-square",
+   "statistic": 0.621,
+   "df": 2,
+   "p": 0.733,
+   "n": 928,
+   "min_expected": 10.24,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "margin_status",
+   "test": "chi-square",
+   "statistic": 4.084,
+   "df": 2,
+   "p": 0.13,
+   "n": 989,
+   "min_expected": 8.9,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "radiation_therapy",
+   "test": "chi-square",
+   "statistic": 1.113,
+   "df": 1,
+   "p": 0.291,
+   "n": 955,
+   "min_expected": 119.71,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "PIK3CA_mutated",
+   "test": "chi-square",
+   "statistic": 37.333,
+   "df": 1,
+   "p": 9.96e-10,
+   "n": 746,
+   "min_expected": 79.62,
+   "valid": true,
+   "bonferroni_p": 1.7e-07,
+   "significant_after_correction": true
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "TP53_mutated",
+   "test": "chi-square",
+   "statistic": 140.858,
+   "df": 1,
+   "p": 1.73e-32,
+   "n": 746,
+   "min_expected": 75.7,
+   "valid": true,
+   "bonferroni_p": 2.96e-30,
+   "significant_after_correction": true
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "TTN_mutated",
+   "test": "chi-square",
+   "statistic": 0.555,
+   "df": 1,
+   "p": 0.456,
+   "n": 746,
+   "min_expected": 40.42,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 15.152,
+   "df": 1,
+   "p": 9.92e-05,
+   "n": 746,
+   "min_expected": 30.76,
+   "valid": true,
+   "bonferroni_p": 0.017,
+   "significant_after_correction": true
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 24.805,
+   "df": 1,
+   "p": 6.34e-07,
+   "n": 746,
+   "min_expected": 25.94,
+   "valid": true,
+   "bonferroni_p": 0.000108,
+   "significant_after_correction": true
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 0.257,
+   "df": 1,
+   "p": 0.612,
+   "n": 746,
+   "min_expected": 22.92,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 2.844,
+   "df": 1,
+   "p": 0.0917,
+   "n": 746,
+   "min_expected": 22.32,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 6.259,
+   "df": 1,
+   "p": 0.0124,
+   "n": 746,
+   "min_expected": 19.91,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_estrogen_receptor_status",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "Positive",
+    "Negative"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 122908.0,
+   "z": 2.598,
+   "p": 0.00936,
+   "n": 1046,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "test": "chi-square",
+   "statistic": 2.615,
+   "df": 2,
+   "p": 0.27,
+   "n": 902,
+   "min_expected": 53.45,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "histological_type",
+   "test": "chi-square",
+   "statistic": 48.031,
+   "df": 4,
+   "p": 9.3e-10,
+   "n": 1028,
+   "min_expected": 5.17,
+   "valid": true,
+   "bonferroni_p": 1.59e-07,
+   "significant_after_correction": true
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "pathologic_stage",
+   "test": "chi-square",
+   "statistic": 3.89,
+   "df": 3,
+   "p": 0.274,
+   "n": 1022,
+   "min_expected": 6.28,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "pathologic_N",
+   "test": "chi-square",
+   "statistic": 4.427,
+   "df": 3,
+   "p": 0.219,
+   "n": 1024,
+   "min_expected": 24.83,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "menopause_status",
+   "test": "chi-square",
+   "statistic": 0.708,
+   "df": 2,
+   "p": 0.702,
+   "n": 924,
+   "min_expected": 11.84,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "margin_status",
+   "test": "chi-square",
+   "statistic": 1.33,
+   "df": 2,
+   "p": 0.514,
+   "n": 986,
+   "min_expected": 10.47,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "radiation_therapy",
+   "test": "chi-square",
+   "statistic": 0.098,
+   "df": 1,
+   "p": 0.754,
+   "n": 952,
+   "min_expected": 138.75,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "PIK3CA_mutated",
+   "test": "chi-square",
+   "statistic": 58.066,
+   "df": 1,
+   "p": 2.53e-14,
+   "n": 745,
+   "min_expected": 87.88,
+   "valid": true,
+   "bonferroni_p": 4.33e-12,
+   "significant_after_correction": true
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "TP53_mutated",
+   "test": "chi-square",
+   "statistic": 141.25,
+   "df": 1,
+   "p": 1.42e-32,
+   "n": 745,
+   "min_expected": 82.89,
+   "valid": true,
+   "bonferroni_p": 2.43e-30,
+   "significant_after_correction": true
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "TTN_mutated",
+   "test": "chi-square",
+   "statistic": 2.887,
+   "df": 1,
+   "p": 0.0893,
+   "n": 745,
+   "min_expected": 44.61,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 18.377,
+   "df": 1,
+   "p": 1.81e-05,
+   "n": 745,
+   "min_expected": 33.95,
+   "valid": true,
+   "bonferroni_p": 0.0031,
+   "significant_after_correction": true
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 18.395,
+   "df": 1,
+   "p": 1.8e-05,
+   "n": 745,
+   "min_expected": 28.63,
+   "valid": true,
+   "bonferroni_p": 0.00308,
+   "significant_after_correction": true
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 0.111,
+   "df": 1,
+   "p": 0.739,
+   "n": 745,
+   "min_expected": 25.3,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 5.568,
+   "df": 1,
+   "p": 0.0183,
+   "n": 745,
+   "min_expected": 23.97,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 7.442,
+   "df": 1,
+   "p": 0.00637,
+   "n": 745,
+   "min_expected": 21.97,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "breast_carcinoma_progesterone_receptor_status",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "Positive",
+    "Negative"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 130088.0,
+   "z": 2.156,
+   "p": 0.0311,
+   "n": 1043,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "histological_type",
+   "test": "chi-square",
+   "statistic": 9.09,
+   "df": 8,
+   "p": 0.335,
+   "n": 893,
+   "min_expected": 2.74,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "pathologic_stage",
+   "test": "chi-square",
+   "statistic": 9.681,
+   "df": 6,
+   "p": 0.139,
+   "n": 894,
+   "min_expected": 2.54,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "pathologic_N",
+   "test": "chi-square",
+   "statistic": 7.98,
+   "df": 6,
+   "p": 0.24,
+   "n": 894,
+   "min_expected": 10.99,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "menopause_status",
+   "test": "chi-square",
+   "statistic": 1.529,
+   "df": 4,
+   "p": 0.821,
+   "n": 835,
+   "min_expected": 6.07,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "margin_status",
+   "test": "chi-square",
+   "statistic": 4.39,
+   "df": 4,
+   "p": 0.356,
+   "n": 865,
+   "min_expected": 4.78,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "radiation_therapy",
+   "test": "chi-square",
+   "statistic": 5.242,
+   "df": 2,
+   "p": 0.0727,
+   "n": 826,
+   "min_expected": 63.88,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "PIK3CA_mutated",
+   "test": "chi-square",
+   "statistic": 0.615,
+   "df": 2,
+   "p": 0.735,
+   "n": 636,
+   "min_expected": 34.67,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "TP53_mutated",
+   "test": "chi-square",
+   "statistic": 2.852,
+   "df": 2,
+   "p": 0.24,
+   "n": 636,
+   "min_expected": 34.67,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "TTN_mutated",
+   "test": "chi-square",
+   "statistic": 3.557,
+   "df": 2,
+   "p": 0.169,
+   "n": 636,
+   "min_expected": 17.57,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 1.093,
+   "df": 2,
+   "p": 0.579,
+   "n": 636,
+   "min_expected": 13.1,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 1.675,
+   "df": 2,
+   "p": 0.433,
+   "n": 636,
+   "min_expected": 10.48,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 1.176,
+   "df": 2,
+   "p": 0.555,
+   "n": 636,
+   "min_expected": 9.86,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 0.387,
+   "df": 2,
+   "p": 0.824,
+   "n": 636,
+   "min_expected": 9.55,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 3.368,
+   "df": 2,
+   "p": 0.186,
+   "n": 636,
+   "min_expected": 9.09,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "lab_proc_her2_neu_immunohistochemistry_receptor_status",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "Negative",
+    "Equivocal"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 50803.0,
+   "z": 0.13,
+   "p": 0.897,
+   "n": 743,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "pathologic_stage",
+   "test": "chi-square",
+   "statistic": 23.294,
+   "df": 12,
+   "p": 0.0253,
+   "n": 1058,
+   "min_expected": 0.32,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "pathologic_N",
+   "test": "chi-square",
+   "statistic": 42.104,
+   "df": 12,
+   "p": 3.2e-05,
+   "n": 1060,
+   "min_expected": 1.23,
+   "valid": false,
+   "bonferroni_p": 0.00547,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "menopause_status",
+   "test": "chi-square",
+   "statistic": 11.699,
+   "df": 8,
+   "p": 0.165,
+   "n": 958,
+   "min_expected": 0.67,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "margin_status",
+   "test": "chi-square",
+   "statistic": 11.816,
+   "df": 8,
+   "p": 0.16,
+   "n": 1015,
+   "min_expected": 0.52,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "radiation_therapy",
+   "test": "chi-square",
+   "statistic": 4.481,
+   "df": 4,
+   "p": 0.345,
+   "n": 987,
+   "min_expected": 6.66,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "PIK3CA_mutated",
+   "test": "chi-square",
+   "statistic": 13.5,
+   "df": 4,
+   "p": 0.00907,
+   "n": 776,
+   "min_expected": 4.69,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "TP53_mutated",
+   "test": "chi-square",
+   "statistic": 68.959,
+   "df": 4,
+   "p": 3.76e-14,
+   "n": 776,
+   "min_expected": 4.2,
+   "valid": true,
+   "bonferroni_p": 6.43e-12,
+   "significant_after_correction": true
+  },
+  {
+   "a": "histological_type",
+   "b": "TTN_mutated",
+   "test": "chi-square",
+   "statistic": 7.393,
+   "df": 4,
+   "p": 0.117,
+   "n": 776,
+   "min_expected": 2.3,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 319.556,
+   "df": 4,
+   "p": 6.54e-68,
+   "n": 776,
+   "min_expected": 1.71,
+   "valid": false,
+   "bonferroni_p": 1.12e-65,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 4.564,
+   "df": 4,
+   "p": 0.335,
+   "n": 776,
+   "min_expected": 1.54,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 4.686,
+   "df": 4,
+   "p": 0.321,
+   "n": 776,
+   "min_expected": 1.31,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 2.687,
+   "df": 4,
+   "p": 0.611,
+   "n": 776,
+   "min_expected": 1.29,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 2.114,
+   "df": 4,
+   "p": 0.715,
+   "n": 776,
+   "min_expected": 1.12,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "histological_type",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "Infiltrating Ductal Carcinoma",
+    "Infiltrating Lobular Carcinoma"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 65879.5,
+   "z": -3.785,
+   "p": 0.000154,
+   "n": 987,
+   "valid": true,
+   "bonferroni_p": 0.0263,
+   "significant_after_correction": true
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "pathologic_N",
+   "test": "chi-square",
+   "statistic": 870.007,
+   "df": 9,
+   "p": 1.79e-181,
+   "n": 1064,
+   "min_expected": 1.18,
+   "valid": true,
+   "bonferroni_p": 3.06e-179,
+   "significant_after_correction": true
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "menopause_status",
+   "test": "chi-square",
+   "statistic": 4.692,
+   "df": 6,
+   "p": 0.584,
+   "n": 960,
+   "min_expected": 0.57,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "margin_status",
+   "test": "chi-square",
+   "statistic": 68.971,
+   "df": 6,
+   "p": 6.65e-13,
+   "n": 1013,
+   "min_expected": 0.52,
+   "valid": false,
+   "bonferroni_p": 1.14e-10,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "radiation_therapy",
+   "test": "chi-square",
+   "statistic": 28.592,
+   "df": 3,
+   "p": 2.73e-06,
+   "n": 981,
+   "min_expected": 8.0,
+   "valid": true,
+   "bonferroni_p": 0.000467,
+   "significant_after_correction": true
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "PIK3CA_mutated",
+   "test": "chi-square",
+   "statistic": 2.102,
+   "df": 2,
+   "p": 0.35,
+   "n": 772,
+   "min_expected": 48.09,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "TP53_mutated",
+   "test": "chi-square",
+   "statistic": 3.768,
+   "df": 2,
+   "p": 0.152,
+   "n": 772,
+   "min_expected": 45.63,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "TTN_mutated",
+   "test": "chi-square",
+   "statistic": 3.436,
+   "df": 2,
+   "p": 0.179,
+   "n": 772,
+   "min_expected": 23.78,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 4.63,
+   "df": 2,
+   "p": 0.0988,
+   "n": 772,
+   "min_expected": 17.79,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 1.686,
+   "df": 2,
+   "p": 0.43,
+   "n": 772,
+   "min_expected": 15.33,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 1.57,
+   "df": 2,
+   "p": 0.456,
+   "n": 772,
+   "min_expected": 13.39,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 1.038,
+   "df": 2,
+   "p": 0.595,
+   "n": 772,
+   "min_expected": 12.86,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 5.007,
+   "df": 2,
+   "p": 0.0818,
+   "n": 772,
+   "min_expected": 11.45,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_stage",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "II",
+    "III"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 77533.5,
+   "z": -0.064,
+   "p": 0.949,
+   "n": 872,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_N",
+   "b": "menopause_status",
+   "test": "chi-square",
+   "statistic": 6.231,
+   "df": 6,
+   "p": 0.398,
+   "n": 959,
+   "min_expected": 2.81,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_N",
+   "b": "margin_status",
+   "test": "chi-square",
+   "statistic": 18.856,
+   "df": 6,
+   "p": 0.00441,
+   "n": 1015,
+   "min_expected": 2.2,
+   "valid": true,
+   "bonferroni_p": 0.754,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_N",
+   "b": "radiation_therapy",
+   "test": "chi-square",
+   "statistic": 38.696,
+   "df": 3,
+   "p": 2.01e-08,
+   "n": 982,
+   "min_expected": 30.57,
+   "valid": true,
+   "bonferroni_p": 3.44e-06,
+   "significant_after_correction": true
+  },
+  {
+   "a": "pathologic_N",
+   "b": "PIK3CA_mutated",
+   "test": "chi-square",
+   "statistic": 0.382,
+   "df": 3,
+   "p": 0.944,
+   "n": 779,
+   "min_expected": 15.23,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_N",
+   "b": "TP53_mutated",
+   "test": "chi-square",
+   "statistic": 4.366,
+   "df": 3,
+   "p": 0.225,
+   "n": 779,
+   "min_expected": 14.52,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_N",
+   "b": "TTN_mutated",
+   "test": "chi-square",
+   "statistic": 5.802,
+   "df": 3,
+   "p": 0.122,
+   "n": 779,
+   "min_expected": 7.62,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_N",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 14.799,
+   "df": 3,
+   "p": 0.002,
+   "n": 779,
+   "min_expected": 5.58,
+   "valid": true,
+   "bonferroni_p": 0.342,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_N",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 2.137,
+   "df": 3,
+   "p": 0.544,
+   "n": 779,
+   "min_expected": 4.91,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_N",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 5.052,
+   "df": 3,
+   "p": 0.168,
+   "n": 779,
+   "min_expected": 4.31,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_N",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 4.99,
+   "df": 3,
+   "p": 0.173,
+   "n": 779,
+   "min_expected": 4.14,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_N",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 1.293,
+   "df": 3,
+   "p": 0.731,
+   "n": 779,
+   "min_expected": 3.48,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "pathologic_N",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "N0",
+    "N1"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 107036.0,
+   "z": 3.535,
+   "p": 0.000407,
+   "n": 880,
+   "valid": true,
+   "bonferroni_p": 0.0696,
+   "significant_after_correction": false
+  },
+  {
+   "a": "menopause_status",
+   "b": "margin_status",
+   "test": "chi-square",
+   "statistic": 1.378,
+   "df": 4,
+   "p": 0.848,
+   "n": 928,
+   "min_expected": 1.13,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "menopause_status",
+   "b": "radiation_therapy",
+   "test": "chi-square",
+   "statistic": 5.635,
+   "df": 2,
+   "p": 0.0598,
+   "n": 906,
+   "min_expected": 16.58,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "menopause_status",
+   "b": "PIK3CA_mutated",
+   "test": "chi-square",
+   "statistic": 5.359,
+   "df": 2,
+   "p": 0.0686,
+   "n": 696,
+   "min_expected": 10.78,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "menopause_status",
+   "b": "TP53_mutated",
+   "test": "chi-square",
+   "statistic": 7.582,
+   "df": 2,
+   "p": 0.0226,
+   "n": 696,
+   "min_expected": 10.13,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "menopause_status",
+   "b": "TTN_mutated",
+   "test": "chi-square",
+   "statistic": 15.51,
+   "df": 2,
+   "p": 0.000429,
+   "n": 696,
+   "min_expected": 5.65,
+   "valid": true,
+   "bonferroni_p": 0.0734,
+   "significant_after_correction": false
+  },
+  {
+   "a": "menopause_status",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 9.387,
+   "df": 2,
+   "p": 0.00915,
+   "n": 696,
+   "min_expected": 3.92,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "menopause_status",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 20.104,
+   "df": 2,
+   "p": 4.31e-05,
+   "n": 696,
+   "min_expected": 3.32,
+   "valid": true,
+   "bonferroni_p": 0.00737,
+   "significant_after_correction": true
+  },
+  {
+   "a": "menopause_status",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 0.622,
+   "df": 2,
+   "p": 0.733,
+   "n": 696,
+   "min_expected": 3.28,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "menopause_status",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 3.111,
+   "df": 2,
+   "p": 0.211,
+   "n": 696,
+   "min_expected": 2.97,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "menopause_status",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 4.448,
+   "df": 2,
+   "p": 0.108,
+   "n": 696,
+   "min_expected": 2.46,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "menopause_status",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "Post (prior bilateral ovariectomy OR >12 mo since LMP with no prior hysterectomy)",
+    "Pre (<6 months since LMP AND no prior bilateral ovariectomy AND not on estrogen replacement)"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 156985.5,
+   "z": 21.509,
+   "p": 1.29e-102,
+   "n": 934,
+   "valid": true,
+   "bonferroni_p": 2.21e-100,
+   "significant_after_correction": true
+  },
+  {
+   "a": "margin_status",
+   "b": "radiation_therapy",
+   "test": "chi-square",
+   "statistic": 3.095,
+   "df": 2,
+   "p": 0.213,
+   "n": 963,
+   "min_expected": 13.78,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "margin_status",
+   "b": "PIK3CA_mutated",
+   "test": "chi-square",
+   "statistic": 0.22,
+   "df": 2,
+   "p": 0.896,
+   "n": 734,
+   "min_expected": 7.08,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "margin_status",
+   "b": "TP53_mutated",
+   "test": "chi-square",
+   "statistic": 2.313,
+   "df": 2,
+   "p": 0.315,
+   "n": 734,
+   "min_expected": 6.68,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "margin_status",
+   "b": "TTN_mutated",
+   "test": "chi-square",
+   "statistic": 0.974,
+   "df": 2,
+   "p": 0.614,
+   "n": 734,
+   "min_expected": 3.62,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "margin_status",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 0.694,
+   "df": 2,
+   "p": 0.707,
+   "n": 734,
+   "min_expected": 2.62,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "margin_status",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 0.293,
+   "df": 2,
+   "p": 0.864,
+   "n": 734,
+   "min_expected": 2.4,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "margin_status",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 1.494,
+   "df": 2,
+   "p": 0.474,
+   "n": 734,
+   "min_expected": 2.04,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "margin_status",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 0.002,
+   "df": 2,
+   "p": 0.999,
+   "n": 734,
+   "min_expected": 1.99,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "margin_status",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 7.473,
+   "df": 2,
+   "p": 0.0238,
+   "n": 734,
+   "min_expected": 1.74,
+   "valid": false,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "margin_status",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "Negative",
+    "Positive"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 34936.0,
+   "z": -0.555,
+   "p": 0.579,
+   "n": 998,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "radiation_therapy",
+   "b": "PIK3CA_mutated",
+   "test": "chi-square",
+   "statistic": 0.584,
+   "df": 1,
+   "p": 0.445,
+   "n": 728,
+   "min_expected": 121.94,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "radiation_therapy",
+   "b": "TP53_mutated",
+   "test": "chi-square",
+   "statistic": 0.223,
+   "df": 1,
+   "p": 0.637,
+   "n": 728,
+   "min_expected": 109.98,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "radiation_therapy",
+   "b": "TTN_mutated",
+   "test": "chi-square",
+   "statistic": 0.046,
+   "df": 1,
+   "p": 0.83,
+   "n": 728,
+   "min_expected": 58.9,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "radiation_therapy",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 2.39,
+   "df": 1,
+   "p": 0.122,
+   "n": 728,
+   "min_expected": 45.1,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "radiation_therapy",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 17.154,
+   "df": 1,
+   "p": 3.45e-05,
+   "n": 728,
+   "min_expected": 39.11,
+   "valid": true,
+   "bonferroni_p": 0.0059,
+   "significant_after_correction": true
+  },
+  {
+   "a": "radiation_therapy",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 1.191,
+   "df": 1,
+   "p": 0.275,
+   "n": 728,
+   "min_expected": 33.59,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "radiation_therapy",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 4.358,
+   "df": 1,
+   "p": 0.0368,
+   "n": 728,
+   "min_expected": 32.67,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "radiation_therapy",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 0.166,
+   "df": 1,
+   "p": 0.684,
+   "n": 728,
+   "min_expected": 28.53,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "radiation_therapy",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "YES",
+    "NO"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 108898.5,
+   "z": -3.226,
+   "p": 0.00125,
+   "n": 1000,
+   "valid": true,
+   "bonferroni_p": 0.214,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PIK3CA_mutated",
+   "b": "TP53_mutated",
+   "test": "chi-square",
+   "statistic": 28.96,
+   "df": 1,
+   "p": 7.39e-08,
+   "n": 791,
+   "min_expected": 93.1,
+   "valid": true,
+   "bonferroni_p": 1.26e-05,
+   "significant_after_correction": true
+  },
+  {
+   "a": "PIK3CA_mutated",
+   "b": "TTN_mutated",
+   "test": "chi-square",
+   "statistic": 2.953,
+   "df": 1,
+   "p": 0.0857,
+   "n": 791,
+   "min_expected": 49.2,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PIK3CA_mutated",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 11.787,
+   "df": 1,
+   "p": 0.000596,
+   "n": 791,
+   "min_expected": 36.46,
+   "valid": true,
+   "bonferroni_p": 0.102,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PIK3CA_mutated",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 2.319,
+   "df": 1,
+   "p": 0.128,
+   "n": 791,
+   "min_expected": 32.57,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PIK3CA_mutated",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 0.255,
+   "df": 1,
+   "p": 0.614,
+   "n": 791,
+   "min_expected": 27.96,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PIK3CA_mutated",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 8.677,
+   "df": 1,
+   "p": 0.00322,
+   "n": 791,
+   "min_expected": 27.26,
+   "valid": true,
+   "bonferroni_p": 0.551,
+   "significant_after_correction": false
+  },
+  {
+   "a": "PIK3CA_mutated",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 13.651,
+   "df": 1,
+   "p": 0.00022,
+   "n": 791,
+   "min_expected": 24.07,
+   "valid": true,
+   "bonferroni_p": 0.0376,
+   "significant_after_correction": true
+  },
+  {
+   "a": "PIK3CA_mutated",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "wild-type",
+    "mutated"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 64142.5,
+   "z": -2.408,
+   "p": 0.016,
+   "n": 791,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "TP53_mutated",
+   "b": "TTN_mutated",
+   "test": "chi-square",
+   "statistic": 3.764,
+   "df": 1,
+   "p": 0.0524,
+   "n": 791,
+   "min_expected": 46.22,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "TP53_mutated",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 40.128,
+   "df": 1,
+   "p": 2.38e-10,
+   "n": 791,
+   "min_expected": 34.25,
+   "valid": true,
+   "bonferroni_p": 4.07e-08,
+   "significant_after_correction": true
+  },
+  {
+   "a": "TP53_mutated",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 28.28,
+   "df": 1,
+   "p": 1.05e-07,
+   "n": 791,
+   "min_expected": 30.59,
+   "valid": true,
+   "bonferroni_p": 1.8e-05,
+   "significant_after_correction": true
+  },
+  {
+   "a": "TP53_mutated",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 0.676,
+   "df": 1,
+   "p": 0.411,
+   "n": 791,
+   "min_expected": 26.27,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "TP53_mutated",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 1.373,
+   "df": 1,
+   "p": 0.241,
+   "n": 791,
+   "min_expected": 25.6,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "TP53_mutated",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 15.472,
+   "df": 1,
+   "p": 8.37e-05,
+   "n": 791,
+   "min_expected": 22.61,
+   "valid": true,
+   "bonferroni_p": 0.0143,
+   "significant_after_correction": true
+  },
+  {
+   "a": "TP53_mutated",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "wild-type",
+    "mutated"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 76342.5,
+   "z": 2.283,
+   "p": 0.0224,
+   "n": 791,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "TTN_mutated",
+   "b": "CDH1_mutated",
+   "test": "chi-square",
+   "statistic": 6.104,
+   "df": 1,
+   "p": 0.0135,
+   "n": 791,
+   "min_expected": 18.1,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "TTN_mutated",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 0.399,
+   "df": 1,
+   "p": 0.528,
+   "n": 791,
+   "min_expected": 16.17,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "TTN_mutated",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 25.221,
+   "df": 1,
+   "p": 5.11e-07,
+   "n": 791,
+   "min_expected": 13.88,
+   "valid": true,
+   "bonferroni_p": 8.74e-05,
+   "significant_after_correction": true
+  },
+  {
+   "a": "TTN_mutated",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 7.124,
+   "df": 1,
+   "p": 0.0076,
+   "n": 791,
+   "min_expected": 13.53,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "TTN_mutated",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 0.966,
+   "df": 1,
+   "p": 0.326,
+   "n": 791,
+   "min_expected": 11.95,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "TTN_mutated",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "wild-type",
+    "mutated"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 34866.5,
+   "z": -4.273,
+   "p": 1.93e-05,
+   "n": 791,
+   "valid": true,
+   "bonferroni_p": 0.0033,
+   "significant_after_correction": true
+  },
+  {
+   "a": "CDH1_mutated",
+   "b": "GATA3_mutated",
+   "test": "chi-square",
+   "statistic": 0.964,
+   "df": 1,
+   "p": 0.326,
+   "n": 791,
+   "min_expected": 11.98,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "CDH1_mutated",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 5.595,
+   "df": 1,
+   "p": 0.018,
+   "n": 791,
+   "min_expected": 10.29,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "CDH1_mutated",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 0.0,
+   "df": 1,
+   "p": 0.992,
+   "n": 791,
+   "min_expected": 10.03,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "CDH1_mutated",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 0.104,
+   "df": 1,
+   "p": 0.747,
+   "n": 791,
+   "min_expected": 8.85,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "CDH1_mutated",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "wild-type",
+    "mutated"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 28048.5,
+   "z": -3.415,
+   "p": 0.000637,
+   "n": 791,
+   "valid": true,
+   "bonferroni_p": 0.109,
+   "significant_after_correction": false
+  },
+  {
+   "a": "GATA3_mutated",
+   "b": "MUC16_mutated",
+   "test": "chi-square",
+   "statistic": 0.449,
+   "df": 1,
+   "p": 0.503,
+   "n": 791,
+   "min_expected": 9.19,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "GATA3_mutated",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 0.153,
+   "df": 1,
+   "p": 0.696,
+   "n": 791,
+   "min_expected": 8.96,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "GATA3_mutated",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 0.57,
+   "df": 1,
+   "p": 0.45,
+   "n": 791,
+   "min_expected": 7.91,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "GATA3_mutated",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "wild-type",
+    "mutated"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 38737.5,
+   "z": 3.197,
+   "p": 0.00139,
+   "n": 791,
+   "valid": true,
+   "bonferroni_p": 0.238,
+   "significant_after_correction": false
+  },
+  {
+   "a": "MUC16_mutated",
+   "b": "KMT2C_mutated",
+   "test": "chi-square",
+   "statistic": 8.551,
+   "df": 1,
+   "p": 0.00345,
+   "n": 791,
+   "min_expected": 7.69,
+   "valid": true,
+   "bonferroni_p": 0.59,
+   "significant_after_correction": false
+  },
+  {
+   "a": "MUC16_mutated",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 0.008,
+   "df": 1,
+   "p": 0.93,
+   "n": 791,
+   "min_expected": 6.79,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "MUC16_mutated",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "wild-type",
+    "mutated"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 25050.0,
+   "z": -1.596,
+   "p": 0.111,
+   "n": 791,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "KMT2C_mutated",
+   "b": "MAP3K1_mutated",
+   "test": "chi-square",
+   "statistic": 3.514,
+   "df": 1,
+   "p": 0.0609,
+   "n": 791,
+   "min_expected": 6.62,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  },
+  {
+   "a": "KMT2C_mutated",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "wild-type",
+    "mutated"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 21792.0,
+   "z": -2.992,
+   "p": 0.00277,
+   "n": 791,
+   "valid": true,
+   "bonferroni_p": 0.474,
+   "significant_after_correction": false
+  },
+  {
+   "a": "MAP3K1_mutated",
+   "b": "age_at_initial_pathologic_diagnosis",
+   "groups": [
+    "wild-type",
+    "mutated"
+   ],
+   "test": "Mann-Whitney U",
+   "statistic": 21285.5,
+   "z": -1.831,
+   "p": 0.0672,
+   "n": 791,
+   "valid": true,
+   "bonferroni_p": 1.0,
+   "significant_after_correction": false
+  }
+ ],
+ "never_verifiable": [
+  "Treatment response or benefit (only whether a treatment was given is recorded)",
+  "Causal claims (observational data)",
+  "Tumor grade (not in the release)",
+  "Individual-patient predictions, diagnosis or risk scores (out of scope)",
+  "Anything about patients outside this release, or other cancers"
+ ]
+}

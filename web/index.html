@@ -618,6 +618,28 @@ svg.foot-ic{width:18px;height:18px;flex:none}
 }
 @media (prefers-reduced-motion:reduce){.why-panel{animation:none}}
 
+/* ================= PHASE 8: touch targets, marker contrast (final polish) ================= */
+/* group numbers: dark text on a white chip with a coloured ring (white text on light colours failed WCAG AA) */
+.g-mark,.g-pill{background:var(--paper)!important;color:var(--ink)!important;border:2px solid var(--line)}
+#srcView.hl-on .src-sent[data-group="1"] .g-mark,.g-pill.g1{border-color:var(--chart-1)}
+#srcView.hl-on .src-sent[data-group="2"] .g-mark,.g-pill.g2{border-color:var(--chart-2)}
+#srcView.hl-on .src-sent[data-group="3"] .g-mark,.g-pill.g3{border-color:var(--chart-3)}
+#srcView.hl-on .src-sent[data-group="4"] .g-mark,.g-pill.g4{border-color:var(--chart-4)}
+#srcView.hl-on .src-sent[data-group="5"] .g-mark,.g-pill.g5{border-color:var(--chart-5)}
+#srcView.hl-on .src-sent[data-group="6"] .g-mark,.g-pill.g6{border-color:var(--chart-6)}
+/* touch screens and anything up to tablet width: every control at least 44 px tall to tap */
+@media (max-width:1024px), (pointer:coarse){
+  button,.opt,input,select{min-height:44px}
+  details > summary{padding-block:12px}
+  .skip:focus{min-height:44px;display:flex;align-items:center}
+  .src-text{line-height:2.6}
+  /* small visual controls keep their look but get an invisible 44 px tap area */
+  .tip,.pt,.gd-mean,.gd-med{overflow:visible}
+  .tip{position:relative}
+  .tip::after,.pt::after,.gd-mean::after,.gd-med::after{content:"";position:absolute;inset:-13px}
+  .steps-nav a{min-height:44px}
+}
+
 /* gentle motion only for people who are fine with motion */
 @media (prefers-reduced-motion:reduce){svg.hero-art,.sk,.vbar div,.bars .b,.alt .bar div,.complete span,.scale .pt,.gd-mean,.gd-med{animation:none}
   *{transition-duration:.01ms!important}}

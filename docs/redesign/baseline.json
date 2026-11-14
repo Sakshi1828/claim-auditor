@@ -1,0 +1,514 @@
+{
+ "reports": {
+  "practice brief": {
+   "claims": [
+    {
+     "id": "S01",
+     "text": "TCGA's breast cancer cohort is one of the most widely used public cancer datasets.",
+     "verdict": "not_a_claim",
+     "summary": "This sentence is background or opinion, not a factual claim about the data, so it is not scored.",
+     "values": [],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "",
+     "suggested_text": ""
+    },
+    {
+     "id": "C01",
+     "text": "Of the 1,101 primary tumors in the release, 535 have survival, mutation, copy number, RNA and protein data.",
+     "verdict": "supported",
+     "summary": "Sample membership from sample_manifest.csv: 1,101 primary tumors (clinical 1,101, survival 1,097, mutation 791, copy number 1,080, RNA 1,097, protein 742).",
+     "values": [
+      "1,101",
+      "535"
+     ],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "Keep it. Cite release A and the definition used (sample barcode (chars 14–15 = sample type), has_copy_number, has_mutation, has_protein, has_rna, has_survival; n = 1,101).",
+     "suggested_text": ""
+    },
+    {
+     "id": "C02",
+     "text": "Luminal A is the largest RNA subtype, accounting for about 62% of primary tumors with an RNA subtype call.",
+     "verdict": "contradicted",
+     "summary": "Counted PAM50 subtype calls in `PAM50Call_RNAseq`: LumA 49.9% (421 of 844), LumB 22.7% (192 of 844), Basal 16.7% (141 of 844), Her2 7.9% (67 of 844), Normal 2.7% (23 of 844).",
+     "values": [
+      "49.9% (421 of 844)",
+      "largest is LumA (421)"
+     ],
+     "correct_value": "49.9% (421 of 844)",
+     "needed": "",
+     "next_step": "Correct the number to 49.9% (421 of 844) before the report is shared, then rerun the audit. Anything built on the old number (sample sizes, figures, abstract text) needs the same fix.",
+     "suggested_text": "Luminal A is the largest RNA subtype, accounting for 49.9% (421 of 844) of primary tumors with an RNA subtype call."
+    },
+    {
+     "id": "S04",
+     "text": "Protein measurements add a useful layer.",
+     "verdict": "not_a_claim",
+     "summary": "This sentence is background or opinion, not a factual claim about the data, so it is not scored.",
+     "values": [],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "",
+     "suggested_text": ""
+    },
+    {
+     "id": "C03",
+     "text": "Patients whose tumors had the highest ER-alpha protein responded best to hormone therapy, which suggests protein data could guide treatment research.",
+     "verdict": "insufficient_evidence",
+     "summary": "The release has no treatment-response outcomes and no field recording hormone therapy specifically, so this claim cannot be checked against the data.",
+     "values": [
+      "YES: 554, NO: 446, nan: 100, [Discrepancy]: 1",
+      "YES: 530, nan: 525, NO: 46",
+      "No: 1083, Yes: 13, nan: 5",
+      "nan: 1016, YES: 53, NO: 32",
+      "742"
+     ],
+     "correct_value": null,
+     "needed": "Per-patient treatment records (which drug, e.g. hormone therapy, and when) and a response or outcome measure linked to each sample, such as response assessment or recurrence after that treatment. Even then, an observational association would not show that the treatment caused the response.",
+     "next_step": "Remove the sentence or reword it as an open question. Don't present it as a result of this dataset. To answer it, you would need: Per-patient treatment records (which drug, e.g. hormone therapy, and when) and a response or outcome measure linked to each sample, such as response assessment or recurrence after that treatment. Even then, an observational association would not show that the treatment caused the response.",
+     "suggested_text": "[Remove, or reword as an open question: this release cannot show it.]"
+    },
+    {
+     "id": "S06",
+     "text": "We recommend future work combine all available layers.",
+     "verdict": "not_a_claim",
+     "summary": "This sentence is a recommendation, not a factual claim about the data, so it is not scored.",
+     "values": [],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "",
+     "suggested_text": ""
+    }
+   ],
+   "suggested_decision": "Fix a problem",
+   "why": "1 of 3 claims contradicts release A. The report shouldn't be shared, cited or used to plan work until they are corrected and the audit is rerun. 3 verdict(s) still need a person to confirm them.",
+   "steps": [
+    "Fix the number: Correct the number to 49.9% (421 of 844) before the report is shared, then rerun the audit. Anything built on the old number (sample sizes, figures, abstract text) needs the same fix.",
+    "Remove or reword: Remove the sentence or reword it as an open question. Don't present it as a result of this dataset. To answer it, you would need: Per-patient treatment records (which drug, e.g. hormone therapy, and when) and a response or outcome measure linked to each sample, such as response assessment or recurrence after that treatment. Even then, an observational association would not show that the treatment caused the response."
+   ],
+   "cant_tell": [
+    "Whether the analyses behind the supported numbers were done correctly. The tool reproduces each number from the data; it does not review the author's methods.",
+    "Anything clinical: whether a result matters for patients, diagnosis or treatment. This is a research-data check only.",
+    "Whether differences are statistically significant. Comparisons are shown by direction and size only.",
+    "Whether the report was written about another release or definition. Everything here is checked against release A; each claim card shows the other reasonable definitions.",
+    "Whether the source data itself is right. The tool trusts the frozen files and only flags known problems (redacted survival rows, the gap between the two manifests).",
+    "Claims stated without numbers, or spread across several sentences, may be missed: the tool reads one sentence at a time."
+   ],
+   "plain_bottom_line": "Don't share or rely on this report until the wrong numbers are fixed.",
+   "plain_points": [
+    "“Luminal A is the largest RNA subtype, accounting for about 62% of primary tumors with an RNA subtype call.” The report says 62%, but the data shows 49.9% (421 of 844), just under half.",
+    "“Patients whose tumors had the highest ER-alpha protein responded best to hormone therapy, which suggests protein data could guide treatment research.” goes beyond what this data can show, so it can be neither confirmed nor ruled out. Checking it would need per-patient treatment records.",
+    "“Of the 1,101 primary tumors in the release, 535 have survival, mutation, copy number, RNA and protein data.” matches the data."
+   ],
+   "glossary": [
+    "Luminal A",
+    "ER (estrogen receptor)",
+    "Mutation",
+    "Subtype (PAM50)",
+    "RNA data",
+    "Protein data",
+    "Copy number",
+    "Primary tumor",
+    "Survival data"
+   ],
+   "export_hashes": {
+    "audit.json findings": "0f28d6bccd472479",
+    "decision_summary.md": "7f22408f497dd236",
+    "corrected_report.md": "3eca6a067bf8c86c"
+   }
+  },
+  "demo test report": {
+   "claims": [
+    {
+     "id": "S01",
+     "text": "TCGA-BRCA is a valuable resource for breast cancer research.",
+     "verdict": "not_a_claim",
+     "summary": "This sentence is background or opinion, not a factual claim about the data, so it is not scored.",
+     "values": [],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "",
+     "suggested_text": ""
+    },
+    {
+     "id": "C01",
+     "text": "Luminal A accounts for about 50% of primary tumors with an RNA subtype call.",
+     "verdict": "supported",
+     "summary": "Counted PAM50 subtype calls in `PAM50Call_RNAseq`: LumA 49.9% (421 of 844), LumB 22.7% (192 of 844), Basal 16.7% (141 of 844), Her2 7.9% (67 of 844), Normal 2.7% (23 of 844).",
+     "values": [
+      "49.9% (421 of 844)"
+     ],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "Keep it. Cite release A and the definition used (sampleID, PAM50Call_RNAseq; n = 844).",
+     "suggested_text": ""
+    },
+    {
+     "id": "C02",
+     "text": "Basal-like tumors make up 25% of primary tumors with an RNA subtype call.",
+     "verdict": "contradicted",
+     "summary": "Counted PAM50 subtype calls in `PAM50Call_RNAseq`: LumA 49.9% (421 of 844), LumB 22.7% (192 of 844), Basal 16.7% (141 of 844), Her2 7.9% (67 of 844), Normal 2.7% (23 of 844).",
+     "values": [
+      "16.7% (141 of 844)"
+     ],
+     "correct_value": "16.7% (141 of 844)",
+     "needed": "",
+     "next_step": "Correct the number to 16.7% (141 of 844) before the report is shared, then rerun the audit. Anything built on the old number (sample sizes, figures, abstract text) needs the same fix.",
+     "suggested_text": "Basal-like tumors make up 16.7% (141 of 844) of primary tumors with an RNA subtype call."
+    },
+    {
+     "id": "C03",
+     "text": "TP53 is mutated in about a third of primary tumors with mutation data.",
+     "verdict": "supported",
+     "summary": "TP53: mutated in 33.4% (264 of 791) primary tumors with mutation data.",
+     "values": [
+      "33.4% (264 of 791)"
+     ],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "Keep it. Cite release A and the definition used (gene row TP53; n = 791).",
+     "suggested_text": ""
+    },
+    {
+     "id": "C04",
+     "text": "PIK3CA is mutated in 60% of ER-positive tumors.",
+     "verdict": "contradicted",
+     "summary": "PIK3CA: mutated in 41.4% (235 of 567) primary tumors with mutation data.",
+     "values": [
+      "41.4% (235 of 567)"
+     ],
+     "correct_value": "41.4% (235 of 567)",
+     "needed": "",
+     "next_step": "Correct the number to 41.4% (235 of 567) before the report is shared, then rerun the audit. Anything built on the old number (sample sizes, figures, abstract text) needs the same fix.",
+     "suggested_text": "PIK3CA is mutated in 41.4% (235 of 567) of ER-positive tumors."
+    },
+    {
+     "id": "C05",
+     "text": "ERBB2 is amplified in about 12% of tumors with copy number data.",
+     "verdict": "supported",
+     "summary": "Counted high-level amplification (GISTIC = 2) in copy_number_gistic among 1,080 primary tumors: ERBB2 amplified: 12.3% (133 of 1,080).",
+     "values": [
+      "12.3% (133 of 1,080)"
+     ],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "Keep it. Cite release A and the definition used (copy_number_gistic row(s), ERBB2; n = 1,080).",
+     "suggested_text": ""
+    },
+    {
+     "id": "C06",
+     "text": "The median age at diagnosis was 65 years.",
+     "verdict": "contradicted",
+     "summary": "Age at diagnosis for 1,097 primary tumors: median 58, range 26–90.",
+     "values": [
+      "58.0 years"
+     ],
+     "correct_value": "58.0 years",
+     "needed": "",
+     "next_step": "Correct the number to 58.0 years before the report is shared, then rerun the audit. Anything built on the old number (sample sizes, figures, abstract text) needs the same fix.",
+     "suggested_text": "The median age at diagnosis was 58.0 years."
+    },
+    {
+     "id": "C07",
+     "text": "Patients older than 65 make up about 29% of the cohort.",
+     "verdict": "supported",
+     "summary": "Age at diagnosis for 1,097 primary tumors: median 58, range 26–90.",
+     "values": [
+      "29.3% (321 of 1,097)"
+     ],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "Keep it. Cite release A and the definition used (age_at_initial_pathologic_diagnosis; n = 1,097).",
+     "suggested_text": ""
+    },
+    {
+     "id": "C08",
+     "text": "About 14% of patients with survival data died.",
+     "verdict": "supported",
+     "summary": "151 of 1,097 primary tumors with OS status have a recorded death (OS = 1).",
+     "values": [
+      "13.8% (151 of 1,097)"
+     ],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "Keep it. Cite release A and the definition used (OS, OS.time; n = 1,097).",
+     "suggested_text": ""
+    },
+    {
+     "id": "C09",
+     "text": "Stage IIA accounts for about a third of tumors with a recorded stage.",
+     "verdict": "supported",
+     "summary": "Counted clinical records among primary tumors: Stage IIA: share of primary tumors with a recorded `pathologic_stage`: 33.3% (358 of 1,075).",
+     "values": [
+      "33.3% (358 of 1,075)"
+     ],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "Keep it. Cite release A and the definition used (pathologic_stage; n = 1,101).",
+     "suggested_text": ""
+    },
+    {
+     "id": "C10",
+     "text": "Fewer than 800 primary tumors have protein data.",
+     "verdict": "supported",
+     "summary": "Sample membership from sample_manifest.csv: 1,101 primary tumors (clinical 1,101, survival 1,097, mutation 791, copy number 1,080, RNA 1,097, protein 742).",
+     "values": [
+      "742"
+     ],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "Keep it. Cite release A and the definition used (sample barcode (chars 14–15 = sample type), has_protein; n = 1,101).",
+     "suggested_text": ""
+    },
+    {
+     "id": "C11",
+     "text": "Of the 1,101 primary tumors in the release, 535 have survival, mutation, copy number, RNA and protein data.",
+     "verdict": "supported",
+     "summary": "Sample membership from sample_manifest.csv: 1,101 primary tumors (clinical 1,101, survival 1,097, mutation 791, copy number 1,080, RNA 1,097, protein 742).",
+     "values": [
+      "1,101",
+      "535"
+     ],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "Keep it. Cite release A and the definition used (sample barcode (chars 14–15 = sample type), has_copy_number, has_mutation, has_protein, has_rna, has_survival; n = 1,101).",
+     "suggested_text": ""
+    },
+    {
+     "id": "C12",
+     "text": "ER-alpha protein is higher in ER-positive tumors than in ER-negative tumors.",
+     "verdict": "supported",
+     "summary": "ERALPHA protein is higher in ER-positive tumors (median 2.31) than ER-negative tumors (median -1.07).",
+     "values": [
+      "mean 2.18 vs -0.87; median 2.31 vs -1.07",
+      "529 vs 169"
+     ],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "Borderline: the number is close to the tolerance. Decide whether the rounding is acceptable, or replace it with the exact value: mean 2.18 vs -0.87; median 2.31 vs -1.07.",
+     "suggested_text": ""
+    },
+    {
+     "id": "C13",
+     "text": "The median number of lymph nodes examined was 9.",
+     "verdict": "insufficient_evidence",
+     "summary": "The tool has no automatic check for this kind of statement. A reviewer must check it by hand.",
+     "values": [],
+     "correct_value": null,
+     "needed": "A reviewer should identify the field(s) this claim refers to, or mark it as not a claim.",
+     "next_step": "A reviewer must check this sentence by hand, or mark it as not a claim, before the report is used. The tool has no rule for it, so this is not a finding either way.",
+     "suggested_text": ""
+    },
+    {
+     "id": "C14",
+     "text": "Lumpectomy was performed in about 23% of patients.",
+     "verdict": "insufficient_evidence",
+     "summary": "The tool has no automatic check for this kind of statement. A reviewer must check it by hand.",
+     "values": [],
+     "correct_value": null,
+     "needed": "A reviewer should identify the field(s) this claim refers to, or mark it as not a claim.",
+     "next_step": "A reviewer must check this sentence by hand, or mark it as not a claim, before the report is used. The tool has no rule for it, so this is not a finding either way.",
+     "suggested_text": ""
+    },
+    {
+     "id": "C15",
+     "text": "Tamoxifen works best in Luminal A tumors.",
+     "verdict": "insufficient_evidence",
+     "summary": "The release has no treatment-response outcomes and no field recording hormone therapy specifically, so this claim cannot be checked against the data.",
+     "values": [
+      "YES: 554, NO: 446, nan: 100, [Discrepancy]: 1",
+      "YES: 530, nan: 525, NO: 46",
+      "No: 1083, Yes: 13, nan: 5",
+      "nan: 1016, YES: 53, NO: 32"
+     ],
+     "correct_value": null,
+     "needed": "Per-patient treatment records (which drug, e.g. hormone therapy, and when) and a response or outcome measure linked to each sample, such as response assessment or recurrence after that treatment. Even then, an observational association would not show that the treatment caused the response.",
+     "next_step": "Remove the sentence or reword it as an open question. Don't present it as a result of this dataset. To answer it, you would need: Per-patient treatment records (which drug, e.g. hormone therapy, and when) and a response or outcome measure linked to each sample, such as response assessment or recurrence after that treatment. Even then, an observational association would not show that the treatment caused the response.",
+     "suggested_text": "[Remove, or reword as an open question: this release cannot show it.]"
+    },
+    {
+     "id": "C16",
+     "text": "Grade 3 tumors make up 40% of the cohort.",
+     "verdict": "insufficient_evidence",
+     "summary": "The tool has no automatic check for this kind of statement. A reviewer must check it by hand.",
+     "values": [],
+     "correct_value": null,
+     "needed": "A reviewer should identify the field(s) this claim refers to, or mark it as not a claim.",
+     "next_step": "A reviewer must check this sentence by hand, or mark it as not a claim, before the report is used. The tool has no rule for it, so this is not a finding either way.",
+     "suggested_text": ""
+    },
+    {
+     "id": "S18",
+     "text": "We recommend validating these findings in an independent cohort.",
+     "verdict": "not_a_claim",
+     "summary": "This sentence is a recommendation, not a factual claim about the data, so it is not scored.",
+     "values": [],
+     "correct_value": null,
+     "needed": "",
+     "next_step": "",
+     "suggested_text": ""
+    }
+   ],
+   "suggested_decision": "Fix a problem",
+   "why": "3 of 16 claims contradict release A. The report shouldn't be shared, cited or used to plan work until they are corrected and the audit is rerun. 16 verdict(s) still need a person to confirm them.",
+   "steps": [
+    "Fix the number: Correct the number to 16.7% (141 of 844) before the report is shared, then rerun the audit. Anything built on the old number (sample sizes, figures, abstract text) needs the same fix.",
+    "Fix the number: Correct the number to 41.4% (235 of 567) before the report is shared, then rerun the audit. Anything built on the old number (sample sizes, figures, abstract text) needs the same fix.",
+    "Fix the number: Correct the number to 58.0 years before the report is shared, then rerun the audit. Anything built on the old number (sample sizes, figures, abstract text) needs the same fix.",
+    "Remove or reword: Remove the sentence or reword it as an open question. Don't present it as a result of this dataset. To answer it, you would need: Per-patient treatment records (which drug, e.g. hormone therapy, and when) and a response or outcome measure linked to each sample, such as response assessment or recurrence after that treatment. Even then, an observational association would not show that the treatment caused the response.",
+    "Check by hand: A reviewer must check this sentence by hand, or mark it as not a claim, before the report is used. The tool has no rule for it, so this is not a finding either way.",
+    "Check by hand: A reviewer must check this sentence by hand, or mark it as not a claim, before the report is used. The tool has no rule for it, so this is not a finding either way.",
+    "Check by hand: A reviewer must check this sentence by hand, or mark it as not a claim, before the report is used. The tool has no rule for it, so this is not a finding either way.",
+    "Decide on rounding: Borderline: the number is close to the tolerance. Decide whether the rounding is acceptable, or replace it with the exact value: mean 2.18 vs -0.87; median 2.31 vs -1.07."
+   ],
+   "cant_tell": [
+    "3 sentence(s) the tool could not read (C13, C14, C16). Nothing has checked them yet.",
+    "Whether the analyses behind the supported numbers were done correctly. The tool reproduces each number from the data; it does not review the author's methods.",
+    "Anything clinical: whether a result matters for patients, diagnosis or treatment. This is a research-data check only.",
+    "Whether differences are statistically significant. Comparisons are shown by direction and size only.",
+    "Whether the report was written about another release or definition. Everything here is checked against release A; each claim card shows the other reasonable definitions.",
+    "Whether the source data itself is right. The tool trusts the frozen files and only flags known problems (redacted survival rows, the gap between the two manifests).",
+    "Claims stated without numbers, or spread across several sentences, may be missed: the tool reads one sentence at a time."
+   ],
+   "plain_bottom_line": "Don't share or rely on this report until the wrong numbers are fixed.",
+   "plain_points": [
+    "“Basal-like tumors make up 25% of primary tumors with an RNA subtype call.” The report says 25%, but the data shows 16.7% (141 of 844), about 1 in 6.",
+    "“PIK3CA is mutated in 60% of ER-positive tumors.” The report says 60%, but the data shows 41.4% (235 of 567), about 2 in 5.",
+    "“The median age at diagnosis was 65 years.” The report says 65, but the data shows 58.0 years.",
+    "“The median number of lymph nodes examined was 9.” goes beyond what this data can show, so it can be neither confirmed nor ruled out. A person needs to check it by hand.",
+    "“Lumpectomy was performed in about 23% of patients.” goes beyond what this data can show, so it can be neither confirmed nor ruled out. A person needs to check it by hand.",
+    "“Tamoxifen works best in Luminal A tumors.” goes beyond what this data can show, so it can be neither confirmed nor ruled out. Checking it would need per-patient treatment records.",
+    "“Grade 3 tumors make up 40% of the cohort.” goes beyond what this data can show, so it can be neither confirmed nor ruled out. A person needs to check it by hand.",
+    "“Luminal A accounts for about 50% of primary tumors with an RNA subtype call.” matches the data.",
+    "“TP53 is mutated in about a third of primary tumors with mutation data.” matches the data.",
+    "“ERBB2 is amplified in about 12% of tumors with copy number data.” matches the data.",
+    "“Patients older than 65 make up about 29% of the cohort.” matches the data.",
+    "“About 14% of patients with survival data died.” matches the data.",
+    "“Stage IIA accounts for about a third of tumors with a recorded stage.” matches the data.",
+    "“Fewer than 800 primary tumors have protein data.” matches the data.",
+    "“Of the 1,101 primary tumors in the release, 535 have survival, mutation, copy number, RNA and protein data.” matches the data.",
+    "“ER-alpha protein is higher in ER-positive tumors than in ER-negative tumors.” matches the data."
+   ],
+   "glossary": [
+    "Luminal A",
+    "Basal-like",
+    "ER (estrogen receptor)",
+    "TP53",
+    "PIK3CA",
+    "Mutation",
+    "Subtype (PAM50)",
+    "RNA data",
+    "Protein data",
+    "Copy number",
+    "Primary tumor",
+    "Survival data",
+    "Median",
+    "Cohort"
+   ],
+   "export_hashes": {
+    "audit.json findings": "8a0eb354a72fa24f",
+    "decision_summary.md": "88e58fb8ecdec0a6",
+    "corrected_report.md": "c1fbddd53115214e"
+   }
+  }
+ },
+ "page": {
+  "element_ids": [
+   "accept",
+   "aiModel",
+   "aiOn",
+   "aiWrap",
+   "alsoReview",
+   "backSum",
+   "btnCompare",
+   "btnCorr",
+   "btnExport",
+   "btnGloss",
+   "btnPlain",
+   "btnPractice",
+   "btnRun",
+   "btnUncompare",
+   "btnUnseal",
+   "cant",
+   "choices",
+   "clear",
+   "copySugg",
+   "corr",
+   "corrBox",
+   "decReason",
+   "detail",
+   "envNum",
+   "envWords",
+   "exportOut",
+   "file",
+   "gloss",
+   "guide",
+   "guideBtn",
+   "guideStep",
+   "guideText",
+   "h1",
+   "h2",
+   "h3",
+   "main",
+   "nav1",
+   "nav2",
+   "nav3",
+   "nextBtn",
+   "ovr",
+   "ovrBox",
+   "ovrC",
+   "ovrCBox",
+   "ovrR",
+   "ovrSave",
+   "ovrV",
+   "plain",
+   "readerTitle",
+   "rec",
+   "releaseDir",
+   "report",
+   "reviewCount",
+   "reviewer",
+   "role",
+   "runNote",
+   "s1",
+   "s2",
+   "s3",
+   "sents",
+   "status",
+   "steps",
+   "story",
+   "storyHead",
+   "storyWrap",
+   "team",
+   "unsealLog"
+  ],
+  "buttons": [
+   "accept",
+   "backSum",
+   "btnCompare",
+   "btnCorr",
+   "btnExport",
+   "btnGloss",
+   "btnPlain",
+   "btnPractice",
+   "btnRun",
+   "btnUncompare",
+   "btnUnseal",
+   "clear",
+   "copySugg",
+   "guideBtn",
+   "nextBtn",
+   "ovr",
+   "ovrSave"
+  ],
+  "api_calls": [
+   "/api/audit",
+   "/api/config",
+   "/api/export",
+   "/api/plan",
+   "/api/unseal"
+  ],
+  "visible_text_hash": "40f8a7ffd13d1382"
+ }
+}

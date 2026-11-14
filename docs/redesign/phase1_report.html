@@ -1,0 +1,227 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Redesign Phase 1 Report</title>
+<style>
+:root{
+  /* base palette */
+  --navy:#1f2d3d; --teal:#2b6b6f; --teal-soft:#e4efed; --sage:#8fae93; --sage-soft:#eef3ec;
+  --sand:#f6f4ef; --white:#fffefb; --stone:#e5e1d8; --stone-2:#efebe3;
+  /* status (words shown on screen do not change; only their colours) */
+  --status-strong:#3d6b48;      --status-strong-bg:#e7efe4;      /* Strong evidence  -> "Supported" */
+  --status-conflict:#8f4a3c;    --status-conflict-bg:#f4e7e2;    /* Conflicting      -> "Contradicted" */
+  --status-uncertain:#76591a;   --status-uncertain-bg:#f5eedc;   /* Uncertain        -> "Insufficient evidence" */
+  --status-limited:#56616c;     --status-limited-bg:#eceef0;     /* Limited data     -> "Not a claim" / neutral */
+  /* roles used by the page (same names as before) */
+  --bg:var(--sand); --paper:var(--white); --ink:var(--navy); --ink-2:#46505c; --muted:#5f6873;
+  --line:var(--stone); --line-2:var(--stone-2);
+  --accent:var(--teal); --accent-2:var(--teal-soft); --rose:#9cc3bd; --cell:rgba(43,107,111,.06);
+  --ok:var(--status-strong); --ok-bg:var(--status-strong-bg); --ok-band:rgba(61,107,72,.16);
+  --bad:var(--status-conflict); --bad-bg:var(--status-conflict-bg);
+  --unk:var(--status-uncertain); --unk-bg:var(--status-uncertain-bg);
+  --na:var(--status-limited); --na-bg:var(--status-limited-bg);
+  --focus:#1d6f8a; --code:#f1efe8;
+  --shadow:0 1px 2px rgba(31,45,61,.04),0 6px 18px rgba(31,45,61,.06);
+  --shadow-lg:0 2px 4px rgba(31,45,61,.05),0 12px 32px rgba(31,45,61,.08);
+  /* fonts: built-in system fonts only, so the app still works offline and sends nothing out */
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+  /* type scale */
+  --fs-xs:12px; --fs-sm:13.5px; --fs-base:15.5px; --fs-md:17px; --fs-lg:20px; --fs-xl:26px; --fs-2xl:32px;
+  --lh-body:1.6; --lh-heading:1.25;
+  /* spacing, radius */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px; --sp-8:64px;
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-pill:999px;
+  /* charts: 6 muted colours that stay distinct for colour-blind readers (based on Okabe-Ito) */
+  --chart-1:#3f6e8c; --chart-2:#d9a24f; --chart-3:#4f9a86; --chart-4:#c2777f; --chart-5:#8a7cb3; --chart-6:#a9a05a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--sand);color:var(--navy);font:16px/1.65 var(--sans)}
+main{max-width:860px;margin:0 auto;padding:32px 20px 60px}
+h1,h2{font-family:var(--serif);font-weight:600;line-height:1.25}
+h1{font-size:32px;margin:6px 0 4px} h2{font-size:23px;margin:36px 0 10px;padding-top:18px;border-top:1px solid var(--stone)}
+p,li{color:#3a4654} .lead{font-size:18px}
+.card{background:var(--white);border:1px solid var(--stone);border-radius:14px;padding:18px 20px;margin:12px 0;box-shadow:var(--shadow)}
+.ok{background:var(--status-strong-bg);color:var(--status-strong);border-radius:12px;padding:14px 18px;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:15px} td,th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--stone-2);vertical-align:top}
+th{color:var(--teal);font-size:13px;text-transform:uppercase;letter-spacing:.05em}
+.sws{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.sw{display:flex;flex-direction:column;gap:2px} .sw span{height:46px;border-radius:10px;border:1px solid var(--stone)} .sw small{color:#5f6873}
+.st{border-radius:12px;padding:12px 16px;margin:8px 0} .st small{display:block;opacity:.9}
+.chart{display:flex;gap:6px} .chart span{flex:1;height:28px;border-radius:6px}
+.ills{display:flex;flex-wrap:wrap;gap:14px} .ills figure{margin:0;background:var(--white);border:1px solid var(--stone);border-radius:12px;padding:10px}
+.ills figcaption{font-size:14px;color:#5f6873;text-align:center}
+.icons{display:flex;flex-wrap:wrap;gap:18px;color:var(--teal)} .ic{display:flex;flex-direction:column;align-items:center;gap:4px;width:92px;text-align:center;font-size:13.5px;color:var(--navy)}
+.btn{background:var(--teal);color:#fff;border:0;border-radius:10px;padding:12px 20px;font:600 16px var(--sans);cursor:pointer}
+.tag{display:inline-block;background:var(--teal-soft);color:var(--teal);border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600}
+@media print{ .noprint{display:none} body{background:#fff} .card,.ills figure{box-shadow:none;break-inside:avoid} h2{break-after:avoid} }
+</style></head><body>
+<svg id="illustrations" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <!-- Cells: an orderly healthy cluster (left) beside a gently irregular, atypical cluster (right) -->
+    <symbol id="ill-cells" viewBox="0 0 240 120">
+      <g fill="none" stroke-width="1.6" style="stroke:var(--teal)">
+        <circle cx="34" cy="44" r="17"/><circle cx="64" cy="36" r="15"/><circle cx="52" cy="72" r="17"/>
+        <circle cx="86" cy="64" r="15"/><circle cx="24" cy="80" r="13"/>
+      </g>
+      <g style="fill:var(--sage)" opacity=".55">
+        <circle cx="34" cy="44" r="5"/><circle cx="64" cy="36" r="4.5"/><circle cx="52" cy="72" r="5"/>
+        <circle cx="86" cy="64" r="4.5"/><circle cx="24" cy="80" r="4"/>
+      </g>
+      <line x1="120" y1="18" x2="120" y2="102" stroke-dasharray="2 5" stroke-width="1.2" style="stroke:var(--stone)"/>
+      <g fill="none" stroke-width="1.6" style="stroke:var(--status-uncertain)" opacity=".85">
+        <path d="M150 30c12-6 26 2 25 14s-8 18-20 17-17-9-16-17 5-11 11-14z"/>
+        <path d="M188 40c14-3 24 8 20 20s-16 15-25 9-9-26 5-29z"/>
+        <path d="M160 70c12 0 22 6 20 18s-14 14-23 10-12-10-9-18 5-10 12-10z"/>
+        <path d="M206 78c9 1 14 9 11 16s-11 9-17 5-6-12 0-17 3-4 6-4z"/>
+      </g>
+      <g style="fill:var(--status-uncertain)" opacity=".35">
+        <ellipse cx="160" cy="45" rx="8" ry="6"/><ellipse cx="193" cy="54" rx="9" ry="7"/>
+        <ellipse cx="166" cy="85" rx="7" ry="8"/><ellipse cx="207" cy="89" rx="5" ry="4"/>
+      </g>
+    </symbol>
+    <!-- DNA: a soft double helix -->
+    <symbol id="ill-dna" viewBox="0 0 240 80">
+      <g fill="none" stroke-width="1.8" stroke-linecap="round">
+        <path d="M0 40 C 30 0, 50 0, 80 40 S 130 80, 160 40 S 210 0, 240 40" style="stroke:var(--teal)"/>
+        <path d="M0 40 C 30 80, 50 80, 80 40 S 130 0, 160 40 S 210 80, 240 40" style="stroke:var(--sage)"/>
+      </g>
+      <g stroke-width="1.2" stroke-linecap="round" style="stroke:var(--stone)">
+        <line x1="20" y1="20" x2="20" y2="60"/><line x1="40" y1="12" x2="40" y2="68"/><line x1="60" y1="20" x2="60" y2="60"/>
+        <line x1="100" y1="20" x2="100" y2="60"/><line x1="120" y1="12" x2="120" y2="68"/><line x1="140" y1="20" x2="140" y2="60"/>
+        <line x1="180" y1="20" x2="180" y2="60"/><line x1="200" y1="12" x2="200" y2="68"/><line x1="220" y1="20" x2="220" y2="60"/>
+      </g>
+    </symbol>
+    <!-- Background textures: use at very low opacity (about 0.05) behind cards -->
+    <pattern id="pat-tissue" width="64" height="56" patternUnits="userSpaceOnUse">
+      <path d="M16 4 32 12 32 30 16 38 0 30 0 12Z M48 22 64 30 64 48 48 56 32 48 32 30Z" fill="none" stroke-width="1"
+            style="stroke:var(--teal)"/>
+      <circle cx="16" cy="21" r="3" style="fill:var(--sage)"/><circle cx="48" cy="39" r="3" style="fill:var(--sage)"/>
+    </pattern>
+    <pattern id="pat-molecules" width="90" height="90" patternUnits="userSpaceOnUse">
+      <g stroke-width="1" style="stroke:var(--teal)"><line x1="12" y1="18" x2="48" y2="30"/><line x1="48" y1="30" x2="70" y2="66"/>
+        <line x1="48" y1="30" x2="30" y2="70"/><line x1="70" y1="66" x2="86" y2="40"/></g>
+      <g style="fill:var(--teal)"><circle cx="12" cy="18" r="3"/><circle cx="48" cy="30" r="4"/><circle cx="70" cy="66" r="3"/>
+        <circle cx="30" cy="70" r="2.5"/><circle cx="86" cy="40" r="2.5"/></g>
+    </pattern>
+    <symbol id="ill-tissue" viewBox="0 0 240 120"><rect width="240" height="120" fill="url(#pat-tissue)"/></symbol>
+    <symbol id="ill-molecules" viewBox="0 0 240 120"><rect width="240" height="120" fill="url(#pat-molecules)"/></symbol>
+    <!-- Icons: 24 x 24, line style, colour follows the surrounding text -->
+    <symbol id="ic-evidence" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v6"/><path d="M6 3v18h6"/><path d="M9 9h5M9 13h3"/><circle cx="17" cy="17" r="3"/><path d="m19.2 19.2 2 2"/></g></symbol>
+    <symbol id="ic-compare" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 20h16"/><rect x="6" y="9" width="4" height="11" rx="1"/><rect x="14" y="5" width="4" height="15" rx="1"/></g></symbol>
+    <symbol id="ic-uncertain" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9" stroke-dasharray="3 3"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.4 2.3c-.6.3-.9.8-.9 1.5V14"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></g></symbol>
+    <symbol id="ic-next" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M13 8l4 4-4 4"/></g></symbol>
+    <symbol id="ic-review" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3.5"/><path d="M3.5 20c.6-4 3.2-6 6.5-6 1.4 0 2.6.3 3.6 1"/><path d="m14.5 18 2 2 4-4.5"/></g></symbol>
+    <symbol id="ic-data" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><ellipse cx="12" cy="6" rx="7" ry="2.8"/><path d="M5 6v12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8V6"/><path d="M5 12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8"/></g></symbol>
+    <symbol id="ic-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".7" fill="currentColor"/></g></symbol>
+  </defs>
+</svg>
+<main>
+<span class="tag">Redesign · Phase 1 of 8</span>
+<h1>New look: what we checked and what we changed</h1>
+<p class="lead">This is the first step of making the Claim Auditor easier on the eyes and easier to understand.
+In this step we only <b>looked</b>, <b>measured</b>, and changed the <b>colours and letters</b>. Nothing the app does was changed.</p>
+<div class="noprint" style="margin:16px 0"><button class="btn" onclick="window.print()">Save as PDF</button>
+<span style="color:#5f6873;margin-left:10px">Opens your print window: choose “Save as PDF”.</span></div>
+
+<div class="ok">✓ Everything still works exactly as before. We checked all 24 test claims, every button and every
+download, and all 5 test packs passed.</div>
+
+<h2>1. What the app is made of</h2>
+<div class="card"><p>The app is <b>one web page</b>, written in plain HTML, CSS and JavaScript (no extra add-ons). The checking is
+done by Python on your computer. There is <b>no chart add-on</b>: the few bars you see are drawn by the page itself.</p></div>
+
+<h2>2. The screens, top to bottom</h2>
+<table>
+<tr><th>Part of the page</th><th>What a person sees there</th></tr>
+<tr><td>Top bar</td><td>App name, the 3 steps (Load · Review · Decide), “Research use only”.</td></tr>
+<tr><td>Guide strip</td><td>One sentence telling you what to do now, and a button that does it.</td></tr>
+<tr><td>Step 1 · Load</td><td>A box to paste a report, upload a file, use the practice report, or open a sealed envelope.</td></tr>
+<tr><td>Summary card</td><td>The headline result, the “HOLD &amp; REVISE”-style stamp, a coloured bar of results, and the biggest problems.</td></tr>
+<tr><td>In plain words</td><td>The same result in everyday language, plus a list of medical words explained.</td></tr>
+<tr><td>Step 2 · Review</td><td>Left: the report, each sentence coloured by result. Right: the details for one claim (what the report says, what the data says, why it matters, what to do).</td></tr>
+<tr><td>Step 3 · Decide</td><td>The suggested decision, steps to fix things, what the check can't tell you, your decision, and the Export button.</td></tr>
+</table>
+
+<h2>3. Where the numbers come from</h2>
+<table>
+<tr><th>What you see</th><th>Where it comes from</th></tr>
+<tr><td>Verdicts, numbers like “49.9% (421 of 844)”</td><td>Python checks the report against the data files (the “check” step).</td></tr>
+<tr><td>Next steps, the suggested decision, the corrected report</td><td>Worked out again each time a person confirms or changes a verdict.</td></tr>
+<tr><td>Plain-words summary and word list</td><td>Rewritten from the same results; it never adds new facts.</td></tr>
+<tr><td>Downloaded files (audit.json, decision record, corrected report)</td><td>Saved by the Export button into the “outputs” folder.</td></tr>
+<tr><td>AI reading (only if switched on)</td><td>An AI describes each claim; the computer then checks it against the data.</td></tr>
+</table>
+
+<h2>4. Buttons and what they do (none of these were changed)</h2>
+<table>
+<tr><th>Button</th><th>What it does</th></tr>
+<tr><td>Use the practice report · Upload a file</td><td>Puts a report into the box.</td></tr>
+<tr><td>Open a sealed envelope · Unseal and check</td><td>Opens the judges’ envelope and checks its report.</td></tr>
+<tr><td>Check every claim</td><td>Checks the whole report. Optional tick box: also read the claims with AI.</td></tr>
+<tr><td>Explain it in plain words · Glossary</td><td>Show or hide the everyday-language summary and word list.</td></tr>
+<tr><td>Program lead / Reviewer / Researcher</td><td>Show less or more detail. The facts stay the same.</td></tr>
+<tr><td>Confirm · Override · Undo · Next claim</td><td>A person agrees with, changes, or undoes a verdict.</td></tr>
+<tr><td>Decision choices · Export</td><td>Pick Proceed / Fix a problem / Narrow the question / Stop, write why, and save the files.</td></tr>
+<tr><td>Download corrected report · Copy suggested wording</td><td>Save or copy the suggested fixes.</td></tr>
+</table>
+
+<h2>5. Where the page is hardest to read today</h2>
+<div class="card"><ol>
+<li><b>The claim details panel</b> (right side of Step 2) is long: many boxes stacked on top of each other.</li>
+<li><b>“How this claim was analysed”</b> is a table of technical words (field names, steps).</li>
+<li><b>Step 3</b> has two long lists side by side (what to do, what it can't tell you).</li>
+<li><b>The guide strip</b> sentence is sometimes long and wraps onto 3 lines on small screens.</li>
+<li><b>Field names</b> such as <code>PAM50Call_RNAseq</code> appear in places a normal reader doesn't need them.</li>
+</ol></div>
+
+<h2>6. Our “before” record (to prove nothing changes later)</h2>
+<div class="card"><p>We saved a record of everything the app shows for two test reports: <b>24 claims</b>, every verdict,
+every number, every next step, every plain-words sentence, and the text of every downloaded file, plus all
+<b>17 buttons</b> and <b>67 page parts</b>.
+After today's change we compared again: <b>no difference at all</b>. We will repeat this check at the end of every phase.</p>
+<p style="margin:0">Tests: main checks ✓ · calculation checks ✓ · AI-layer checks ✓ · AI-reading checks ✓ · different-data-release checks ✓</p></div>
+
+<h2>7. The new colours (soft on the eyes)</h2>
+<p>Every text colour was measured for comfortable reading (it passes the common eye-comfort reading standard, called
+WCAG AA, in both light and dark mode). There is no harsh red anywhere.</p>
+<div class="sws"><div class="sw"><span style="background:var(--navy)"></span><b>Deep navy</b><small>Main text and headings</small></div><div class="sw"><span style="background:var(--teal)"></span><b>Calm teal</b><small>Buttons, links, highlights</small></div><div class="sw"><span style="background:var(--sage)"></span><b>Soft sage</b><small>Gentle decoration</small></div><div class="sw"><span style="background:var(--sand)"></span><b>Warm sand</b><small>Page background</small></div><div class="sw"><span style="background:var(--white)"></span><b>Clean white</b><small>Cards and boxes</small></div><div class="sw"><span style="background:var(--stone)"></span><b>Stone</b><small>Thin lines between things</small></div></div>
+<h3 style="font-family:var(--serif);margin-top:22px">Colours for results (the words on screen stay the same)</h3>
+<div class="st" style="background:var(--status-strong-bg);color:var(--status-strong)"><b>Strong evidence</b><small>Used for “Supported”: the data agrees</small></div><div class="st" style="background:var(--status-conflict-bg);color:var(--status-conflict)"><b>Conflicting</b><small>Used for “Contradicted”: the data says something different (soft clay, not alarm red)</small></div><div class="st" style="background:var(--status-uncertain-bg);color:var(--status-uncertain)"><b>Uncertain</b><small>Used for “Insufficient evidence”: the data can't settle it</small></div><div class="st" style="background:var(--status-limited-bg);color:var(--status-limited)"><b>Limited data</b><small>Used for neutral items such as “Not a claim”</small></div>
+<h3 style="font-family:var(--serif);margin-top:22px">Colours for future charts</h3>
+<p>Six calm colours that still look different to people who are colour-blind:</p><div class="chart"><span style="background:var(--chart-1)"></span><span style="background:var(--chart-2)"></span><span style="background:var(--chart-3)"></span><span style="background:var(--chart-4)"></span><span style="background:var(--chart-5)"></span><span style="background:var(--chart-6)"></span></div>
+
+<h2>8. Letters and spacing</h2>
+<div class="card"><p><b>Headings:</b> an elegant book-style font (<span style="font-family:var(--serif)">like this</span>).
+<b>Normal text:</b> a clear, modern font, slightly larger than before (15.5 instead of 15) with a little more space between lines.
+We used fonts that are already on the computer, so the app still works <b>without internet</b> and sends nothing out.</p>
+<p style="margin:0">We also set fixed sizes for gaps, rounded corners and soft shadows, so every later screen looks consistent.</p></div>
+
+<h2>9. New pictures (ready, not shown in the app yet)</h2>
+<p>Calm, respectful line drawings in the same colours. They are stored invisibly in the page and will be placed in later phases.</p>
+<div class="ills">
+<figure><svg width="220" height="110" viewBox="0 0 240 120" role="img" aria-label="ill-cells"><use href="#ill-cells"/></svg><figcaption>Cells: orderly (left) and irregular (right)</figcaption></figure>
+<figure><svg width="220" height="74" viewBox="0 0 240 80" role="img" aria-label="ill-dna"><use href="#ill-dna"/></svg><figcaption>DNA helix</figcaption></figure>
+<figure style="opacity:.55"><svg width="220" height="110" viewBox="0 0 240 120" role="img" aria-label="ill-tissue"><use href="#ill-tissue"/></svg><figcaption>Tissue background (used very faintly)</figcaption></figure>
+<figure style="opacity:.55"><svg width="220" height="110" viewBox="0 0 240 120" role="img" aria-label="ill-molecules"><use href="#ill-molecules"/></svg><figcaption>Molecule network background</figcaption></figure>
+</div>
+<div class="card"><div class="icons"><div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-evidence"/></svg><span>Evidence</span></div><div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-compare"/></svg><span>Comparison</span></div><div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-uncertain"/></svg><span>Uncertain</span></div><div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-next"/></svg><span>Next step</span></div><div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-review"/></svg><span>Person checks</span></div><div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-data"/></svg><span>Data</span></div><div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-info"/></svg><span>More info</span></div></div></div>
+
+<h2>10. Plan: where pictures and charts can replace text</h2>
+<table>
+<tr><th>Where</th><th>Today</th><th>Idea for later phases (same facts, easier to see)</th></tr>
+<tr><td>Summary card</td><td>“1 of 3 claims is contradicted…” plus a thin bar</td><td>A larger, labelled bar or ring showing how many claims agree, conflict, or can't be checked.</td></tr>
+<tr><td>Claim details</td><td>Many stacked text boxes</td><td>Tabs: “What it says” · “What the data shows” · “What to do”, each with an icon.</td></tr>
+<tr><td>Report vs data</td><td>A number line</td><td>Keep it, but larger, with the two values clearly labelled.</td></tr>
+<tr><td>Data completeness</td><td>“844 of 1,101 have a value (23% missing)”</td><td>A small filled bar showing how complete the data is.</td></tr>
+<tr><td>Step 3 · what to do</td><td>A numbered text list</td><td>Step cards with the “next step” icon, one action each.</td></tr>
+<tr><td>What the check can't tell you</td><td>A bullet list</td><td>The same list with the “uncertain” icon, grouped and collapsible.</td></tr>
+<tr><td>Different data release</td><td>One sentence</td><td>A small checklist: renamed ✓, missing ✕, added +.</td></tr>
+<tr><td>Empty/start screen</td><td>Text only</td><td>The cell or DNA drawing as a calm welcome picture.</td></tr>
+</table>
+
+<h2>11. What changed and what did not</h2>
+<div class="card"><p><b>Changed:</b> colours, fonts, text size and line spacing; the small tab icon colour; a hidden picture library.</p>
+<p style="margin:0"><b>Not changed:</b> any button, box, wording, number, result, download, calculation, or anything behind the screen.
+Nothing was risky, so nothing had to be skipped.</p></div>
+<p style="color:#5f6873;margin-top:30px;font-size:14px">Research Claim Auditor · Team Cache us if u can · Redesign phase 1</p>
+</main></body></html>

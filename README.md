@@ -8,12 +8,16 @@ TCGA-BRCA release**, and sorts claims into **supported**, **contradicted** (with
 (with the data that would be needed). A person confirms or overrides every verdict; both are kept. The reviewer then records a
 decision (Proceed / Fix a problem / Narrow the question / Stop) and exports `audit.json` in the organizers' shared format.
 
+By default every verdict comes from deterministic rules, with no AI and no key. An **optional AI reading** (Gemini 2.5 Flash,
+Groq fallback, your own key) can help read unusual phrasing. The model only describes each claim; code checks it against
+the data and decides (see *Optional AI reading* below).
+
 > **Research use only.** No diagnosis, treatment advice or risk scores. Verdicts are about whether a report matches the data,
 > not about patients. Every verdict is flagged for human review until a person confirms it.
 
 ## Setup (about 5 minutes)
-Needs **Python 3.10 or newer** and git. Only `pandas`, `jsonschema` and `cryptography`: no Streamlit, no API keys,
-no internet after fetching. Every command below runs from **one folder that holds both repos**:
+Needs **Python 3.10 or newer** and git. Only `pandas`, `jsonschema` and `cryptography`: no Streamlit, no API keys
+needed, and no internet after fetching. Only the optional AI reading needs a key and internet. Every command below runs from **one folder that holds both repos**:
 ```
 your-folder/
   oncosys-hackathon-challenge/   ← organizers' repo (data is fetched into it)
@@ -74,11 +78,20 @@ If port 8501 is busy (another app, or a second copy of this one), pick another p
 ```bash
 python claim-auditor/app.py --port 8502
 ```
-1. *Use the practice report* (or upload / paste a report, or open a sealed envelope).
-2. *Check claims*. Click any sentence to see the claim, the numbers, the files and fields, and where the evidence stops.
-   Switch *Program lead / Reviewer / Researcher* for less or more detail. The same facts are shown in every view.
-3. *Confirm* or *Override…* each verdict (an override needs a reason).
-4. Pick a decision, write why, and *Export*. Files go to `claim-auditor/outputs/`.
+The app has three steps, shown at the top: **Load → Review → Decide**.
+1. **Load.** *Use the practice report*, paste a report, open a sealed envelope, or *Upload a file*: `.md`, `.txt`, or a
+   **findings `.json`**. A JSON file can be this app's own export (`audit.json`: each finding's `claim_text` is read),
+   a `claims` / `findings` / `items` list whose entries are sentences or have a `text` / `claim` / `claim_text` field,
+   or a single `report` / `text` field. The claims are loaded word for word and checked like any report. A sample file is
+   in `tests/sample_findings.json`. Then press *Check every claim*. If a key is set, you can also tick *Also read claims with AI*.
+2. **Review.** The *Key takeaway* summary and charts come first. Click any sentence to see the claim, the numbers
+   (report vs data on one scale, with a *Show table* option), what to do, and how it was checked (files, fields and
+   calculation). *Read the report with its sources* shows each sentence; click one to open *Why this is said*, with its
+   data files and the checker's reason. Switch *Program lead / Reviewer / Researcher* for less or more detail; every
+   view shows the same facts. Then *Confirm* or *Override…* each verdict (an override needs a reason).
+3. **Decide.** Pick a decision, write why, and *Export*. Files go to `claim-auditor/outputs/`.
+
+The page works on phones, tablets and laptops, can be used with a keyboard, and supports dark mode.
 
 **Command line** (fast, for the live test):
 ```bash
@@ -108,9 +121,23 @@ Validate the output:
 ```bash
 python oncosys-hackathon-challenge/format/validate.py claim-auditor/outputs/audit.json
 ```
-Regression tests: 6 reports, 81 sentences (including 20 real-world phrasings and 20 held-out claims written before the tool saw them), plus a random release rebuilt from `tests/random_release.json` with the organizers' `make_release.py` to check that numbers come from the release you point at:
+Regression tests: 9 reports, 116 sentences (including 20 real-world phrasings and 20 held-out claims written before the tool saw them), plus a random release rebuilt from `tests/random_release.json` with the organizers' `make_release.py` to check that numbers come from the release you point at:
 ```bash
 python claim-auditor/tests/run_tests.py
+```
+The other test packs need no key, since the AI calls are faked. They cover the analytical engine against independently
+computed answers, the claim-reading layer, the AI provider layer, and releases with different or missing files:
+```bash
+python claim-auditor/tests/test_engine.py
+```
+```bash
+python claim-auditor/tests/test_semantic.py
+```
+```bash
+python claim-auditor/tests/test_llm.py
+```
+```bash
+python claim-auditor/tests/test_releases.py
 ```
 
 ## Required outputs
@@ -162,8 +189,9 @@ or within ±1.5 points or 5% if the claim says *about / approximately / roughly*
 (other subtype column, other denominator), so a reviewer can see when a conclusion depends on a choice.
 
 ## Known limitations
-- Claim recognition is rule-based (deterministic and reproducible, with no LLM and no key). Unusual phrasing falls through to
-  *unrecognised*, which is reported honestly as needing manual review rather than guessed.
+- By default, claim recognition is rule-based (deterministic and reproducible, with no LLM and no key). Unusual phrasing
+  falls through to *unrecognised*, which is reported honestly as needing manual review rather than guessed. The optional
+  AI reading can cover some of these cases, but it is slower (about 30 s), and a provider outage falls back to rules.
 - It checks a report against **one release at a time** (release A by default). For envelopes it also checks the envelope
   release and shows the differences.
 - For release A, which samples exist and which data layers they have comes from `sample_manifest.csv`, the organizers'
@@ -179,7 +207,17 @@ or within ±1.5 points or 5% if the claim says *about / approximately / roughly*
 TCGA-BRCA via the UCSC Xena TCGA hub and NCI Imaging Data Commons (see the challenge repo's `DATA_LICENSES.md`).
 Raw data is fetched by the organizers' `fetch.py` and is **not** committed here. De-identified, patient-derived, research use only.
 
-## Optional LLM layer (in development, not used by the auditor yet)
+## Optional AI reading (hybrid mode)
+Off unless you add a key. With a key, the app shows *Also read claims with AI*. Only the report's sentences are sent to
+the provider, never the data. The model describes each claim; the rules and the analytical engine compute and decide.
+Guards: the engine only fills gaps where the rules have no check at all, so a deliberate "can't check" from the rules is
+never overridden. A partial reading is never used. When the two disagree, the rules' verdict is kept and the claim is
+flagged for a person. Results: `catalog/BENCHMARK.md` (rules only 116/116 against the gold labels; hybrid 113/116,
+where the 3 differences are hard sentences the rules refuse on purpose).
+
+**Releases with a different layout.** `auditor/adapt.py` profiles each release (release A, an envelope, a generated one),
+maps it to the reference columns, and says exactly which checks can't run when a file or column is missing.
+
 `auditor/llm.py` connects Gemini 2.5 Flash (primary) and Groq `openai/gpt-oss-120b` (fallback) behind one interface
 that returns schema-validated JSON (`auditor/claim_schema.py`), with timeouts, retries, rate-limit handling, caching
 and graceful failure. **Keys are user-supplied**: copy `.env.example` to `.env` (git-ignored) and add your own. Keys
@@ -205,8 +243,9 @@ in `tests/independent_answers.py`.
 | [cryptography](https://cryptography.io) | The organizers' `envelopes/unseal.py` | Apache-2.0 or BSD-3-Clause |
 | Organizers' challenge repo (`fetch.py`, `unseal.py`, `make_release.py`, `validate.py`) | Run unchanged, not copied | See the challenge repo |
 
-Everything else (the checkers, the app and the tests) is our own code. No AI model, API key or network service is used:
-every verdict is computed locally from the release files.
+Everything else (the checkers, the engine, the app and the tests) is our own code. By default no AI model, API key or
+network service is used: every verdict is computed locally from the release files. The optional AI reading calls Gemini
+or Groq over HTTPS using Python's standard library, with your own key. Even then, verdicts are computed locally.
 
 **Windows note:** `envelopes/unseal.py` fails its fingerprint check on Windows because pandas writes `\r\n` line endings.
 Our tool runs it unchanged with `os.linesep = "\n"` (see `auditor/envelope.py`).

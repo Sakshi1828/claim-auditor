@@ -136,7 +136,18 @@ def run_audit(report_text: str, release: Release, compare: bool | None = None, s
             from .engine import combine
             eng, grounded = _engine_for(specs, release)
             rule_verdict = res.verdict
-            if eng is not None and grounded:
+            # Guards against false "supported": (1) the engine may only fill a gap where the rules had NO check
+            # ("unrecognised"); a deliberate refusal (missing data, treatment, survival comparison...) always stands.
+            # (2) a partial reading (the sentence states numbers the model's reading doesn't cover) is never used.
+            read_nums = [sp["claimed_value"][k] for sp in specs for k in ("number", "low", "high")
+                         if sp["claimed_value"][k] is not None]
+            partial = any(all(abs(n.value - x) > max(0.6, 0.01 * abs(n.value)) for x in read_nums) for n in s.numbers
+                          if not (1900 <= n.value <= 2100 and not n.is_percent))
+            can_fill = res.verdict in ("supported", "contradicted") or res.check in ("unrecognised", "not_a_claim")
+            if eng is not None and grounded and (partial or not can_fill) and res.verdict not in ("supported", "contradicted"):
+                decided = ("rules (the AI reading covers only part of this sentence, so the engine was not used)" if partial
+                           else "rules (a deliberate 'can't check' by the rules is never overridden)")
+            elif eng is not None and grounded:
                 merged = combine(res, eng)
                 if merged is eng:
                     decided = "engine (rules had no check for this wording)"

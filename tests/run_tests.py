@@ -49,6 +49,14 @@ EXPECT = {
     HERE / "clinical_report.md":
         ["supported", "supported", "contradicted", "supported", "supported", "contradicted", "supported", "contradicted",
          "supported", "supported", "supported", "contradicted", "supported"],
+    # Routing: claims the keyword router used to send to a checker that measured something else (false "contradicted").
+    # Pandas answers: MYC amplified 21.2% of 1,080, ERBB2 12.3%, CCND1 16.4%, CDKN2A deep deletion 4.4%, MYC within
+    # basal-like 46.7% of 135; PFI 13.2% of 1,097, DFI 8.8% of 953, DSS 7.7% of 1,078; HER2 RPPA mean LumA 0.31,
+    # Basal -0.01, Her2-enriched 2.02; stage IIA 33.3% of 1,075. The last three must stay unchecked, not be mis-measured:
+    # an RPPA cluster is not the PAM50 call, "no distant metastasis" is a negation, and the 2012 staging is another column.
+    HERE / "routing_report.md":
+        ["supported", "contradicted", "supported", "supported", "supported", "supported", "contradicted", "supported",
+         "supported", "contradicted", "supported", "insufficient_evidence", "insufficient_evidence", "insufficient_evidence"],
     # Held out: written and answered (with plain pandas) before the tool was run on it.
     HERE / "holdout_report.md":
         ["supported"] * 7 + ["contradicted"] + ["supported"] * 4 + ["contradicted"] + ["supported"] * 3

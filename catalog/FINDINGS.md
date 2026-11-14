@@ -79,6 +79,20 @@ else and declares a true claim wrong:
 Many probe sentences use column-style wording, so the 21 overstate how often this happens with natural prose, but each
 is a real routing error: the checker's keyword matched and its measurement did not answer the claim.
 
+## After the false-alarm fixes (same 107 true claims)
+| Outcome | Before | After |
+|---|---|---|
+| Verified (supported) | 17 | **24** |
+| Not verifiable | 69 | 83 |
+| False alarm (true claim marked contradicted) | 21 | **0** |
+
+Fixes: checkers now give up instead of measuring something else (cohort checker on "X% of tumors *with* <layer>
+data" and on "X% of the RPPA clusters"; subtype checker on other classifications; clinical checker on negations,
+later events and other source columns); survival handles progression (PFI), recurrence (DFI) and cancer deaths (DSS);
+protein comparisons use the two groups the claim names; a new copy-number checker (amplified / deeply deleted /
+gained / lost, optionally within a subgroup); sub-stages (IIA...); a sentence with a percentage or a patient count is
+no longer mistaken for a disclaimer. Locked in by `tests/routing_report.md` (14 claims, answers from plain pandas).
+
 ## What this means for the upgrade
 1. Route by meaning, not keywords: a structured claim (target field + value, population, denominator, metric) checked
    against this catalog before any calculation.

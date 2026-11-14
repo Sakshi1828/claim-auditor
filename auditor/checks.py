@@ -476,9 +476,11 @@ class ManifestChecker(Checker):
 
 class SubtypeChecker(Checker):
     name = "subtype_share"
+    # "Basal" in an RPPA, Pan-Cancer, methylation or miRNA cluster is a different classification from the PAM50 call
+    OTHER_CLASSIFICATION = r"\brppa\b|cluster|pancan|pan[- ]cancer|methylation|mirna|\bcna\b"
 
     def applies(self, s, r):
-        return any(re.search(p[0], s.lower) for p in SUBTYPES.values())
+        return any(re.search(p[0], s.lower) for p in SUBTYPES.values()) and not re.search(self.OTHER_CLASSIFICATION, s.lower)
 
     def run(self, s, r):
         t = s.lower
@@ -607,14 +609,19 @@ class ProteinCompareChecker(Checker):
                 fields.append(col)
                 break
         if group_desc is None:
-            for key, (pat, lab, _) in SUBTYPES.items():
-                if re.search(pat, t):
-                    st = c["PAM50Call_RNAseq"].reindex(vals.index)
-                    a_ids = st[st == lab].index.tolist()
+            named = sorted((m.start(), key, lab) for key, (pat, lab, _) in SUBTYPES.items() for m in [re.search(pat, t)] if m)
+            if named:
+                st = c["PAM50Call_RNAseq"].reindex(vals.index)
+                _, key, lab = named[0]
+                a_ids = st[st == lab].index.tolist()
+                if len(named) >= 2:          # "higher in Luminal A than in Basal-like": compare the two groups named
+                    _, key2, lab2 = named[1]
+                    b_ids = st[st == lab2].index.tolist()
+                    group_desc = (SUBTYPE_NAMES[key], SUBTYPE_NAMES[key2], "PAM50Call_RNAseq")
+                else:
                     b_ids = st[st.notna() & (st != lab)].index.tolist()
                     group_desc = (SUBTYPE_NAMES[key], "other subtypes", "PAM50Call_RNAseq")
-                    fields.append("PAM50Call_RNAseq")
-                    break
+                fields.append("PAM50Call_RNAseq")
         if group_desc is None or not a_ids or not b_ids:
             return Result(verdict="insufficient_evidence", check=self.name,
                           summary=f"Found {prot} protein data, but could not tell which groups the claim compares.",
@@ -818,6 +825,72 @@ class MutationChecker(Checker):
                             + "\n".join(f"(M.loc['{g}'] > 0).mean() * 100   # n = {den}" for g in genes)))
 
 
+class CopyNumberChecker(Checker):
+    """'<GENE> is amplified / deeply deleted / gained / lost in N% of tumors' from GISTIC thresholded calls."""
+    name = "copy_number_frequency"
+    EVENTS = [("amplified", r"amplif", lambda x: x == 2, "high-level amplification (GISTIC = 2)"),
+              ("deeply deleted", r"deep(?:ly)?[- ]delet|homozygous(?:ly)?[- ]delet", lambda x: x == -2,
+               "deep deletion (GISTIC = -2)"),
+              ("gained", r"\bgain(?:ed|s)?\b", lambda x: x >= 1, "any copy-number gain (GISTIC >= 1)"),
+              ("lost", r"\bloss(?:es)?\b|\blost\b|\bdelet", lambda x: x <= -1, "any copy-number loss (GISTIC <= -1)")]
+
+    @staticmethod
+    def table(r):
+        if getattr(r, "_cn_table", None) is None:
+            r._cn_table = pd.read_csv(r.path("copy_number"), sep="\t", index_col=0)
+        return r._cn_table
+
+    def _genes(self, s, r):
+        idx = self.table(r).index
+        return [(m.start(), m.group(0)) for m in re.finditer(r"\b[A-Z][A-Z0-9-]{1,14}\b", s.text)
+                if m.group(0) not in STOP_GENES and m.group(0) in idx]
+
+    def _event(self, t):
+        return next((e for e in self.EVENTS if re.search(e[1], t)), None)
+
+    def applies(self, s, r):
+        return bool(s.numbers) and r.has_file("copy_number") and self._event(s.lower) is not None and bool(self._genes(s, r))
+
+    def run(self, s, r):
+        cn = self.table(r)
+        word, _, test, label = self._event(s.lower)
+        prim = [x for x in cn.columns if is_primary(x)]
+        group = MutationChecker().subgroup(s.text, r)
+        cols = [x for x in prim if x in group[1]] if group else prim
+        genes = self._genes(s, r)
+        subs, fields = [], [f"copy_number_gistic row(s)"]
+        for num in s.numbers:
+            gene = nearest(num.start, genes, prefer_before=True)
+            if gene is None:
+                continue
+            k = int(cn.loc[gene, cols].map(test).sum())
+            where = f" within {group[0]}" if group else ""
+            if num.is_percent:
+                ok, rule = matches(num, pct(k, len(cols)), True)
+                subs.append(SubCheck(f"{gene} {word}{where}: share of primary tumors with copy-number calls", num.text,
+                                     fmt_pct(k, len(cols)), ok, rule))
+            else:
+                ok, rule = matches(num, k, False)
+                subs.append(SubCheck(f"{gene} {word}{where}: primary tumors", num.text, f"{k:,}", ok, rule))
+            fields.append(gene)
+        v = verdict_from(subs)
+        return Result(verdict=v, check=self.name,
+                      summary=f"Counted {label} in copy_number_gistic among {len(cols):,} primary tumors"
+                              + (f" ({group[0]})" if group else "") + ": "
+                              + "; ".join(f"{sc.label.split(':')[0]}: {sc.observed}" for sc in subs) + ".",
+                      subchecks=subs, correct_value=correct_from(subs) if v == "contradicted" else None,
+                      files=[FILES["copy_number"]] + ([FILES["clinical"]] if group else []),
+                      fields=fields + ([group[2]] if group else []), n=len(cols),
+                      population="Primary tumors with copy-number calls" + (f", {group[0]}" if group else ""),
+                      limitation="GISTIC2 thresholded calls: 2 = high-level amplification, -2 = deep deletion, +1/-1 = "
+                                 "low-level gain/loss (noisier). Copy number is not expression: an amplified gene is not "
+                                 "proven to be overexpressed.",
+                      code="cn = copy_number.set_index('Gene Symbol')\nprim = [c for c in cn.columns if c[13:15]=='01']\n"
+                           + "\n".join(f"(cn.loc['{g}', prim] {'== 2' if word == 'amplified' else '== -2' if word == 'deeply deleted' else '>= 1' if word == 'gained' else '<= -1'}).mean()"
+                                       for g in fields[1:]),
+                      confidence="high")
+
+
 class AgeChecker(Checker):
     name = "age"
 
@@ -862,24 +935,39 @@ class AgeChecker(Checker):
 class SurvivalChecker(Checker):
     name = "survival"
 
+    # which endpoint a claim is about: progression -> PFI, recurrence / disease-free -> DFI, cancer death -> DSS, else OS
+    ENDPOINTS = [("PFI", r"progression|progressed", "a progression event (PFI = 1)"),
+                 ("DFI", r"recurren|relapse|disease[- ]free", "a recurrence (DFI = 1)"),
+                 ("DSS", r"disease[- ]specific|died (?:of|from) (?:breast )?cancer|cancer[- ](?:related |specific )?deaths?",
+                  "a disease-specific death (DSS = 1)")]
+    EVENT_WORDS = r"\bdied\b|\bdeaths?\b|deceased|mortality|progression|progressed|recurren|relapse|disease[- ]free|disease[- ]specific"
+
     def applies(self, s, r):
         t = s.lower
-        if not re.search(r"\bsurviv|\bdied\b|\bdeaths?\b|follow[- ]up|prognos|mortality|alive", t):
+        if re.search(r"lost (?:to )?follow|follow[- ]?up (?:case|form|submission)|report form|submission reason", t):
+            return False          # record-keeping fields, not outcomes
+        if not re.search(r"\bsurviv|\bdied\b|\bdeaths?\b|follow[- ]up|prognos|mortality|alive|progression|progressed|"
+                         r"recurren|relapse|disease[- ]free|disease[- ]specific", t):
             return False
         # "survival" used as the name of a data layer ("535 have survival, mutation and RNA data") is a coverage claim
         n_layers = sum(bool(re.search(p, t)) for p in LAYER_PATTERNS.values())
         if n_layers >= 2:
             return False
         # "...with survival data had a recorded death": the deaths are the claim, survival data is the population
-        if re.search(r"survival (?:data|records|information|layer)", t) and not re.search(r"\bdied\b|\bdeaths?\b|deceased|mortality", t):
+        if re.search(r"survival (?:data|records|information|layer)", t) and not re.search(self.EVENT_WORDS, t):
             return False
         return True
 
     def run(self, s, r):
         t = s.lower
+        ep, ep_label = "OS", "a recorded death (OS = 1)"
+        for key, pat, label in self.ENDPOINTS:
+            if re.search(pat, t):
+                ep, ep_label = key, label
+                break
         sv = r.survival
-        sv = sv[sv["sample"].map(is_primary)].dropna(subset=["OS"])
-        deaths, n = int(sv.OS.sum()), len(sv)
+        sv = sv[sv["sample"].map(is_primary)].dropna(subset=[ep])
+        deaths, n = int(sv[ep].sum()), len(sv)
         comparative = re.search(r"worse|better|poorer|shorter|longer|higher risk|lower risk|prognos|than", t)
         subs = []
         if not comparative:
@@ -891,10 +979,10 @@ class SurvivalChecker(Checker):
                     subs.append(SubCheck("Median follow-up (OS.time)", num.text, f"{med:.1f} {'years' if unit > 300 else 'months' if unit > 1 else 'days'}", ok, "within 5%"))
                 elif num.is_percent:
                     ok, rule = matches(num, pct(deaths, n), True)
-                    subs.append(SubCheck("Share with a recorded death (OS = 1)", num.text, fmt_pct(deaths, n), ok, rule))
+                    subs.append(SubCheck(f"Share with {ep_label}", num.text, fmt_pct(deaths, n), ok, rule))
                 else:
                     ok, rule = matches(num, deaths, False)
-                    subs.append(SubCheck("Recorded deaths (OS = 1)", num.text, f"{deaths:,}", ok, rule))
+                    subs.append(SubCheck(f"Tumors with {ep_label}", num.text, f"{deaths:,}", ok, rule))
         if comparative or not subs:
             return Result(verdict="insufficient_evidence", check=self.name,
                           summary=f"Survival data exists ({n:,} primary tumors, {deaths:,} recorded deaths), but a survival comparison "
@@ -906,12 +994,14 @@ class SurvivalChecker(Checker):
                           code="sv = survival[survival['sample'].str[13:15]=='01']\nsv[['OS','OS.time']].describe()",
                           confidence="medium")
         v = verdict_from(subs)
-        return Result(verdict=v, check=self.name, summary=f"{deaths:,} recorded deaths among {n:,} primary tumors with survival data.",
+        return Result(verdict=v, check=self.name,
+                      summary=f"{deaths:,} of {n:,} primary tumors with {ep} status have {ep_label}.",
                       subchecks=subs, correct_value=correct_from(subs) if v == "contradicted" else None,
-                      files=[FILES["survival"]], fields=["OS", "OS.time"], n=n, population="Primary tumors with overall survival",
-                      limitation="OS = overall survival from the TCGA Clinical Data Resource; many patients have short follow-up. "
-                                 + redaction_note(r),
-                      code="sv = survival[survival['sample'].str[13:15]=='01'].dropna(subset=['OS'])\nsv.OS.sum(), len(sv), sv['OS.time'].median()")
+                      files=[FILES["survival"]], fields=[ep, f"{ep}.time"], n=n, population=f"Primary tumors with {ep} status",
+                      limitation=f"{ep} from the TCGA Clinical Data Resource; follow-up length differs between patients, so this "
+                                 "is a raw count, not a survival probability. " + redaction_note(r),
+                      code=f"sv = survival[survival['sample'].str[13:15]=='01'].dropna(subset=['{ep}'])\n"
+                           f"sv['{ep}'].sum(), len(sv), sv['OS.time'].median()")
 
 
 class CohortChecker(Checker):
@@ -954,6 +1044,14 @@ class CohortChecker(Checker):
                 ok, rule = matches(num, totals[ent], False)
                 subs.append(SubCheck(f"Number of {ent if ent != 'primary' else 'primary tumors'} (denominator)", num.text,
                                      f"{totals[ent]:,}", ok, rule))
+                continue
+            # "21% of tumors WITH copy number data are amplified": the layer only says which tumors are counted; the claim
+            # is about something else (amplification, events, stage...), so this checker must not answer it.
+            if num.is_percent and re.match(r"\s*of\s+(?:the\s+|all\s+)?(?:\w+\s+){0,2}?(?:tumou?rs|samples|patients|cases)"
+                                           r"\s+(?:with|that have|having)\b", after, re.I):
+                continue
+            # "21.6% of the RPPA clusters": the layer name is part of a classification, not data availability
+            if num.is_percent and re.search(r"cluster|subtype|classif|\bgroups?\b", after, re.I):
                 continue
             entity = next((k for k, pat in self.ENTITIES if re.match(pat, after, re.I)), None)
             layers = [k for k, pat in LAYER_PATTERNS.items() if re.search(pat, after, re.I)]
@@ -1092,6 +1190,14 @@ CLINICAL_TOPICS = {
     "radiation": (r"radiation|radiotherapy", "radiation_therapy", lambda v: v == "YES", "Received radiation therapy",
                   _UNKNOWN),
 }
+for _st in ("IA", "IB", "IIA", "IIB", "IIIA", "IIIB", "IIIC"):     # sub-stages: "Stage IIA" exactly
+    CLINICAL_TOPICS[f"stage_{_st.lower()}"] = (rf"\bstage {_st.lower()}\b", "pathologic_stage",
+                                               lambda v, _s=_st: v == f"Stage {_s}", f"Stage {_st}", _UNKNOWN + r"|stage x")
+# Words that put the claim on a different variable than the topic keyword: a later event, an additional treatment, or a
+# negation the topic doesn't model ("no distant metastasis"). The checker gives up rather than measure the wrong thing.
+_CLIN_OTHER_VARIABLE = r"\badditional\b|new (?:tumou?r|neoplasm)|recurren|relapse|after (?:the )?(?:initial |first )?treatment|" \
+                       r"follow[- ]?up|\bhistory of\b|\bprior\b|\bother\b"
+_CLIN_NEGATION = r"\b(?:no|not|without|absent|free of|none|never)\b"
 # Sentences about genes, subtypes, receptors, survival, age or omics layers belong to the other checkers.
 _CLIN_EXCLUDE = (r"mutat|\bsurviv|\bdeaths?\b|\bdied\b|deceased|\bage\b|years? old|\bmedian\b|\bmean\b|protein|rppa|copy[- ]number"
                  r"|\brna\b|slides?\b|pam50|subtype|luminal|basal|her2|triple[- ]negative|\btnbc\b|estrogen|progesterone"
@@ -1112,6 +1218,10 @@ class ClinicalCategoryChecker(Checker):
         t = s.lower
         if re.search(_CLIN_EXCLUDE, t) or re.search(r"\b[A-Z][A-Z0-9]{2,}\d\b", s.text):
             return []
+        if re.search(_CLIN_OTHER_VARIABLE, t):
+            return []
+        if re.search(r"2012|nature|converted|\bajcc\b|pancan|pan[- ]cancer", t):
+            return []         # the claim names another source column (e.g. the 2012 study's staging): don't substitute ours
         spans, taken = [], []
         for key, (pat, *_rest) in CLINICAL_TOPICS.items():
             for m in re.finditer(pat, t):
@@ -1119,6 +1229,18 @@ class ClinicalCategoryChecker(Checker):
                     continue          # "lymph node metastasis" is a node claim, not a distant-metastasis claim
                 taken.append((m.start(), m.end()))
                 spans.append((m.start(), key))
+        # a negation outside the matched topic words ("no distant metastasis") flips the meaning: don't guess
+        rest = t
+        for a, b in sorted(taken, reverse=True):
+            rest = rest[:a] + " " * (b - a) + rest[b:]
+        if re.search(_CLIN_NEGATION, rest):
+            return []
+        # two different categories of the same variable sharing one number ("ductal and lobular: 7%") is ambiguous
+        by_col = {}
+        for _, key in spans:
+            by_col.setdefault(CLINICAL_TOPICS[key][1], set()).add(key)
+        if any(len(v) > 1 for v in by_col.values()) and len(s.numbers) < 2:
+            return []
         return sorted(spans)
 
     def applies(self, s, r):
@@ -1218,7 +1340,8 @@ class StatementKindChecker(Checker):
 # The clinical-category checker comes last (before the fallback) so it only gets sentences no other checker takes;
 # its early copy only takes number-free "most / nearly all" sentences that would otherwise be read as opinion.
 CHECKERS: list[Checker] = [StatementKindChecker(), TreatmentChecker(), ManifestChecker(), ClinicalCategoryChecker(early=True),
-                           NotAClaimChecker(), SurvivalChecker(), ProteinCompareChecker(), MutationChecker(), SubtypeChecker(),
+                           NotAClaimChecker(), SurvivalChecker(), ProteinCompareChecker(), MutationChecker(),
+                           CopyNumberChecker(), SubtypeChecker(),
                            ReceptorShareChecker(), AgeChecker(), CohortChecker(), ClinicalCategoryChecker(), Fallback()]
 
 

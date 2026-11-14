@@ -30,9 +30,9 @@
  {
   "capability": "share:Gender_nature2012",
   "claim": "99.0% of primary tumors with a recorded Gender (2012 study) are FEMALE.",
-  "verdict": "supported",
-  "checker": "clinical_category",
-  "outcome": "verified"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:HER2_Final_Status_nature2012",
@@ -121,16 +121,16 @@
  {
   "capability": "share:RPPA_Clusters_nature2012",
   "claim": "21.6% of primary tumors with a recorded RPPA Clusters (2012 study) are Basal.",
-  "verdict": "contradicted",
-  "checker": "subtype_share",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:Survival_Data_Form_nature2012",
   "claim": "71.4% of primary tumors with a recorded Survival Data Form (2012 study) are enrollment.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:Tumor_T1_Coded_nature2012",
@@ -184,9 +184,9 @@
  {
   "capability": "share:_PANCAN_RPPA_PANCAN_K8",
   "claim": "65.5% of primary tumors with a recorded PANCAN RPPA PANCAN K8 are BRCA nonbasal-like c8.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:_PANCAN_UNC_RNAseq_PANCAN_K16",
@@ -212,9 +212,9 @@
  {
   "capability": "share:_PANCAN_mutation_PANCAN",
   "claim": "34.1% of primary tumors with a recorded PANCAN mutation PANCAN are mutation c1uster 9.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:additional_pharmaceutical_therapy",
@@ -226,9 +226,9 @@
  {
   "capability": "share:additional_radiation_therapy",
   "claim": "65.5% of primary tumors with a recorded additional radiation therapy are NO.",
-  "verdict": "contradicted",
-  "checker": "clinical_category",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:additional_surgery_locoregional_procedure",
@@ -310,9 +310,9 @@
  {
   "capability": "share:distant_metastasis_present_ind2",
   "claim": "96.9% of primary tumors with a recorded distant metastasis present ind2 are NO.",
-  "verdict": "contradicted",
-  "checker": "clinical_category",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:er_level_cell_percentage_category",
@@ -331,9 +331,9 @@
  {
   "capability": "share:followup_case_report_form_submission_reason",
   "claim": "99.2% of primary tumors with a recorded followup case report form submission reason are Scheduled Follow-up Submission.",
-  "verdict": "contradicted",
-  "checker": "survival",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:gender",
@@ -387,9 +387,9 @@
  {
   "capability": "share:histological_type_other",
   "claim": "36.7% of primary tumors with a recorded histological type other are Infiltrating ductal and lobular carcinoma.",
-  "verdict": "contradicted",
-  "checker": "clinical_category",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:history_of_neoadjuvant_treatment",
@@ -429,9 +429,9 @@
  {
   "capability": "share:lost_follow_up",
   "claim": "89.6% of primary tumors with a recorded lost follow up are NO.",
-  "verdict": "contradicted",
-  "checker": "survival",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "numeric:lymph_node_examined_count",
@@ -499,9 +499,9 @@
  {
   "capability": "share:new_neoplasm_event_type",
   "claim": "60.8% of primary tumors with a recorded new neoplasm event type are Distant Metastasis.",
-  "verdict": "contradicted",
-  "checker": "clinical_category",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:new_neoplasm_occurrence_anatomic_site_text",
@@ -541,30 +541,30 @@
  {
   "capability": "share:pathologic_M",
   "claim": "97.0% of primary tumors with a recorded pathologic M are M0.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:pathologic_N",
   "claim": "30.9% of primary tumors with a recorded pathologic N are N0.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:pathologic_T",
   "claim": "57.9% of primary tumors with a recorded pathologic T are T2.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "insufficient_evidence",
+  "checker": "unrecognised",
+  "outcome": "NOT VERIFIABLE by current engine"
  },
  {
   "capability": "share:pathologic_stage",
   "claim": "33.3% of primary tumors with a recorded pathologic stage are Stage IIA.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "supported",
+  "checker": "clinical_category",
+  "outcome": "verified"
  },
  {
   "capability": "share:person_neoplasm_cancer_status",
@@ -653,37 +653,37 @@
  {
   "capability": "copy_number:frequency",
   "claim": "PVT1 is amplified in 21.2% of tumors with copy number data.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "supported",
+  "checker": "copy_number_frequency",
+  "outcome": "verified"
  },
  {
   "capability": "copy_number:frequency",
   "claim": "MYC is amplified in 21.2% of tumors with copy number data.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "supported",
+  "checker": "copy_number_frequency",
+  "outcome": "verified"
  },
  {
   "capability": "copy_number:frequency",
   "claim": "CASC8 is amplified in 21.0% of tumors with copy number data.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "supported",
+  "checker": "copy_number_frequency",
+  "outcome": "verified"
  },
  {
   "capability": "copy_number:frequency",
   "claim": "CSMD1 is deeply deleted in 9.6% of tumors with copy number data.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "supported",
+  "checker": "copy_number_frequency",
+  "outcome": "verified"
  },
  {
   "capability": "copy_number:frequency",
   "claim": "RNA5SP251 is deeply deleted in 7.2% of tumors with copy number data.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "supported",
+  "checker": "copy_number_frequency",
+  "outcome": "verified"
  },
  {
   "capability": "protein:levels",
@@ -695,9 +695,9 @@
  {
   "capability": "protein:levels",
   "claim": "HER2 protein levels are higher in Luminal A tumors than in Basal-like tumors.",
-  "verdict": "contradicted",
+  "verdict": "supported",
   "checker": "protein_comparison",
-  "outcome": "false alarm (true claim marked wrong)"
+  "outcome": "verified"
  },
  {
   "capability": "protein:levels",
@@ -730,9 +730,9 @@
  {
   "capability": "survival:descriptive",
   "claim": "13.2% of primary tumors with survival data had a progression event.",
-  "verdict": "contradicted",
-  "checker": "cohort_coverage",
-  "outcome": "false alarm (true claim marked wrong)"
+  "verdict": "supported",
+  "checker": "survival",
+  "outcome": "verified"
  },
  {
   "capability": "survival:descriptive",

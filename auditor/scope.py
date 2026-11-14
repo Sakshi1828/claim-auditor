@@ -133,7 +133,11 @@ def statement_kind(text: str) -> str | None:
     tl = t.lower()
     if t.endswith("?"):
         return "a question"
-    if re.search(DISCLAIMER, tl):
+    # "97% of patients had no distant metastasis at diagnosis" states a finding: a percentage or a count of patients /
+    # tumors means it is a claim, even if it contains "no ... diagnosis"
+    finding = re.search(r"\d\s*(?:%|percent)|\b\d[\d,]*\s+(?:of\s+(?:the\s+|all\s+)?)?(?:\w+\s+){0,2}"
+                        r"(?:patients|tumou?rs|samples|cases|women|participants)\b", tl)
+    if re.search(DISCLAIMER, tl) and not finding:
         return "a safety or scope disclaimer"
     if re.search(INSTRUCTION, tl):
         return "an instruction to the reader or the system"

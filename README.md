@@ -179,5 +179,16 @@ or within ±1.5 points or 5% if the claim says *about / approximately / roughly*
 TCGA-BRCA via the UCSC Xena TCGA hub and NCI Imaging Data Commons (see the challenge repo's `DATA_LICENSES.md`).
 Raw data is fetched by the organizers' `fetch.py` and is **not** committed here. De-identified, patient-derived, research use only.
 
+## Third-party code and licenses
+| Package | Used for | License |
+|---|---|---|
+| [pandas](https://pandas.pydata.org) (with numpy) | Counting and joining the release files | BSD-3-Clause (numpy: BSD-3-Clause) |
+| [jsonschema](https://github.com/python-jsonschema/jsonschema) | The organizers' `format/validate.py` | MIT |
+| [cryptography](https://cryptography.io) | The organizers' `envelopes/unseal.py` | Apache-2.0 or BSD-3-Clause |
+| Organizers' challenge repo (`fetch.py`, `unseal.py`, `make_release.py`, `validate.py`) | Run unchanged, not copied | See the challenge repo |
+
+Everything else (the checkers, the app and the tests) is our own code. No AI model, API key or network service is used:
+every verdict is computed locally from the release files.
+
 **Windows note:** `envelopes/unseal.py` fails its fingerprint check on Windows because pandas writes `\r\n` line endings.
 Our tool runs it unchanged with `os.linesep = "\n"` (see `auditor/envelope.py`).

@@ -151,6 +151,14 @@ class Handler(BaseHTTPRequestHandler):
             self._json({"error": f"{type(e).__name__}: {e}"}, 500)
 
 
+def _rel(path) -> str:
+    """A path as you'd type it from the current folder (so printed hints work wherever you ran this)."""
+    try:
+        return os.path.relpath(pathlib.Path(path).resolve())
+    except ValueError:        # another drive on Windows
+        return str(pathlib.Path(path).resolve())
+
+
 def main():
     global CHALLENGE
     p = argparse.ArgumentParser()
@@ -159,7 +167,17 @@ def main():
     p.add_argument("--no-browser", action="store_true")
     a = p.parse_args()
     CHALLENGE = pathlib.Path(a.challenge).resolve()
-    srv = ThreadingHTTPServer(("127.0.0.1", a.port), Handler)
+
+    class Server(ThreadingHTTPServer):
+        # On Windows, SO_REUSEADDR lets a second server bind a busy port silently; refuse instead.
+        allow_reuse_address = os.name != "nt"
+
+    try:
+        srv = Server(("127.0.0.1", a.port), Handler)
+    except OSError as e:
+        sys.exit(f"Port {a.port} is already in use ({e.strerror or e}).\n"
+                 f"Is the app already running? Then just open http://localhost:{a.port}\n"
+                 f"Or start it on another port:  python {_rel(__file__)} --port {a.port + 1}")
     url = f"http://localhost:{a.port}"
     print(f"Claim Auditor running at {url}  (Ctrl+C to stop)")
     threading.Thread(target=get_release, args=(None,), daemon=True).start()   # warm the cache

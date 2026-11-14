@@ -73,7 +73,7 @@ def _gap(claimed: str, observed: str) -> str:
             extra = f", about {abs(round(d / 100 * den)):,} of {den:,} tumors"
         return f"{abs(d):.1f} percentage points {'too high' if d > 0 else 'too low'}{extra}"
     d = c - o
-    rel = f" ({abs(d) / o * 100:.0f}%)" if o else ""
+    rel = f", {abs(d) / o * 100:.0f}% off" if o else ""
     return f"{abs(d):,.{0 if float(d).is_integer() else 2}f} {'too many' if d > 0 else 'too few'}{rel}"
 
 

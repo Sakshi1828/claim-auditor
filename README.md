@@ -12,28 +12,67 @@ decision (Proceed / Fix a problem / Narrow the question / Stop) and exports `aud
 > not about patients. Every verdict is flagged for human review until a person confirms it.
 
 ## Setup (about 5 minutes)
-The tool sits **next to** the challenge repo:
+Needs **Python 3.10 or newer** and git. Only `pandas`, `jsonschema` and `cryptography`: no Streamlit, no API keys,
+no internet after fetching. Every command below runs from **one folder that holds both repos**:
 ```
 your-folder/
   oncosys-hackathon-challenge/   ← organizers' repo (data is fetched into it)
   claim-auditor/                 ← this repo
 ```
+
+**1. Check your Python.** Mac/Linux: `python3 --version`. Windows: `py --version`.
+If it says 3.9 or older (the built-in Python on many Macs), install Python 3.12 from python.org
+(or `brew install python@3.12`) and use `python3.12` in step 3.
+
+**2. Get both repos, side by side**
 ```bash
 git clone https://github.com/disleveK/oncosys-hackathon-challenge.git
 ```
+```bash
+git clone https://github.com/Sakshi1828/claim-auditor.git
+```
+
+**3. Make a virtual environment and turn it on**
+
+Mac/Linux:
+```bash
+python3 -m venv .venv
+```
+```bash
+source .venv/bin/activate
+```
+Windows (PowerShell or Anaconda Prompt):
+```bash
+py -m venv .venv
+```
+```bash
+.venv\Scripts\activate
+```
+After this, `python` and `pip` mean the venv's copies on every system.
+
+**4. Install and fetch the data**
 ```bash
 pip install -r claim-auditor/requirements.txt
 ```
 ```bash
 python oncosys-hackathon-challenge/data/tcga-brca/fetch.py
 ```
-Needs Python 3.10+. Only `pandas`, `jsonschema` and `cryptography`: no Streamlit, no API keys, no internet after fetching.
-On Windows use `py` instead of `python` if `python` isn't found.
+`fetch.py` checks every file against the organizers' frozen checksums. The RNA file is 64 MB, so on a slow connection
+this step can take a couple of minutes.
+
+> **Windows with Smart App Control:** if importing pandas fails with "An Application Control policy has blocked this
+> file", install `pip install "pandas==2.3.3"`. Newer pandas wheels are not yet allowed by that policy on some machines.
 
 ## Run it
+All commands run from the folder that holds both repos, with the venv turned on.
+
 **Review app** (opens http://localhost:8501):
 ```bash
 python claim-auditor/app.py
+```
+If port 8501 is busy (another app, or a second copy of this one), pick another port:
+```bash
+python claim-auditor/app.py --port 8502
 ```
 1. *Use the practice report* (or upload / paste a report, or open a sealed envelope).
 2. *Check claims*. Click any sentence to see the claim, the numbers, the files and fields, and where the evidence stops.
@@ -53,6 +92,17 @@ python claim-auditor/audit_report.py --envelope 07 amber falcon river quartz
 ```
 The envelope command unseals, audits `claim_auditor_report.md` against release A and against the envelope's own release,
 prints any verdict that changes between the two, and writes `outputs/audit.json`. The whole run takes a few seconds.
+
+To try it now, use the public practice envelope:
+```bash
+python claim-auditor/audit_report.py --envelope practice orange meadow pilot lantern
+```
+**That's expected to stop after unsealing**: the practice envelope holds only a new release, with no report inside, so
+there is nothing to audit. It says so, prints the command for auditing a report against that release, and exits with code 0.
+Saturday's envelopes contain `claim_auditor_report.md`.
+
+Exit codes: `0` audit written (or practice envelope with no report), `1` unsealing failed (wrong number or words, or
+release A not fetched), `2` report not found.
 
 Validate the output:
 ```bash

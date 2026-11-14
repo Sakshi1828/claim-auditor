@@ -11,6 +11,7 @@ Options: --challenge DIR (the challenge repo, default ../oncosys-hackathon-chall
 from __future__ import annotations
 
 import argparse
+import os
 import pathlib
 import sys
 import time
@@ -27,6 +28,14 @@ DEFAULT_CHALLENGE = HERE.parent / "oncosys-hackathon-challenge"
 ICON = {"supported": "OK ", "contradicted": "XX ", "insufficient_evidence": "?? ", "not_a_claim": "-- "}
 
 
+def cmd(path) -> str:
+    """A path as you'd type it from the current folder, so printed hints work wherever you ran this."""
+    try:
+        return os.path.relpath(pathlib.Path(path).resolve())
+    except ValueError:        # another drive on Windows
+        return str(pathlib.Path(path).resolve())
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("report", nargs="?", help="Markdown or text report (default: the practice brief)")
@@ -39,19 +48,26 @@ def main(argv=None):
     t0 = time.time()
     challenge = pathlib.Path(a.challenge).resolve()
     report = pathlib.Path(a.report) if a.report else challenge / "products/research-claim-auditor/practice_brief.md"
+    me = cmd(__file__)
     if a.envelope:
         num, *words = a.envelope
         print(f"Unsealing envelope {num} ...")
         if unseal(challenge, num, words).returncode:
-            sys.exit("Unsealing failed: see the message above (wrong code, or release A needs fetch.py).")
-        report = opened_dir(challenge, num) / "claim_auditor_report.md"
-        if not report.exists() and not a.report:
-            rel = opened_dir(challenge, num) / "release"
-            sys.exit(f"\nThis envelope has no claim_auditor_report.md (the practice envelope only holds a release).\n"
-                     f"To audit a report against its data:\n"
-                     f"  python audit_report.py <report.md> --release \"{rel}\"")
+            print("\nUnsealing failed: see the message above (wrong number or words, or release A needs fetch.py).",
+                  file=sys.stderr)
+            sys.exit(1)
+        if not a.report:
+            report = opened_dir(challenge, num) / "claim_auditor_report.md"
+        if not report.exists():
+            rel = cmd(opened_dir(challenge, num) / "release")
+            print(f"\nEnvelope {num} opened, but it holds no claim_auditor_report.md, so there is nothing to audit."
+                  + (" That is expected for the practice envelope: it only holds a new release." if num == "practice" else "")
+                  + f"\nTo audit any report against the envelope's release:\n"
+                  f"  python {me} <report.md> --release \"{rel}\"")
+            sys.exit(0 if num == "practice" else 2)
     if not report.exists():
-        sys.exit(f"Report not found: {report}")
+        print(f"Report not found: {report}", file=sys.stderr)
+        sys.exit(2)
 
     release = Release(a.release or challenge / "data/tcga-brca/raw", challenge / "data/tcga-brca/slide_manifest.csv")
     audit = run_audit(report.read_text(encoding="utf-8"), release)
@@ -107,7 +123,7 @@ def main(argv=None):
     corr.write_text(corrected_markdown(plan, release.name), encoding="utf-8")
     print()
     print(f"Suggested corrected report -> {corr}")
-    print("Every verdict needs a person to confirm it: open the review app (python app.py).")
+    print(f"Every verdict needs a person to confirm it: open the review app (python {cmd(HERE / 'app.py')}).")
     print(f"\nWrote {out} (shared format) and {out.with_name(out.stem + '_full.json').name}  in {time.time() - t0:.1f} s")
 
 

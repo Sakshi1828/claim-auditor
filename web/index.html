@@ -4,393 +4,732 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Research Claim Auditor</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='10' fill='%239b2f63'/%3E%3Cpath d='M18 7.5c-3.2 0-5.4 2.4-5.4 5.3 0 2.5 1.6 4.8 3.3 7.2L10 29.5h4.4l3.6-5.7 3.6 5.7H26l-5.9-9.5c1.7-2.4 3.3-4.7 3.3-7.2 0-2.9-2.2-5.3-5.4-5.3Zm0 3.2c1.3 0 2.3 1 2.3 2.2 0 1.3-1 3.1-2.3 5.1-1.3-2-2.3-3.8-2.3-5.1 0-1.2 1-2.2 2.3-2.2Z' fill='white'/%3E%3C/svg%3E">
 <style>
 :root{
-  --bg:#f6f5f1;--panel:#fff;--ink:#14202b;--muted:#5b6670;--line:#dedbd2;--accent:#1f5f8b;
-  --ok:#1d6b3a;--ok-bg:#e3f2e8;--bad:#a12a2a;--bad-bg:#fbe5e3;--unk:#8a5a00;--unk-bg:#fdf0d5;--na:#5b6670;--na-bg:#ecebe6;
-  --focus:#2463eb;--code:#f1f0ec;
+  --bg:#f7f2f3; --paper:#fffcfc; --ink:#221a20; --ink-2:#4a3d45; --muted:#7a6b74; --line:#eadde1; --line-2:#f1e7ea;
+  --accent:#9b2f63; --accent-2:#f8e6ee; --rose:#d9739f; --cell:rgba(155,47,99,.07);
+  --ok:#1f7a45; --ok-bg:#e4f3ea; --ok-band:rgba(31,122,69,.16);
+  --bad:#b3332b; --bad-bg:#fbe8e5;
+  --unk:#9a6400; --unk-bg:#fcf1d8;
+  --na:#7b858e; --na-bg:#eeece6;
+  --focus:#2563eb; --code:#f2efe7; --shadow:0 1px 2px rgba(22,32,42,.05),0 4px 16px rgba(22,32,42,.06);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#12171c;--panel:#1b2229;--ink:#e8ecef;--muted:#9aa6b0;--line:#2e3943;--accent:#6fb1e0;
-  --ok:#7fd49c;--ok-bg:#183626;--bad:#ff9b92;--bad-bg:#40201e;--unk:#f3c46b;--unk-bg:#3a2f15;--na:#9aa6b0;--na-bg:#262e36;--code:#141a20;}}
+  --bg:#151014; --paper:#1f171d; --ink:#f1e9ed; --ink-2:#d2c3cb; --muted:#9e8c96; --line:#3a2c35; --line-2:#2c2229;
+  --accent:#ee9cc4; --accent-2:#3a1f2e; --rose:#e88bb5; --cell:rgba(238,156,196,.07);
+  --ok:#7ad39a; --ok-bg:#16301f; --ok-band:rgba(122,211,154,.18);
+  --bad:#ff958b; --bad-bg:#3b1d1b; --unk:#f0c264; --unk-bg:#352a12; --na:#8f9ba5; --na-bg:#232c34;
+  --code:#121920; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
 a{color:var(--accent)}
-:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
-header{padding:14px 20px;border-bottom:1px solid var(--line);background:var(--panel);display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
-header h1{font-size:19px;margin:0}
-.safety{font-size:13px;color:var(--muted)}
-.safety b{color:var(--ink)}
-main{max-width:1280px;margin:0 auto;padding:16px}
-section.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
-h2{font-size:16px;margin:0 0 10px}
-h3{font-size:14px;margin:14px 0 6px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+.hidden{display:none!important}
+svg:not([width]){width:14px;height:14px;flex:none}
+.verdict-line svg{width:14px;height:14px}
+@media (max-width:1100px){.safety{display:none!important}.brand span{display:none!important}}
+.muted{color:var(--muted)} .small{font-size:13px} .tiny{font-size:12px}
+
+/* ---------- top bar ---------- */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1320px;margin:0 auto;padding:10px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.brand{display:flex;gap:10px;align-items:center;margin-right:auto}
+.brand svg{flex:none}
+.brand b{font-size:16px;letter-spacing:-.01em}
+.brand span{display:block;font-size:12px;color:var(--muted);line-height:1.2}
+.steps-nav{display:flex;gap:4px;list-style:none;margin:0;padding:0}
+.steps-nav a{display:flex;gap:8px;align-items:center;padding:6px 12px;border-radius:999px;text-decoration:none;color:var(--muted);font-size:13.5px;font-weight:600}
+.steps-nav a .dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;border:1.5px solid currentColor;font-size:12px}
+.steps-nav a.on{color:var(--accent);background:var(--accent-2)}
+.steps-nav a.done{color:var(--ok)}
+.steps-nav a.done .dot{background:var(--ok);border-color:var(--ok);color:var(--paper)}
+.steps-nav a[aria-disabled=true]{pointer-events:none;opacity:.5}
+.safety{font-size:12px;color:var(--muted);max-width:340px;line-height:1.35}
+.safety b{color:var(--ink-2)}
+
+main{max-width:1320px;margin:0 auto;padding:22px 20px 80px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.pad{padding:20px 22px}
+.sec-h{display:flex;align-items:baseline;gap:12px;margin:34px 0 12px}
+.sec-h h2{font:600 22px/1.2 var(--serif);margin:0;letter-spacing:-.01em}
+.sec-h .k{font:700 12px var(--sans);color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.sec-h p{margin:0;color:var(--muted);font-size:14px}
+h3{font:700 12px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:22px 0 8px}
+
 button,select,input,textarea{font:inherit;color:inherit}
-button{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:7px 12px;cursor:pointer}
-button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+button{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:14px;transition:background .12s,border-color .12s}
+button:hover{border-color:var(--muted)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 @media (prefers-color-scheme:dark){button.primary{color:#0d1418}}
-button[aria-pressed=true]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+button.primary:hover{filter:brightness(1.08)}
+button.big{padding:12px 22px;font-size:15.5px;border-radius:11px}
+button.ghost{background:none;border-color:transparent;color:var(--accent);padding:6px 8px}
 button:disabled{opacity:.5;cursor:not-allowed}
-input,select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:7px 9px}
-textarea{width:100%;min-height:130px;font-family:ui-monospace,Consolas,monospace;font-size:13px}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:16px}
-@media (max-width:900px){.grid{grid-template-columns:1fr}}
-.badge{display:inline-flex;gap:5px;align-items:center;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600;white-space:nowrap}
+input,select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:8px 10px;width:100%}
+textarea{min-height:190px;font:13px/1.55 var(--mono);resize:vertical}
+label{font-size:12.5px;font-weight:600;color:var(--ink-2);display:block;margin-bottom:4px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.field{flex:1;min-width:160px}
+
+/* ---------- 1 load ---------- */
+.load{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px}
+@media (max-width:900px){.load{grid-template-columns:1fr}}
+.opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:12px 14px;border-radius:11px;margin-bottom:8px;font-weight:400}
+.opt .ic{width:34px;height:34px;flex:none;border-radius:9px;background:var(--accent-2);color:var(--accent);display:grid;place-items:center;font-size:17px}
+.opt b{display:block;font-size:14.5px;color:var(--ink)}
+.opt span span{display:block;font-size:13px;color:var(--muted)}
+.opt input[type=file]{display:none}
+details.env{border:1px dashed var(--line);border-radius:11px;padding:10px 14px;margin-top:4px}
+details summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:14px}
+#status{min-height:1.4em;margin-top:10px;font-size:13.5px;color:var(--ink-2)}
+#status.busy::before{content:"";display:inline-block;width:12px;height:12px;margin-right:8px;border:2px solid var(--accent);border-right-color:transparent;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-1px}
+@keyframes spin{to{transform:rotate(360deg)}}
+pre{background:var(--code);border:1px solid var(--line);border-radius:9px;padding:10px 12px;overflow:auto;font:12.5px/1.5 var(--mono);max-height:320px}
+
+/* ---------- story ---------- */
+.story{padding:26px 28px;position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 92% 18%, var(--cell) 0 46px, transparent 47px),
+    radial-gradient(circle at 92% 18%, transparent 0 58px, var(--cell) 59px 61px, transparent 62px),
+    radial-gradient(circle at 80% 70%, var(--cell) 0 22px, transparent 23px),
+    radial-gradient(circle at 80% 70%, transparent 0 30px, var(--cell) 31px 32px, transparent 33px),
+    radial-gradient(circle at 97% 82%, var(--cell) 0 14px, transparent 15px),
+    radial-gradient(circle at 70% 8%, var(--cell) 0 9px, transparent 10px),
+    var(--paper)}
+.story > *{position:relative}
+.ribbon-rule{height:3px;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--rose) 55%,transparent);width:120px;margin-bottom:14px}
+.kicker{font-size:12.5px;color:var(--muted);letter-spacing:.02em}
+.headline{font:600 30px/1.22 var(--serif);letter-spacing:-.015em;margin:8px 0 10px;max-width:880px}
+.headline em{font-style:normal;color:var(--bad)} .headline i{font-style:normal;color:var(--unk)} .headline u{text-decoration:none;color:var(--ok)}
+.dek{font-size:15.5px;color:var(--ink-2);max-width:860px;margin:0}
+.vbar{display:flex;height:14px;border-radius:999px;overflow:hidden;margin:20px 0 8px;background:var(--line-2)}
+.vbar div{height:100%;transition:width .4s}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13.5px}
+.legend span{display:flex;gap:7px;align-items:center}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.legend b{font-size:17px}
+.bg-supported{background:var(--ok)} .bg-contradicted{background:var(--bad)} .bg-insufficient_evidence{background:var(--unk)} .bg-not_a_claim{background:var(--na)}
+.top3{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-top:20px}
+.fcard{border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:11px;padding:12px 14px;background:var(--bg);cursor:pointer;text-align:left;font-weight:400;width:100%}
+.fcard.unk{border-left-color:var(--unk)}
+.fcard .t{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--bad)}
+.fcard.unk .t{color:var(--unk)}
+.fcard .q{font-size:14px;margin:4px 0 6px;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fcard .d{font-size:13.5px;color:var(--ink-2)}
+.fcard .d b{font-size:15px}
+.progress{display:flex;gap:10px;align-items:center;font-size:13.5px;color:var(--ink-2);margin-top:16px}
+.meter{flex:0 0 180px;height:6px;background:var(--line-2);border-radius:999px;overflow:hidden}
+.meter div{height:100%;background:var(--accent);transition:width .3s}
+
+/* ---------- badges ---------- */
+.badge{display:inline-flex;gap:6px;align-items:center;border-radius:999px;padding:3px 11px;font-size:13px;font-weight:700;white-space:nowrap}
+.badge svg{width:13px;height:13px}
 .v-supported{background:var(--ok-bg);color:var(--ok)}
 .v-contradicted{background:var(--bad-bg);color:var(--bad)}
 .v-insufficient_evidence{background:var(--unk-bg);color:var(--unk)}
 .v-not_a_claim{background:var(--na-bg);color:var(--na)}
-.chips{display:flex;gap:8px;flex-wrap:wrap}
-.chip{border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:120px}
-.chip .n{font-size:24px;font-weight:700;line-height:1}
-.report p{margin:0 0 8px}
-.sent{cursor:pointer;border-radius:4px;padding:1px 2px;border-bottom:2px solid transparent}
-.sent.v-supported{border-bottom-color:var(--ok)}
-.sent.v-contradicted{border-bottom-color:var(--bad)}
-.sent.v-insufficient_evidence{border-bottom-color:var(--unk)}
-.sent.v-not_a_claim{background:none;color:var(--muted)}
-.sent.sel{outline:2px solid var(--accent)}
-.tag{font-size:11px;font-weight:700;vertical-align:super;margin-left:2px}
-.queue{list-style:none;margin:0;padding:0}
-.queue li button{width:100%;text-align:left;display:flex;gap:10px;align-items:flex-start;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:10px 6px;background:none}
-.queue li button.sel{background:var(--bg)}
-.queue .txt{flex:1;font-size:14px}
-.rv{font-size:12px;color:var(--muted)}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{text-align:left;border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
-th{color:var(--muted);font-weight:600}
-pre{background:var(--code);border:1px solid var(--line);border-radius:7px;padding:10px;overflow:auto;font-size:12.5px}
-.callout{border-left:4px solid var(--accent);background:var(--bg);padding:8px 12px;border-radius:0 7px 7px 0;margin:8px 0}
-.callout.bad{border-color:var(--bad)} .callout.unk{border-color:var(--unk)} .callout.ok{border-color:var(--ok)}
-.muted{color:var(--muted)}
-.small{font-size:13px}
-.hidden{display:none!important}
-details summary{cursor:pointer;color:var(--accent)}
-label{font-size:13px;color:var(--muted);display:block;margin-bottom:3px}
-.field{margin-bottom:8px}
-#status{min-height:1.5em}
-.after{display:grid;gap:8px;margin:10px 0}
-.aft{border:1px solid var(--line);border-radius:8px;padding:8px 12px}
-.aft h4{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
-.aft p{margin:0 0 4px} .aft ul{margin:0;padding-left:18px}
-.sugg{background:var(--ok-bg);padding:1px 4px;border-radius:4px}
-ol.steps{padding-left:20px;margin:6px 0} ol.steps li{margin-bottom:8px}
-.corr p{margin:0 0 8px} .corr del{color:var(--bad);background:var(--bad-bg)} .corr ins{color:var(--ok);background:var(--ok-bg);text-decoration:none}
-.corr .flag{color:var(--unk);background:var(--unk-bg);font-weight:600}
-.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
-@media (max-width:900px){.two{grid-template-columns:1fr}}
+
+/* ---------- 2 review ---------- */
+.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.seg{display:inline-flex;background:var(--line-2);border-radius:10px;padding:3px}
+.seg button{border:0;background:none;padding:6px 12px;border-radius:8px;font-size:13px;color:var(--ink-2)}
+.seg button[aria-pressed=true]{background:var(--paper);color:var(--ink);box-shadow:var(--shadow)}
+.review{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.25fr);gap:18px;align-items:start}
+@media (max-width:980px){.review{grid-template-columns:1fr}}
+.reader{padding:18px 20px}
+.reader .title{font:600 17px var(--serif);margin:0 0 12px}
+.sents{display:flex;flex-direction:column;gap:2px}
+.sent{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:start;padding:8px 10px;border-radius:9px;cursor:pointer;border:1px solid transparent;text-align:left;background:none;font-weight:400;font-size:14.5px;line-height:1.5;width:100%}
+.sent:hover{background:var(--bg)}
+.sent.sel{background:var(--accent-2);border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+.sent .mk{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;margin-top:1px}
+.sent .mk svg{width:12px;height:12px}
+.sent.v-not_a_claim{color:var(--muted);background:none}
+.sent.v-not_a_claim.sel{background:var(--accent-2)}
+.sent .mk.v-not_a_claim{background:none;color:var(--na)}
+.sent .meta{display:flex;gap:8px;align-items:center;margin-top:3px;font-size:12px;color:var(--muted)}
+.sent .meta .ok{color:var(--ok);font-weight:600}
+.sent .meta .warn{color:var(--unk);font-weight:600}
+.sent .txt b{font-weight:600}
+.detail{position:sticky;top:76px;max-height:calc(100vh - 92px);overflow:auto;padding:22px 24px}
+.d-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.d-head .id{font:700 12px var(--mono);color:var(--muted)}
+.quote{font:500 19px/1.4 var(--serif);margin:12px 0 4px;padding-left:14px;border-left:3px solid var(--line)}
+.summary{color:var(--ink-2);font-size:14.5px;margin:10px 0 0}
+
+/* comparison visuals */
+.cmp{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:12px;background:var(--bg)}
+.cmp .lab{font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:10px}
+.cmp .lab small{font-weight:400;color:var(--muted)}
+.scale{position:relative;height:44px;margin:6px 6px 2px}
+.scale .track{position:absolute;left:0;right:0;top:20px;height:4px;background:var(--line);border-radius:4px}
+.scale .band{position:absolute;top:14px;height:16px;background:var(--ok-band);border-radius:4px}
+.scale .link{position:absolute;top:21px;height:2px;background:var(--bad);opacity:.5}
+.scale .pt{position:absolute;top:12px;width:20px;height:20px;margin-left:-10px;border-radius:50%;border:3px solid var(--paper);box-shadow:0 0 0 1.5px currentColor}
+.scale .pt.data{background:var(--ink);color:var(--ink)}
+.scale .pt.rep{background:var(--bad);color:var(--bad)}
+.scale .pt.rep.ok{background:var(--ok);color:var(--ok)}
+.scale .tag{position:absolute;transform:translateX(-50%);font-size:12px;white-space:nowrap;font-weight:700}
+.scale .tag.up{top:-8px} .scale .tag.dn{top:34px}
+.scale .tag.data{color:var(--ink)} .scale .tag.rep{color:var(--bad)} .scale .tag.rep.ok{color:var(--ok)}
+.axis{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin:16px 6px 0}
+.bars{display:grid;grid-template-columns:90px 1fr auto;gap:8px 10px;align-items:center;font-size:13.5px}
+.bars .b{height:12px;border-radius:4px;background:var(--ink);min-width:3px}
+.bars .b.rep{background:var(--bad)} .bars .b.rep.ok{background:var(--ok)}
+.bars .v{font-weight:700}
+.verdict-line{margin-top:10px;font-size:13.5px;display:flex;gap:6px;align-items:center}
+.verdict-line.bad{color:var(--bad)} .verdict-line.ok{color:var(--ok)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13.5px}
+.pair div{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.pair small{display:block;font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+
+.callout{border-radius:11px;padding:12px 14px;margin-top:12px;font-size:14px}
+.callout.bad{background:var(--bad-bg)} .callout.unk{background:var(--unk-bg)} .callout.ok{background:var(--ok-bg)}
+.callout b.h{display:block;font-size:12px;letter-spacing:.07em;text-transform:uppercase;margin-bottom:2px}
+.callout.bad b.h{color:var(--bad)} .callout.unk b.h{color:var(--unk)} .callout.ok b.h{color:var(--ok)}
+.big-val{font:600 22px var(--serif)}
+
+.after{display:grid;gap:10px;margin-top:16px}
+.aft{border:1px solid var(--line);border-radius:12px;padding:12px 14px 12px 46px;position:relative}
+.aft .ic{position:absolute;left:12px;top:12px;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;background:var(--accent-2);color:var(--accent)}
+.aft .ic svg{width:14px;height:14px}
+.aft h4{margin:0 0 3px;font-size:13px;font-weight:700;color:var(--ink)}
+.aft p{margin:0 0 4px;font-size:14px;color:var(--ink-2)}
+.aft ul{margin:2px 0 0;padding-left:18px;font-size:13.5px;color:var(--ink-2)}
+.aft li{margin-bottom:3px}
+.sugg{display:block;background:var(--ok-bg);border-radius:8px;padding:8px 10px;margin-top:6px;font-size:13.5px;color:var(--ink)}
+.sugg-row{display:flex;gap:6px;align-items:center;margin-top:6px}
+
+.alts{display:grid;gap:6px;margin-top:4px}
+.alt{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13px}
+.alt .bar{height:8px;background:var(--line-2);border-radius:4px;overflow:hidden}
+.alt .bar div{height:100%;background:var(--accent)}
+.alt.match .bar div{background:var(--unk)}
+.alt .val{font-weight:700;white-space:nowrap}
+details.ev{border-top:1px solid var(--line);margin-top:18px;padding-top:12px}
+details.ev > summary{font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;border-bottom:1px solid var(--line-2);padding:7px 8px;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12.5px}
+.rev{margin-top:20px;border-top:1px solid var(--line);padding-top:16px}
+.rev .row button{flex:none}
+.rev-note{font-size:13px;color:var(--muted);margin-top:8px}
+
+/* ---------- 3 decide ---------- */
+.decide{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px}
+@media (max-width:980px){.decide{grid-template-columns:1fr}}
+.rec{display:flex;gap:16px;align-items:center;padding:18px 22px;border-radius:14px;margin-bottom:18px}
+.rec .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none;background:var(--paper)}
+.rec .ic svg{width:22px;height:22px}
+.rec b{font:600 20px var(--serif);display:block}
+.rec.bad{background:var(--bad-bg)} .rec.bad .ic{color:var(--bad)}
+.rec.unk{background:var(--unk-bg)} .rec.unk .ic{color:var(--unk)}
+.rec.ok{background:var(--ok-bg)} .rec.ok .ic{color:var(--ok)}
+.rec.na{background:var(--na-bg)}
+ol.tl{list-style:none;margin:0;padding:0;counter-reset:s}
+ol.tl li{position:relative;padding:0 0 16px 40px;counter-increment:s}
+ol.tl li::before{content:counter(s);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--paper);font-size:13px;font-weight:700;display:grid;place-items:center}
+ol.tl li::after{content:"";position:absolute;left:12.5px;top:28px;bottom:2px;width:1px;background:var(--line)}
+ol.tl li:last-child::after{display:none}
+ol.tl b{display:block;font-size:14.5px}
+ol.tl p{margin:2px 0 0;font-size:13.5px;color:var(--ink-2)}
+ol.tl .pill{font:700 11px var(--mono);color:var(--muted);margin-left:6px}
+.cant li{margin-bottom:7px;font-size:13.5px;color:var(--ink-2)}
+.corr{font:15px/1.6 var(--serif);max-height:420px;overflow:auto;padding:4px 2px}
+.corr p{margin:0 0 10px}
+.corr del{color:var(--bad);text-decoration-thickness:1px}
+.corr ins{display:block;text-decoration:none;background:var(--ok-bg);border-radius:6px;padding:2px 6px;margin-top:2px}
+.corr .flag{font:700 11.5px var(--sans);color:var(--unk);background:var(--unk-bg);border-radius:5px;padding:1px 6px;margin-left:4px}
+.choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:700px){.choices{grid-template-columns:1fr 1fr}}
+.choice{text-align:left;padding:12px;border-radius:11px;font-weight:400;position:relative}
+.choice b{display:block;font-size:14.5px}
+.choice span{font-size:12.5px;color:var(--muted)}
+.choice[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset;background:var(--accent-2)}
+.choice .sug{position:absolute;top:8px;right:8px;font-size:10.5px;font-weight:700;color:var(--accent);letter-spacing:.05em;text-transform:uppercase}
+.export-ok{margin-top:14px;border-radius:11px;background:var(--ok-bg);padding:12px 14px;font-size:13.5px}
+.export-ok code{font:12.5px var(--mono)}
+.export-bad{background:var(--bad-bg)}
+.foot{margin-top:40px;text-align:center;font-size:12.5px;color:var(--muted)}
 </style>
 </head>
 <body>
-<header>
-  <h1>Research Claim Auditor</h1>
-  <div class="safety"><b>Research use only.</b> Checks claims about the TCGA-BRCA release. Not a clinical tool: no diagnosis,
-    treatment advice or risk scores. <b>Every verdict needs a person to confirm it.</b></div>
-</header>
-<main>
-
-<section class="card" aria-labelledby="s1">
-  <h2 id="s1">1 · Load a report</h2>
-  <div class="row" style="margin-bottom:10px">
-    <button id="btnPractice">Use the practice report</button>
-    <label class="hidden" for="file">Upload</label>
-    <input type="file" id="file" accept=".md,.txt,.markdown" aria-label="Upload a report (.md or .txt)">
-    <span class="muted small">or paste below</span>
-  </div>
-  <details style="margin-bottom:10px"><summary>Open a sealed envelope (judging)</summary>
-    <div class="row" style="margin-top:8px">
-      <div class="field"><label for="envNum">Envelope number</label><input id="envNum" size="9" placeholder="07 or practice"></div>
-      <div class="field"><label for="envWords">Four-word code</label><input id="envWords" size="30" placeholder="amber falcon river quartz"></div>
-      <button id="btnUnseal">Unseal and load</button>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true">
+        <rect width="36" height="36" rx="10" fill="var(--accent)"/>
+        <path d="M18 7.5c-3.2 0-5.4 2.4-5.4 5.3 0 2.5 1.6 4.8 3.3 7.2L10 29.5h4.4l3.6-5.7 3.6 5.7H26l-5.9-9.5c1.7-2.4 3.3-4.7 3.3-7.2 0-2.9-2.2-5.3-5.4-5.3Zm0 3.2c1.3 0 2.3 1 2.3 2.2 0 1.3-1 3.1-2.3 5.1-1.3-2-2.3-3.8-2.3-5.1 0-1.2 1-2.2 2.3-2.2Z" fill="#fff"/></svg>
+      <div><b>Research Claim Auditor</b><span>Breast cancer research claims, checked against TCGA-BRCA data.</span></div>
     </div>
-    <pre id="unsealLog" class="hidden"></pre>
-  </details>
-  <label for="report">Report text (Markdown)</label>
-  <textarea id="report" placeholder="Paste a report here…"></textarea>
-  <div class="row" style="margin-top:8px">
-    <div class="field" style="flex:1;min-width:260px"><label for="releaseDir">Release folder</label><input id="releaseDir" style="width:100%"></div>
-    <div class="field"><label for="reviewer">Your name</label><input id="reviewer" placeholder="e.g. A. Reviewer"></div>
-    <div class="field"><label for="role">Your role</label>
-      <select id="role"><option>Data-use reviewer</option><option>Researcher</option><option>Data engineer</option><option>Program leader</option></select></div>
-    <button class="primary" id="btnRun">Check claims</button>
+    <nav aria-label="Steps"><ol class="steps-nav">
+      <li><a href="#s1" id="nav1" class="on"><span class="dot">1</span>Load</a></li>
+      <li><a href="#s2" id="nav2" aria-disabled="true"><span class="dot">2</span>Review</a></li>
+      <li><a href="#s3" id="nav3" aria-disabled="true"><span class="dot">3</span>Decide</a></li>
+    </ol></nav>
+    <div class="safety"><b>Research use only.</b> Not a clinical tool: no diagnosis, treatment advice or risk scores. A person confirms every verdict.</div>
   </div>
-  <div id="status" role="status" aria-live="polite" class="muted small"></div>
+</header>
+
+<main>
+<!-- ============ 1. LOAD ============ -->
+<section id="s1" aria-labelledby="h1">
+  <div class="sec-h" style="margin-top:6px"><span class="k">Step 1</span><h2 id="h1">Load a report</h2><p>Paste it, upload it, or open a sealed envelope.</p></div>
+  <div class="load">
+    <div class="card pad">
+      <label for="report">Report text (Markdown or plain text)</label>
+      <textarea id="report" placeholder="Paste a report here, or pick an option on the right…"></textarea>
+      <div class="row" style="margin-top:12px">
+        <div class="field" style="flex:2;min-width:240px"><label for="releaseDir">Data release folder</label><input id="releaseDir"></div>
+        <div class="field"><label for="reviewer">Your name</label><input id="reviewer" placeholder="e.g. A. Reviewer"></div>
+        <div class="field"><label for="role">Your role</label>
+          <select id="role"><option>Data-use reviewer</option><option>Researcher</option><option>Data engineer</option><option>Program leader</option></select></div>
+      </div>
+      <div class="row" style="margin-top:14px;align-items:center">
+        <button class="primary big" id="btnRun">Check every claim →</button>
+        <span class="muted small">Takes a second or two. Nothing leaves this computer.</span>
+      </div>
+      <div id="status" role="status" aria-live="polite"></div>
+    </div>
+    <div>
+      <button class="opt" id="btnPractice"><span class="ic" aria-hidden="true">★</span><span><b>Use the practice report</b><span>The organizers' practice brief, with one supported, one wrong and one uncheckable claim.</span></span></button>
+      <label class="opt" style="cursor:pointer;margin:0 0 8px;border:1px solid var(--line);background:var(--paper)">
+        <span class="ic" aria-hidden="true">⇪</span><span><b style="color:var(--ink)">Upload a file</b><span>.md or .txt</span></span>
+        <input type="file" id="file" accept=".md,.txt,.markdown"></label>
+      <details class="env card" style="box-shadow:none">
+        <summary>Open a sealed envelope (judging)</summary>
+        <div class="row" style="margin-top:10px">
+          <div class="field" style="flex:0 0 110px;min-width:0"><label for="envNum">Number</label><input id="envNum" placeholder="07"></div>
+          <div class="field"><label for="envWords">Four-word code</label><input id="envWords" placeholder="amber falcon river quartz"></div>
+        </div>
+        <button id="btnUnseal" style="margin-top:10px">Unseal and check</button>
+        <pre id="unsealLog" class="hidden" style="margin-top:10px"></pre>
+      </details>
+    </div>
+  </div>
 </section>
 
-<section class="card hidden" id="results" aria-labelledby="s2">
-  <div class="row" style="justify-content:space-between">
-    <h2 id="s2">2 · Review the claims</h2>
-    <div class="row" role="group" aria-label="Detail level">
-      <span class="muted small">Show detail for:</span>
+<!-- ============ STORY ============ -->
+<section id="storyWrap" class="hidden" aria-label="Audit summary" style="margin-top:26px">
+  <div class="card story" id="story"></div>
+</section>
+
+<!-- ============ 2. REVIEW ============ -->
+<section id="s2" class="hidden" aria-labelledby="h2">
+  <div class="sec-h"><span class="k">Step 2</span><h2 id="h2">Review each claim</h2><p>Click a sentence. Confirm or override what the tool found.</p></div>
+  <div class="toolbar">
+    <div class="seg" role="group" aria-label="Show">
+      <button data-filter="all" aria-pressed="true">All sentences</button>
+      <button data-filter="problems" aria-pressed="false">Problems only</button>
+      <button data-filter="todo" aria-pressed="false">Not yet confirmed</button>
+    </div>
+    <div class="seg" role="group" aria-label="Detail level">
       <button data-view="lead" aria-pressed="false">Program lead</button>
       <button data-view="reviewer" aria-pressed="true">Reviewer</button>
       <button data-view="researcher" aria-pressed="false">Researcher</button>
     </div>
   </div>
-  <div class="chips" id="chips" style="margin:8px 0 12px"></div>
-  <div id="leadView" class="callout hidden"></div>
-  <div class="grid">
-    <div>
-      <h3>The report, marked up</h3>
-      <div class="report" id="reportView"></div>
-      <h3>Audit queue</h3>
-      <ul class="queue" id="queue"></ul>
-    </div>
-    <div id="detail" aria-live="polite"></div>
+  <div class="review">
+    <div class="card reader"><p class="title" id="readerTitle">The report</p><div class="sents" id="sents"></div></div>
+    <div class="card detail" id="detail" aria-live="polite"></div>
   </div>
 </section>
 
-<section class="card hidden" id="decide" aria-labelledby="s3">
-  <h2 id="s3">3 · What happens next</h2>
-  <div id="suggest" class="callout"></div>
-  <div class="two">
-    <div><h3>Do this, in order</h3><ol class="steps" id="steps"></ol></div>
-    <div><h3>What this audit can't tell you</h3><ul id="cant" class="small"></ul></div>
+<!-- ============ 3. DECIDE ============ -->
+<section id="s3" class="hidden" aria-labelledby="h3">
+  <div class="sec-h"><span class="k">Step 3</span><h2 id="h3">What happens next</h2><p>The tool's plan, its limits, and your decision.</p></div>
+  <div id="rec" class="rec na"></div>
+  <div class="decide">
+    <div class="card pad">
+      <h3 style="margin-top:0">Do this, in order</h3>
+      <ol class="tl" id="steps"></ol>
+      <details id="corrBox" style="margin-top:8px"><summary>Suggested corrected report, for the author</summary>
+        <div class="corr" id="corr" style="margin-top:12px"></div>
+        <button id="btnCorr" style="margin-top:8px">Download corrected_report.md</button></details>
+    </div>
+    <div class="card pad">
+      <h3 style="margin-top:0">What this audit can't tell you</h3>
+      <ul class="cant" id="cant" style="padding-left:18px;margin:0"></ul>
+    </div>
   </div>
-  <details id="corrBox"><summary>Suggested corrected report (for the author)</summary>
-    <div class="corr" id="corr" style="margin-top:8px"></div>
-    <button id="btnCorr">Download corrected_report.md</button></details>
-  <h3>Your decision</h3>
-  <div class="row">
-    <div class="field"><label for="decision">Decision</label>
-      <select id="decision"><option>Proceed</option><option>Fix a problem</option><option>Narrow the question</option><option>Stop</option></select></div>
-    <div class="field" style="flex:1;min-width:240px"><label for="decReason">Why (required)</label><input id="decReason" style="width:100%"></div>
-    <div class="field"><label for="alsoReview">Also needs review by</label><input id="alsoReview" value="Study PI and a biostatistician"></div>
-    <div class="field"><label for="team">Team name</label><input id="team" value="Cache us if u can"></div>
+  <div class="card pad" style="margin-top:18px">
+    <h3 style="margin-top:0">Your decision</h3>
+    <div class="choices" role="group" aria-label="Decision" id="choices"></div>
+    <div class="row" style="margin-top:14px">
+      <div class="field" style="flex:2;min-width:260px"><label for="decReason">Why (required)</label><input id="decReason" placeholder="e.g. One subtype share is wrong; author must correct it before we use the report."></div>
+      <div class="field"><label for="alsoReview">Also needs review by</label><input id="alsoReview" value="Study PI and a biostatistician"></div>
+      <div class="field" style="flex:0 0 190px"><label for="team">Team name</label><input id="team" value="Cache us if u can"></div>
+    </div>
+    <div class="row" style="margin-top:14px;align-items:center">
+      <button class="primary big" id="btnExport">Export audit.json + decision record</button>
+      <span id="reviewCount" class="muted small"></span>
+    </div>
+    <div id="exportOut" class="hidden"></div>
   </div>
-  <div class="row"><button class="primary" id="btnExport">Export audit.json + decision record</button>
-    <span id="reviewCount" class="muted small"></span></div>
-  <pre id="exportOut" class="hidden"></pre>
+  <p class="foot">Research Claim Auditor · Team Cache us if u can · rule-based, reproducible, no AI model or API key · research use only</p>
 </section>
 </main>
 
 <script>
-const $ = s => document.querySelector(s);
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const LABEL = {supported:"Supported", contradicted:"Contradicted", insufficient_evidence:"Insufficient evidence", not_a_claim:"Not a claim"};
-const ICON = {supported:"✓", contradicted:"✗", insufficient_evidence:"?", not_a_claim:"–"};
-let cfg = {}, audit = null, sel = null, view = "reviewer", plan = null;
+const SVG = {
+  supported:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"/></svg>',
+  contradicted:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>',
+  insufficient_evidence:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5.5 6a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.6V10"/><circle cx="8" cy="13" r=".6" fill="currentColor"/></svg>',
+  not_a_claim:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4.5 8h7"/></svg>',
+  why:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 2 1.8 13h12.4z"/><path d="M8 6.5v3"/><circle cx="8" cy="11.4" r=".5" fill="currentColor"/></svg>',
+  next:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>',
+  cant:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="6"/><path d="M3.8 3.8l8.4 8.4"/></svg>',
+};
+let cfg = {}, audit = null, sel = null, view = "reviewer", filter = "all", plan = null, decision = null, decisionTouched = false;
 
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const badge = v => `<span class="badge v-${v}"><span aria-hidden="true">${ICON[v]}</span>${LABEL[v]}</span>`;
+const badge = v => `<span class="badge v-${v}">${SVG[v]}${LABEL[v]}</span>`;
 const finalV = it => (it.review && it.review.verdict) || it.tool_verdict;
-const status = t => $("#status").textContent = t;
+const status = (t, busy) => { const s = $("#status"); s.textContent = t; s.classList.toggle("busy", !!busy); };
+const num = s => { const m = String(s ?? "").replace(/,/g, "").match(/-?\d+(?:\.\d+)?/); return m ? parseFloat(m[0]) : null; };
+const fmt = v => Math.abs(v) >= 100 ? Math.round(v).toLocaleString() : (+v.toFixed(1)).toLocaleString();
+const plural = (n, a, b) => n === 1 ? a : b;
 
 async function api(path, body){
   const r = await fetch(path, body ? {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)} : {});
   const j = await r.json(); if (j.error) throw new Error(j.error); return j;
 }
 
+// ---------------------------------------------------------------- load
 async function init(){
   cfg = await api("/api/config");
   $("#releaseDir").value = cfg.release_dir;
   try { $("#reviewer").value = localStorage.getItem("ca_reviewer") || ""; } catch(e){}
 }
-$("#btnPractice").onclick = () => { $("#report").value = cfg.practice_report; status("Practice report loaded. Press “Check claims”."); };
+$("#btnPractice").onclick = () => { $("#report").value = cfg.practice_report; status("Practice report loaded. Press “Check every claim”."); $("#btnRun").focus(); };
 $("#file").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { $("#report").value = t; status(`Loaded ${f.name}.`); }); };
 $("#btnUnseal").onclick = async () => {
-  status("Unsealing… (10–20 seconds)");
+  status("Unsealing the envelope (10–20 seconds)…", true);
   try {
     const j = await api("/api/unseal", {number: $("#envNum").value, words: $("#envWords").value});
     $("#unsealLog").textContent = j.log; $("#unsealLog").classList.remove("hidden");
-    if (j.ok) { $("#report").value = j.report_text; status("Envelope opened. Checking claims…"); run(); }
-    else status("Could not open that envelope. Check the number and the four words.");
+    if (j.ok) { $("#report").value = j.report_text; status("Envelope opened. Checking claims…", true); run(); }
+    else status("Could not open that envelope. Check the number and the four words, or see the log.");
   } catch(e){ status("Error: " + e.message); }
 };
 $("#btnRun").onclick = () => run();
 
 async function run(){
   const text = $("#report").value.trim();
-  if (!text) { status("Load or paste a report first."); return; }
+  if (!text) { status("Load or paste a report first."); $("#report").focus(); return; }
   try { localStorage.setItem("ca_reviewer", $("#reviewer").value); } catch(e){}
-  status("Checking each claim against the data…");
+  status("Checking each claim against the data…", true);
   try {
     audit = await api("/api/audit", {report_text: text, release_dir: $("#releaseDir").value});
-    plan = null; planKey = "";
-    const first = audit.items.find(i => i.tool_verdict !== "not_a_claim");
+    plan = null; planKey = ""; decisionTouched = false; filter = "all";
+    $("#exportOut").className = "hidden"; $("#exportOut").dataset.ok = ""; $("#decReason").value = "";
+    $$("[data-filter]").forEach(x => x.setAttribute("aria-pressed", x.dataset.filter === "all"));
+    const t = text.match(/^#\s+(.+)$/m); audit.title = t ? t[1].replace(/[*_`]/g, "").trim() : "Untitled report";
+    const first = claims().find(i => finalV(i) === "contradicted") || claims()[0];
     sel = first ? first.id : null;
-    status(`Checked ${audit.items.length} sentences in ${audit.seconds}s against release ${audit.release.name}.`);
-    $("#results").classList.remove("hidden"); $("#decide").classList.remove("hidden");
+    const n = claims().length;
+    status(`Checked ${audit.items.length} sentences (${n} ${plural(n, "claim", "claims")}) in ${audit.seconds}s against release ${audit.release.name}.`);
+    ["#storyWrap", "#s2", "#s3"].forEach(s => $(s).classList.remove("hidden"));
+    ["#nav2", "#nav3"].forEach(s => $(s).removeAttribute("aria-disabled"));
     render();
+    $("#storyWrap").scrollIntoView({behavior: "smooth", block: "start"});
   } catch(e){ status("Error: " + e.message); }
 }
 
-document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => {
-  view = b.dataset.view;
-  document.querySelectorAll("[data-view]").forEach(x => x.setAttribute("aria-pressed", x === b));
-  render();
-});
-
+// ---------------------------------------------------------------- helpers
 function counts(){
   const c = {supported:0, contradicted:0, insufficient_evidence:0, not_a_claim:0};
   audit.items.forEach(i => c[finalV(i)]++); return c;
 }
 function claims(){ return audit.items.filter(i => i.tool_verdict !== "not_a_claim" || i.review); }
+function firstWrong(it){ return it.result.subchecks.find(s => s.ok === false); }
 
-function render(){
-  const c = counts(), cl = claims(), reviewed = cl.filter(i => i.review).length;
-  $("#chips").innerHTML = ["supported","contradicted","insufficient_evidence","not_a_claim"].map(v =>
-    `<div class="chip"><div class="n">${c[v]}</div>${badge(v)}</div>`).join("") +
-    `<div class="chip"><div class="n">${reviewed}/${cl.length}</div><span class="small">confirmed by a person</span></div>`;
+// ---------------------------------------------------------------- render all
+$$("[data-view]").forEach(b => b.onclick = () => {
+  view = b.dataset.view; $$("[data-view]").forEach(x => x.setAttribute("aria-pressed", x === b)); renderDetail();
+});
+$$("[data-filter]").forEach(b => b.onclick = () => {
+  filter = b.dataset.filter; $$("[data-filter]").forEach(x => x.setAttribute("aria-pressed", x === b)); renderReader();
+});
 
-  // program-lead one-liner
-  const sug = suggest();
-  $("#leadView").classList.toggle("hidden", view !== "lead");
-  $("#leadView").innerHTML = `<b>In one line:</b> of ${cl.length} checkable claims: ${c.supported} supported, ${c.contradicted} wrong,
-    ${c.insufficient_evidence} can't be checked with this data. <b>Suggested next step: ${sug.decision}.</b> ${esc(sug.reason)}
-    <br><span class="small muted">${reviewed} of ${cl.length} verdicts confirmed by a person so far.</span>`;
+function render(){ renderStory(); renderReader(); renderDetail(); renderNav(); schedulePlan(); }
 
-  $("#reportView").innerHTML = audit.items.map(it => {
-    const v = finalV(it);
-    return `<span class="sent v-${v} ${it.id === sel ? "sel" : ""}" tabindex="0" role="button" data-id="${it.id}"
-      aria-label="${LABEL[v]}: ${esc(it.claim_text)}">${esc(it.claim_text)}<span class="tag" aria-hidden="true">[${ICON[v]}]</span></span> `;
-  }).join("");
-  document.querySelectorAll(".sent").forEach(el => {
-    el.onclick = () => { sel = el.dataset.id; render(); };
-    el.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); sel = el.dataset.id; render(); } };
-  });
-
-  $("#queue").innerHTML = cl.map(it => `<li><button class="${it.id === sel ? "sel" : ""}" data-id="${it.id}">
-      <span>${badge(finalV(it))}</span><span class="txt"><b>${it.id}</b> ${esc(it.claim_text)}
-      <div class="rv">${it.review ? (it.review.decision === "override" ? "Overridden by " : "Confirmed by ") + esc(it.review.reviewer || "reviewer")
-        : "⚠ Needs a person to confirm"}</div></span></button></li>`).join("");
-  document.querySelectorAll(".queue button").forEach(b => b.onclick = () => { sel = b.dataset.id; render(); });
-
-  renderDetail();
-  if (!$("#decision").dataset.touched) $("#decision").value = sug.decision;
-  schedulePlan();
-  $("#reviewCount").textContent = reviewed < cl.length ? `${cl.length - reviewed} claim(s) still need confirming. Unconfirmed ones are exported flagged for human review.` : "All claims confirmed.";
+function renderNav(){
+  const cl = claims(), done = cl.filter(i => i.review).length;
+  $("#nav1").className = "done";
+  $("#nav2").className = done === cl.length && cl.length ? "done" : "on";
+  $("#nav3").className = $("#exportOut").dataset.ok ? "done" : "";
 }
 
-// ---- what happens next: recomputed on the server from the reviewers' final verdicts
-let planTimer = null, planKey = "";
-function schedulePlan(){
-  const key = JSON.stringify(audit.items.map(i => [i.id, i.review]));
-  if (key === planKey && plan) { renderPlan(); return; }
-  clearTimeout(planTimer);
-  planTimer = setTimeout(async () => {
-    try { plan = await api("/api/plan", {audit}); planKey = key; renderPlan(); renderDetail(); }
-    catch(e){ status("Could not build next steps: " + e.message); }
-  }, 120);
+function headline(c, n){
+  if (!n) return "No checkable claims were found in this report.";
+  const parts = [];
+  if (c.contradicted) parts.push(`<em>${c.contradicted} of ${n} ${plural(n, "claim", "claims")} ${plural(c.contradicted, "is", "are")} contradicted</em> by the data`);
+  if (c.insufficient_evidence) parts.push(`<i>${c.insufficient_evidence} ${plural(c.insufficient_evidence, "goes", "go")} beyond</i> what it can show`);
+  if (!parts.length) return `<u>All ${n} ${plural(n, "claim holds", "claims hold")} up</u> against the data.`;
+  let h = parts.join(", and ") + ".";
+  if (c.supported) h += c.supported === 1 ? " The remaining claim holds up." : ` The other ${c.supported} hold up.`;
+  return h;
 }
-function renderPlan(){
-  if (!plan) return;
-  $("#suggest").innerHTML = `<b>Tool's suggestion: ${esc(plan.decision)}.</b> ${esc(plan.why)} <span class="muted small">(You decide below.)</span>`;
-  $("#steps").innerHTML = plan.steps.length ? plan.steps.map(s => `<li><b>${esc(s.id)} · ${esc(s.do)}.</b> ${esc(s.detail)}
-      ${s.suggested_text ? `<div class="small">Suggested wording: <span class="sugg">${esc(s.suggested_text)}</span></div>` : ""}</li>`).join("")
-    : `<li>Nothing to fix. Keep the definitions and the release name next to each number.</li>`;
-  $("#cant").innerHTML = plan.cant_tell.map(c => `<li>${esc(c)}</li>`).join("");
-  $("#corr").innerHTML = plan.corrected.map(c => {
-    if (c.status === "kept") return `<p>${esc(c.new)}</p>`;
-    if (c.status === "fixed") return `<p><del>${esc(c.old)}</del><br><ins>${esc(c.new)}</ins> <span class="small muted">${esc(c.id)}</span></p>`;
-    const tail = c.new.slice(c.old.length).trim();
-    return `<p>${esc(c.old)} <span class="flag">${esc(tail)}</span> <span class="small muted">${esc(c.id)}</span></p>`;
+
+function renderStory(){
+  const c = counts(), cl = claims(), n = cl.length, done = cl.filter(i => i.review).length, total = audit.items.length;
+  const seg = v => c[v] ? `<div class="bg-${v}" style="width:${100 * c[v] / total}%" title="${LABEL[v]}: ${c[v]}"></div>` : "";
+  const problems = cl.filter(i => ["contradicted", "insufficient_evidence"].includes(finalV(i)))
+    .sort((a, b) => (finalV(a) === "contradicted" ? 0 : 1) - (finalV(b) === "contradicted" ? 0 : 1)).slice(0, 3);
+  const fc = problems.map(it => {
+    const v = finalV(it), w = firstWrong(it), r = it.result;
+    const cv = (it.review && it.review.correct_value) || r.correct_value;
+    const d = v === "contradicted"
+      ? (w ? `Report says <b>${esc(w.claimed)}</b> → data says <b>${esc(w.observed.split(";")[0])}</b>` : `Data: <b>${esc(cv || "see claim")}</b>`)
+      : esc(r.needed ? "Needs: " + r.needed.split(/[.;(]/)[0] : r.summary.split(".")[0]);
+    return `<button class="fcard ${v === "contradicted" ? "" : "unk"}" data-go="${it.id}">
+      <div class="t">${v === "contradicted" ? "Wrong number" : "Can't be checked"} · ${it.id}</div>
+      <div class="q">“${esc(it.claim_text)}”</div><div class="d">${d}</div></button>`;
   }).join("");
-  if (view === "lead") {
-    $("#leadView").innerHTML = `<b>${esc(plan.decision)}.</b> ${esc(plan.why)}` +
-      (plan.steps.length ? `<ol class="steps">${plan.steps.slice(0,3).map(s => `<li><b>${esc(s.do)}</b> (${esc(s.id)}): ${esc(s.detail)}</li>`).join("")}</ol>` : "") +
-      `<span class="small muted">What it can't tell you: ${esc(plan.cant_tell[0])}</span>`;
+  $("#story").innerHTML = `
+    <div class="ribbon-rule"></div>
+    <div class="kicker">${esc(audit.title)} · ${total} sentences · checked against release ${esc(audit.release.name)} in ${audit.seconds}s</div>
+    <h2 class="headline">${headline(c, n)}</h2>
+    <p class="dek">${plan ? `<b>Suggested next step: ${esc(plan.decision)}.</b> ${esc(plan.why.replace(/^[^.]*\.\s*/, ""))}` : ""}</p>
+    <div class="vbar" role="img" aria-label="${c.supported} supported, ${c.contradicted} contradicted, ${c.insufficient_evidence} insufficient evidence, ${c.not_a_claim} not claims">
+      ${seg("contradicted")}${seg("insufficient_evidence")}${seg("supported")}${seg("not_a_claim")}</div>
+    <div class="legend num">
+      ${["contradicted", "insufficient_evidence", "supported", "not_a_claim"].map(v =>
+        `<span><i class="bg-${v}"></i><b>${c[v]}</b> ${LABEL[v].toLowerCase()}</span>`).join("")}
+    </div>
+    ${fc ? `<div class="top3">${fc}</div>` : ""}
+    <div class="progress"><div class="meter"><div style="width:${n ? 100 * done / n : 0}%"></div></div>
+      <span><b class="num">${done} of ${n}</b> verdicts confirmed by a person${done < n ? " · each one waits for you in step 2" : " · ready to decide"}</span></div>`;
+  $$("[data-go]").forEach(b => b.onclick = () => { sel = b.dataset.go; renderReader(); renderDetail(); $("#s2").scrollIntoView({behavior:"smooth"}); });
+}
+
+function renderReader(){
+  $("#readerTitle").textContent = audit.title;
+  const keep = it => filter === "all" || (filter === "problems" ? ["contradicted", "insufficient_evidence"].includes(finalV(it))
+                                                                 : (it.tool_verdict !== "not_a_claim" && !it.review));
+  const rows = audit.items.filter(keep);
+  $("#sents").innerHTML = rows.length ? rows.map(it => {
+    const v = finalV(it), isClaim = v !== "not_a_claim" || it.review;
+    const meta = isClaim ? `<div class="meta"><span>${it.id}</span>·<span>${LABEL[v]}</span>·${it.review
+      ? `<span class="ok">✓ ${it.review.decision === "override" ? "overridden" : "confirmed"}</span>` : `<span class="warn">needs a person</span>`}</div>` : "";
+    return `<button class="sent v-${v} ${it.id === sel ? "sel" : ""}" data-id="${it.id}" aria-current="${it.id === sel}">
+      <span class="mk v-${v}">${SVG[v]}</span><span class="txt">${esc(it.claim_text)}${meta}</span></button>`;
+  }).join("") : `<p class="muted small" style="padding:8px">Nothing here. ${filter === "todo" ? "Every claim has been confirmed." : "No problems found."}</p>`;
+  $$(".sent").forEach(el => el.onclick = () => { sel = el.dataset.id; renderReader(); renderDetail(); });
+}
+
+// ---------------------------------------------------------------- comparison visuals
+function compare(sc){
+  const c = num(sc.claimed), o = num(sc.observed), ok = sc.ok;
+  const isPct = /%/.test(sc.claimed) && /%/.test(sc.observed);
+  const counts = sc.observed.match(/\(([\d,]+) of ([\d,]+)\)/);
+  const lab = `<div class="lab">${esc(sc.label)} <small>· ${esc(sc.rule)}</small></div>`;
+  if (c == null || o == null || /rank/.test(sc.claimed))
+    return `<div class="cmp">${lab}<div class="pair"><div><small>Report says</small>${esc(sc.claimed)}</div>
+      <div><small>Data says</small><b>${esc(sc.observed)}</b></div></div>${vline(ok, "")}</div>`;
+  const diff = c - o;
+  if (isPct){
+    const tol = num((sc.rule.match(/±\s*([\d.]+)/) || [])[1]) || 0.5;
+    let lo = Math.max(0, Math.floor((Math.min(c, o) - tol - 6) / 10) * 10), hi = Math.min(100, Math.ceil((Math.max(c, o) + tol + 6) / 10) * 10);
+    if (hi - lo < 20) { hi = Math.min(100, lo + 20); }
+    const P = v => `${(100 * (v - lo) / (hi - lo)).toFixed(2)}%`;
+    const left = Math.min(c, o), right = Math.max(c, o), repUp = true;
+    const gapTxt = ok ? `Within the allowed margin (±${tol} points).` :
+      `${Math.abs(diff).toFixed(1)} percentage points ${diff > 0 ? "too high" : "too low"}${counts ? `, about ${Math.round(Math.abs(diff) / 100 * num(counts[2])).toLocaleString()} of ${counts[2]} tumors` : ""}.`;
+    return `<div class="cmp">${lab}
+      <div class="scale" role="img" aria-label="Report says ${c}%, data says ${o}%">
+        <div class="track"></div>
+        <div class="band" style="left:${P(Math.max(lo, o - tol))};width:calc(${P(Math.min(hi, o + tol))} - ${P(Math.max(lo, o - tol))})"></div>
+        ${ok ? "" : `<div class="link" style="left:${P(left)};width:calc(${P(right)} - ${P(left)})"></div>`}
+        <div class="pt data" style="left:${P(o)}"></div><div class="pt rep ${ok ? "ok" : ""}" style="left:${P(c)}"></div>
+        <div class="tag ${Math.abs(c - o) < (hi - lo) * 0.18 ? "dn" : "up"} data" style="left:${P(o)}">Data ${o}%</div>
+        <div class="tag up rep ${ok ? "ok" : ""}" style="left:${P(c)}">Report ${c}%</div>
+      </div>
+      <div class="axis num"><span>${lo}%</span><span>${(lo + hi) / 2}%</span><span>${hi}%</span></div>
+      ${vline(ok, gapTxt)}</div>`;
   }
+  const mx = Math.max(Math.abs(c), Math.abs(o)) || 1;
+  const unit = (sc.observed.match(/[a-zA-Z]+/) || [""])[0];
+  const gapTxt = ok ? (diff === 0 ? "Exact match." : "Within the allowed margin.") :
+    `${fmt(Math.abs(diff))} ${diff > 0 ? "too many" : "too few"}${o ? ` (${Math.round(100 * Math.abs(diff) / Math.abs(o))}% off)` : ""}.`;
+  return `<div class="cmp">${lab}<div class="bars num">
+      <span>Report says</span><div class="b rep ${ok ? "ok" : ""}" style="width:${100 * Math.abs(c) / mx}%"></div><span class="v">${esc(sc.claimed)}</span>
+      <span>Data says</span><div class="b" style="width:${100 * Math.abs(o) / mx}%"></div><span class="v">${fmt(o)}${unit && !/of/.test(unit) ? " " + esc(unit) : ""}</span>
+    </div>${vline(ok, gapTxt)}</div>`;
 }
-$("#btnCorr").onclick = () => {
-  if (!plan) return;
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([plan.corrected_markdown], {type:"text/markdown"}));
-  a.download = "corrected_report.md"; a.click(); URL.revokeObjectURL(a.href);
-};
+const vline = (ok, t) => ok == null ? "" : `<div class="verdict-line ${ok ? "ok" : "bad"}">${ok ? SVG.supported : SVG.contradicted}<span>${ok ? "Matches." : "Doesn't match."} ${esc(t)}</span></div>`;
 
-function suggest(){
-  const v = claims().map(finalV).filter(x => x !== "not_a_claim");
-  if (!v.length) return {decision:"Stop", reason:"No checkable claims found."};
-  const n = k => v.filter(x => x === k).length;
-  if (n("contradicted")) return {decision:"Fix a problem", reason:`${n("contradicted")} claim(s) contradict the data and must be corrected.`};
-  if (n("insufficient_evidence")) return {decision:"Narrow the question", reason:`${n("insufficient_evidence")} claim(s) go beyond what this data can show; reword or remove them.`};
-  return {decision:"Proceed", reason:"Every checked claim is supported by the data."};
+function alternatives(r, it){
+  if (!r.alternatives.length) return "";
+  const w = firstWrong(it) || r.subchecks.find(s => s.ok !== null);
+  const claimed = w ? num(w.claimed) : null, isPct = w && /%/.test(w.claimed);
+  const rows = r.alternatives.map(a => {
+    const v = num(a.value), match = claimed != null && v != null && isPct && Math.abs(v - claimed) <= 1.5;
+    const def = (a.subtype ? a.subtype + ": " : "") + String(a.definition).replace(/^use\s+/i, "").replace(/\s+instead$/i, "");
+    return `<div class="alt ${match ? "match" : ""}"><span>${esc(def)}${match ? ` <b style="color:var(--unk)">← matches the report</b>` : ""}</span>
+      <div class="bar">${v != null && /%/.test(a.value) ? `<div style="width:${Math.min(100, v)}%"></div>` : ""}</div><span class="val num">${esc(a.value)}</span></div>`;
+  }).join("");
+  return `<h3>Same question, other reasonable definitions</h3><p class="small muted" style="margin:-4px 0 8px">If the answer moves a lot here, the report must say which definition it used.</p><div class="alts">${rows}</div>`;
 }
 
+// ---------------------------------------------------------------- detail
 function renderDetail(){
-  const it = audit.items.find(i => i.id === sel);
-  if (!it) { $("#detail").innerHTML = `<p class="muted">Select a claim.</p>`; return; }
+  const it = audit && audit.items.find(i => i.id === sel);
+  if (!it) { $("#detail").innerHTML = `<p class="muted">Select a sentence on the left.</p>`; return; }
   const r = it.result, v = finalV(it), tv = it.tool_verdict;
-  const cls = {contradicted:"bad", insufficient_evidence:"unk", supported:"ok"}[tv] || "";
   const judged = r.subchecks.filter(s => s.ok !== null), context = r.subchecks.filter(s => s.ok === null);
-  let h = `<h3>Claim ${it.id}</h3><p style="font-size:16px">“${esc(it.claim_text)}”</p>
-    <div class="row">${badge(tv)} <span class="muted small">tool verdict · confidence ${r.confidence}</span>
-    ${it.review ? `<span class="muted small">→ final:</span> ${badge(v)}` : ""}</div>
-    <div class="callout ${cls}">${esc(r.summary)}</div>`;
   const cv = (it.review && it.review.correct_value) || r.correct_value;
-  if (v === "contradicted" && cv) h += `<div class="callout bad"><b>What the data shows instead:</b> ${esc(cv)}</div>`;
-  if (r.needed) h += `<div class="callout unk"><b>What data would be needed:</b> ${esc(r.needed)}</div>`;
   const imp = (plan && plan.impacts && plan.impacts[it.id]) || it.impact;
-  if (imp && v !== "not_a_claim") {
-    h += `<div class="after">
-      <div class="aft"><h4>Why it matters</h4><p>${esc(imp.why_it_matters)}</p></div>
-      <div class="aft"><h4>What to do next</h4><p>${esc(imp.next_step)}</p>
-        ${imp.suggested_text ? `<p class="small"><b>Suggested wording:</b> <span class="sugg">${esc(imp.suggested_text)}</span></p>` : ""}
-        ${imp.ask_author && v !== "supported" ? `<p class="small"><b>Ask the author:</b> ${esc(imp.ask_author)}</p>` : ""}</div>
-      <div class="aft"><h4>What the tool can't tell you</h4><ul>${imp.cant_tell.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
-    </div>`;
+  let h = `<div class="d-head">${badge(v)}<span class="id">${it.id}</span>
+      <span class="small muted">confidence ${esc(r.confidence)}${it.review && v !== tv ? ` · tool said ${LABEL[tv]}` : ""}</span></div>
+    <p class="quote">${esc(it.claim_text)}</p>
+    <p class="summary">${esc(r.summary)}</p>`;
+  if (v === "not_a_claim") {
+    h += `<div class="callout"><b class="h">Not scored</b>${esc(r.limitation || "Nothing in this sentence can be measured in the data.")}</div>`;
+  } else {
+    if (judged.length && view !== "lead") h += `<h3>What the report says vs what the data says</h3>` + judged.map(compare).join("");
+    if (v === "contradicted" && cv) h += `<div class="callout bad"><b class="h">What the data shows instead</b><span class="big-val num">${esc(cv)}</span></div>`;
+    if (r.needed) h += `<div class="callout unk"><b class="h">Data that would be needed</b>${esc(r.needed)}</div>`;
+    if (imp) {
+      h += `<div class="after">
+        <div class="aft"><span class="ic">${SVG.why}</span><h4>Why it matters</h4><p>${esc(imp.why_it_matters)}</p></div>
+        <div class="aft"><span class="ic">${SVG.next}</span><h4>What to do next</h4><p>${esc(imp.next_step)}</p>
+          ${imp.suggested_text ? `<span class="sugg">${esc(imp.suggested_text)}</span>
+            <div class="sugg-row"><button class="ghost small" id="copySugg">Copy suggested wording</button></div>` : ""}
+          ${imp.ask_author && v !== "supported" ? `<p class="small" style="margin-top:6px"><b>Ask the author:</b> ${esc(imp.ask_author)}</p>` : ""}</div>
+        <div class="aft"><span class="ic">${SVG.cant}</span><h4>What the tool can't tell you</h4><ul>${imp.cant_tell.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
+      </div>`;
+    }
+    if (view !== "lead") h += alternatives(r, it);
   }
-  if (judged.length && view !== "lead") h += `<h3>Claim vs data</h3><table><thead><tr><th>Measured</th><th>Report says</th><th>Data says</th><th>Result</th></tr></thead><tbody>` +
-      judged.map(s => `<tr><td>${esc(s.label)}<div class="small muted">${esc(s.rule)}</div></td><td>${esc(s.claimed)}</td><td><b>${esc(s.observed)}</b></td>
-        <td>${s.ok ? badge("supported").replace("Supported","Matches") : badge("contradicted").replace("Contradicted","Doesn't match")}</td></tr>`).join("") + `</tbody></table>`;
-  if (context.length && view !== "lead") h += `<h3>Context from the data</h3><table><tbody>` +
-      context.map(s => `<tr><td>${esc(s.label)}</td><td>${esc(s.observed)}<div class="small muted">${esc(s.rule)}</div></td></tr>`).join("") + `</tbody></table>`;
-  if (r.alternatives.length && view !== "lead") h += `<h3>Same question, other reasonable definitions</h3><table><thead><tr><th>Definition</th><th>Result</th></tr></thead><tbody>` +
-      r.alternatives.map(a => `<tr><td>${esc((a.subtype ? a.subtype + ": " : "") + a.definition)}</td><td>${esc(a.value)}</td></tr>`).join("") + `</tbody></table>`;
-  if (view !== "lead") h += `<h3>Source</h3><table><tbody>
-      <tr><th>Release</th><td>${esc(audit.release.name)} <span class="small muted">${esc(audit.release.dir)}</span></td></tr>
+  if (view !== "lead") {
+    h += `<details class="ev" ${view === "researcher" ? "open" : ""}><summary>Show the evidence: files, fields, calculation</summary>`;
+    if (context.length) h += `<h3>Context from the data</h3><table><tbody>` +
+      context.map(s => `<tr><td>${esc(s.label)}</td><td class="num">${esc(s.observed)}<div class="tiny muted">${esc(s.rule)}</div></td></tr>`).join("") + `</tbody></table>`;
+    h += `<h3>Source</h3><table><tbody>
+      <tr><th>Release</th><td>${esc(audit.release.name)} <div class="tiny muted">${esc(audit.release.dir)}</div></td></tr>
       <tr><th>Files</th><td>${r.files.map(f => { const x = audit.release.files.find(z => z.file === f);
-          return `${esc(f)}${x ? `<div class="small muted">sha256 ${x.sha256.slice(0,16)}…</div>` : ""}`; }).join("") || "—"}</td></tr>
+          return `${esc(f)}${x ? `<div class="tiny muted">sha256 ${x.sha256.slice(0, 16)}…</div>` : ""}`; }).join("") || "—"}</td></tr>
       <tr><th>Fields</th><td>${r.fields.map(esc).join(", ") || "—"}</td></tr>
       <tr><th>Population</th><td>${esc(r.population)}${r.n != null ? ` (n = ${Number(r.n).toLocaleString()})` : ""}</td></tr>
       <tr><th>Checker</th><td>${esc(r.check)}</td></tr></tbody></table>`;
-  if (view === "researcher") {
     if (r.code) h += `<h3>Reproduce it (pandas)</h3><pre>${esc(r.code)}</pre>`;
-    if (r.n_sample_ids) h += `<details><summary>Sample IDs used (${r.n_sample_ids.toLocaleString()}, first ${r.sample_ids.length} shown)</summary><pre>${esc(r.sample_ids.join("\n"))}</pre></details>`;
+    if (r.n_sample_ids) h += `<details style="margin-top:8px"><summary class="small">Sample IDs used (${r.n_sample_ids.toLocaleString()}, first ${r.sample_ids.length} shown)</summary><pre>${esc(r.sample_ids.join("\n"))}</pre></details>`;
+    h += `</details>`;
   }
-  h += `<h3>Your review</h3>
+  h += `<div class="rev"><h3 style="margin-top:0">Your review</h3>
     <div class="row"><button class="primary" id="accept">Confirm: ${LABEL[tv]}</button><button id="ovr">Override…</button>
-      ${it.review ? `<button id="clear">Undo review</button>` : ""}</div>
-    <div id="ovrBox" class="hidden" style="margin-top:8px">
-      <div class="row"><div class="field"><label for="ovrV">Verdict</label><select id="ovrV">
-        ${["supported","contradicted","insufficient_evidence","not_a_claim"].filter(x => x !== tv).map(x => `<option value="${x}">${LABEL[x]}</option>`).join("")}</select></div>
-      <div class="field" style="flex:1"><label for="ovrR">Reason (required, kept with the tool's original verdict)</label><input id="ovrR" style="width:100%"></div>
-      <div class="field hidden" id="ovrCBox"><label for="ovrC">Correct value (required for contradicted, e.g. 49.9% (421 of 844))</label><input id="ovrC" style="width:100%"></div>
-      <button id="ovrSave">Save override</button></div></div>
-    ${it.review ? `<p class="small muted">${it.review.decision === "override" ? "Overridden" : "Confirmed"} by ${esc(it.review.reviewer)} (${esc(it.review.reviewer_role)}) at ${esc(it.review.at)}${it.review.reason ? ": " + esc(it.review.reason) : ""}. Tool verdict kept: ${LABEL[tv]}.</p>` : ""}`;
+      ${it.review ? `<button class="ghost" id="clear">Undo</button>` : ""}<button class="ghost" id="nextBtn" style="margin-left:auto">Next claim →</button></div>
+    <div id="ovrBox" class="hidden" style="margin-top:12px">
+      <div class="row"><div class="field" style="flex:0 0 200px"><label for="ovrV">Change verdict to</label><select id="ovrV">
+        ${["supported", "contradicted", "insufficient_evidence", "not_a_claim"].filter(x => x !== tv).map(x => `<option value="${x}">${LABEL[x]}</option>`).join("")}</select></div>
+      <div class="field"><label for="ovrR">Reason (required; the tool's verdict is kept too)</label><input id="ovrR"></div></div>
+      <div class="field hidden" id="ovrCBox" style="margin-top:8px"><label for="ovrC">Correct value (required for contradicted, e.g. 49.9% (421 of 844))</label><input id="ovrC"></div>
+      <button id="ovrSave" style="margin-top:10px">Save override</button></div>
+    ${it.review ? `<p class="rev-note">${it.review.decision === "override" ? "Overridden" : "Confirmed"} by <b>${esc(it.review.reviewer)}</b> (${esc(it.review.reviewer_role)}) at ${esc(it.review.at)}${it.review.reason ? ": “" + esc(it.review.reason) + "”" : ""}. Tool verdict kept: ${LABEL[tv]}.</p>` : ""}</div>`;
   $("#detail").innerHTML = h;
-  const who = () => ({reviewer: $("#reviewer").value || "unnamed reviewer", reviewer_role: $("#role").value, at: new Date().toISOString().slice(0,16).replace("T"," ")});
+  $("#detail").scrollTop = 0;
+  const who = () => ({reviewer: $("#reviewer").value || "unnamed reviewer", reviewer_role: $("#role").value, at: new Date().toISOString().slice(0, 16).replace("T", " ")});
   $("#accept").onclick = () => { it.review = {decision:"accept", verdict: tv, ...who()}; next(); };
-  $("#ovr").onclick = () => $("#ovrBox").classList.toggle("hidden");
+  $("#ovr").onclick = () => { $("#ovrBox").classList.toggle("hidden"); $("#ovrR").focus(); };
+  $("#nextBtn").onclick = () => step(1);
   const syncC = () => $("#ovrCBox").classList.toggle("hidden", $("#ovrV").value !== "contradicted");
   $("#ovrV").onchange = syncC; syncC();
   if ($("#clear")) $("#clear").onclick = () => { it.review = null; render(); };
+  if ($("#copySugg")) $("#copySugg").onclick = () => { navigator.clipboard && navigator.clipboard.writeText(imp.suggested_text); $("#copySugg").textContent = "Copied ✓"; };
   $("#ovrSave").onclick = () => {
-    const reason = $("#ovrR").value.trim(); if (!reason) { $("#ovrR").focus(); status("An override needs a reason."); return; }
-    const v = $("#ovrV").value, cv = $("#ovrC").value.trim();
-    if (v === "contradicted" && !cv) { $("#ovrC").focus(); status("A contradicted verdict needs the correct value from the data."); return; }
-    it.review = {decision:"override", verdict: v, reason, ...(v === "contradicted" ? {correct_value: cv} : {}), ...who()}; next();
+    const reason = $("#ovrR").value.trim(); if (!reason) { $("#ovrR").focus(); $("#ovrR").placeholder = "An override needs a reason."; return; }
+    const nv = $("#ovrV").value, c = $("#ovrC").value.trim();
+    if (nv === "contradicted" && !c) { $("#ovrC").focus(); $("#ovrC").placeholder = "Type what the data actually shows."; return; }
+    it.review = {decision:"override", verdict: nv, reason, ...(nv === "contradicted" ? {correct_value: c} : {}), ...who()}; next();
   };
+}
+function step(d){
+  const cl = audit.items, i = cl.findIndex(x => x.id === sel);
+  for (let k = 1; k <= cl.length; k++) { const x = cl[(i + d * k + cl.length) % cl.length]; if (x.tool_verdict !== "not_a_claim" || x.review) { sel = x.id; break; } }
+  renderReader(); renderDetail();
 }
 function next(){
   const cl = claims(), i = cl.findIndex(x => x.id === sel);
   const nxt = cl.slice(i + 1).find(x => !x.review) || cl.find(x => !x.review);
   if (nxt) sel = nxt.id; render();
 }
-$("#decision").onchange = e => e.target.dataset.touched = "1";
+document.addEventListener("keydown", e => {
+  if (!audit || ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) return;
+  if (e.key === "j" || e.key === "ArrowDown" && e.altKey) step(1);
+  if (e.key === "k" || e.key === "ArrowUp" && e.altKey) step(-1);
+});
+
+// ---------------------------------------------------------------- plan + decision
+let planTimer = null, planKey = "";
+function schedulePlan(){
+  const key = JSON.stringify(audit.items.map(i => [i.id, i.review]));
+  if (key === planKey && plan) { renderPlan(); return; }
+  clearTimeout(planTimer);
+  planTimer = setTimeout(async () => {
+    try { plan = await api("/api/plan", {audit}); planKey = key; renderPlan(); renderDetail(); renderStory(); }
+    catch(e){ status("Could not build next steps: " + e.message); }
+  }, 120);
+}
+const DECISIONS = [
+  ["Proceed", "Use the report as it is."], ["Fix a problem", "Author corrects it first."],
+  ["Narrow the question", "Remove what the data can't show."], ["Stop", "Don't use this report."]];
+function renderPlan(){
+  if (!plan) return;
+  const tone = {"Fix a problem": "bad", "Narrow the question": "unk", "Proceed": "ok"}[plan.decision] || "na";
+  const ic = {bad: SVG.contradicted, unk: SVG.insufficient_evidence, ok: SVG.supported, na: SVG.not_a_claim}[tone];
+  $("#rec").className = "rec " + tone;
+  $("#rec").innerHTML = `<span class="ic">${ic}</span><div><span class="small muted">The tool suggests</span><b>${esc(plan.decision)}</b>
+    <span class="small" style="color:var(--ink-2)">${esc(plan.why)}</span></div>`;
+  $("#steps").innerHTML = plan.steps.length ? plan.steps.map(s => `<li><b>${esc(s.do)}<span class="pill">${esc(s.id)}</span></b><p>${esc(s.detail)}</p>
+      ${s.suggested_text ? `<span class="sugg">${esc(s.suggested_text)}</span>` : ""}</li>`).join("")
+    : `<li><b>Nothing to fix</b><p>Keep the definitions and the release name next to each number.</p></li>`;
+  $("#cant").innerHTML = plan.cant_tell.map(c => `<li>${esc(c)}</li>`).join("");
+  $("#corr").innerHTML = plan.corrected.map(c => {
+    if (c.status === "kept") return `<p>${esc(c.new)}</p>`;
+    if (c.status === "fixed") return `<p><del>${esc(c.old)}</del><ins>${esc(c.new)}</ins></p>`;
+    const tail = c.new.slice(c.old.length).trim().replace(/^\[|\]$/g, "");
+    return `<p>${esc(c.old)}<span class="flag">${esc(tail)}</span></p>`;
+  }).join("");
+  if (!decisionTouched) decision = plan.decision;
+  $("#choices").innerHTML = DECISIONS.map(([d, s]) => `<button class="choice" aria-pressed="${d === decision}" data-d="${esc(d)}">
+      ${d === plan.decision ? `<span class="sug">Suggested</span>` : ""}<b>${esc(d)}</b><span>${esc(s)}</span></button>`).join("");
+  $$("[data-d]").forEach(b => b.onclick = () => { decision = b.dataset.d; decisionTouched = true; renderPlan(); });
+  const cl = claims(), left = cl.filter(i => !i.review).length;
+  $("#reviewCount").textContent = left ? `${left} ${plural(left, "claim", "claims")} not yet confirmed: exported as needing human review.` : "Every claim confirmed by a person.";
+  renderNav();
+}
+$("#btnCorr").onclick = () => {
+  if (!plan) return;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([plan.corrected_markdown], {type: "text/markdown"}));
+  a.download = "corrected_report.md"; a.click(); URL.revokeObjectURL(a.href);
+};
 $("#btnExport").onclick = async () => {
   const reason = $("#decReason").value.trim();
-  if (!reason) { $("#decReason").focus(); status("Write why you chose this decision before exporting."); return; }
-  const decision = {decision: $("#decision").value, reason, reviewer: $("#reviewer").value || "unnamed reviewer",
+  if (!reason) { $("#decReason").focus(); $("#decReason").placeholder = "Write why you chose this decision before exporting."; return; }
+  const d = {decision: decision || (plan && plan.decision) || "Stop", reason, reviewer: $("#reviewer").value || "unnamed reviewer",
     reviewer_role: $("#role").value, also_review: $("#alsoReview").value, at: new Date().toISOString(),
     claims_confirmed: claims().filter(i => i.review).length, claims_total: claims().length};
+  const box = $("#exportOut");
   try {
-    const j = await api("/api/export", {audit, decision, team: $("#team").value});
-    $("#exportOut").textContent = `Saved:\n  ${j.paths.join("\n  ")}\n\nValidator: ${j.validator}`;
-    $("#exportOut").classList.remove("hidden");
-    status("Exported. audit.json is in the outputs folder.");
-  } catch(e){ status("Export failed: " + e.message); }
+    const j = await api("/api/export", {audit, decision: d, team: $("#team").value});
+    const valid = /\bvalid\b/.test(j.validator) && !/invalid/i.test(j.validator);
+    box.className = "export-ok" + (valid ? "" : " export-bad"); box.dataset.ok = valid ? "1" : "";
+    box.innerHTML = `<b>${valid ? "✓ Exported, and the organizers' validator says valid." : "Exported, but check the validator message."}</b>
+      <div style="margin-top:6px">${j.paths.map(p => `<div><code>${esc(p)}</code></div>`).join("")}</div>
+      <div class="tiny muted" style="margin-top:6px">${esc(j.validator)}</div>`;
+    renderNav();
+  } catch(e){ box.className = "export-ok export-bad"; box.textContent = "Export failed: " + e.message; }
 };
 init();
 </script>

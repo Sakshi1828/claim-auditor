@@ -47,6 +47,7 @@ class Result:
     code: str = ""
     confidence: str = "high"
     sample_ids: list[str] = field(default_factory=list)
+    trace: list[dict] = field(default_factory=list)   # analytical engine: each validation step and its outcome
 
     def to_dict(self) -> dict:
         d = asdict(self)

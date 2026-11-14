@@ -190,6 +190,13 @@ python tools/llm_smoke_test.py --both   # live: sends 7 sample claims to each pr
 ```
 Without a key the tool behaves exactly as before.
 
+`auditor/semantic.py` asks the model to *describe* each claim (field, value, population, aggregation, comparison,
+verifiability) using the release catalog; code grounds every field it names. `auditor/engine.py` then runs only
+**approved operations** (share, count, mean, median, rank, two-group comparison, cohort and slide facts) through a
+10-step validated pipeline with a trace, ending in insufficient evidence whenever a step fails. The model never runs
+code or decides verdicts. `python tests/test_engine.py` checks every operation against answers computed independently
+in `tests/independent_answers.py`.
+
 ## Third-party code and licenses
 | Package | Used for | License |
 |---|---|---|

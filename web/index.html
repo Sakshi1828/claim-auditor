@@ -640,6 +640,29 @@ svg.foot-ic{width:18px;height:18px;flex:none}
   .steps-nav a{min-height:44px}
 }
 
+/* ================= READABILITY PASS: calmer claim panel (look only) ================= */
+/* header row: chips line up evenly, extras are quieter, "Back to summary" sits on its own line */
+#detail .d-head{gap:8px 10px;row-gap:10px}
+#detail .d-head .id{font-size:13px;color:var(--muted);font-weight:600}
+#detail .d-head .small.muted{font-size:13px}
+#detail .d-head .backlink{flex-basis:100%;justify-content:flex-end;text-align:right;margin-top:-4px}
+/* the claim itself: one clean sans font, comfortable size, no jumpy line height */
+#detail .quote{font:500 19px/1.65 var(--sans);color:var(--ink);margin:16px 0 14px;padding:4px 0 4px 16px;border-left:3px solid var(--accent);max-width:none}
+/* "?" helpers inside the sentence: small and quiet, lifted up like a footnote so the words read in one line */
+#detail .quote .tip{width:15px;height:15px;font:700 9.5px/13px var(--sans);margin:0 1px 0 1px;vertical-align:super;opacity:.75;background:transparent}
+#detail .quote .tip:hover,#detail .quote .tip:focus-visible{opacity:1}
+#detail .quote .term{text-decoration-thickness:1px;text-underline-offset:4px}
+/* text boxes use the whole panel width, with matching size and spacing */
+#detail .plainline,#detail .summary,#detail .callout{max-width:none}
+#detail .plainline{font-size:15.5px;line-height:1.6;padding:12px 16px;margin-top:0}
+#detail .summary{font-size:15px;line-height:1.7;margin-top:14px;color:var(--ink-2)}
+/* source tags ("From the data", "Interpretation"): smaller and softer so they don't shout */
+#detail .src{font-size:9.5px;letter-spacing:.04em;opacity:.85;margin-left:8px}
+/* tabs get a little breathing room above */
+#detail .dtabs,#detail [role="tablist"]{margin-top:20px}
+/* left list: a bit more space between sentences */
+#story .sent{margin-bottom:6px}
+
 /* gentle motion only for people who are fine with motion */
 @media (prefers-reduced-motion:reduce){svg.hero-art,.sk,.vbar div,.bars .b,.alt .bar div,.complete span,.scale .pt,.gd-mean,.gd-med{animation:none}
   *{transition-duration:.01ms!important}}

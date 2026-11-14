@@ -802,8 +802,8 @@ svg.foot-ic{width:18px;height:18px;flex:none}
     <div>
       <button class="opt" id="btnPractice"><span class="ic" aria-hidden="true">★</span><span><b>Use the practice report</b><span>The organizers' practice brief, with one supported, one wrong and one uncheckable claim.</span></span></button>
       <label class="opt" style="cursor:pointer;margin:0 0 8px;border:1px solid var(--line);background:var(--paper)">
-        <span class="ic" aria-hidden="true">⇪</span><span><b style="color:var(--ink)">Upload a file</b><span>.md or .txt</span></span>
-        <input type="file" id="file" accept=".md,.txt,.markdown"></label>
+        <span class="ic" aria-hidden="true">⇪</span><span><b style="color:var(--ink)">Upload a file</b><span>.md, .txt, or a findings .json</span></span>
+        <input type="file" id="file" accept=".md,.txt,.markdown,.json,application/json"></label>
       <details class="env card" style="box-shadow:none">
         <summary>Open a sealed envelope (judging)</summary>
         <div class="row" style="margin-top:10px">
@@ -994,7 +994,27 @@ async function init(){
   try { $("#reviewer").value = localStorage.getItem("ca_reviewer") || ""; } catch(e){}
 }
 $("#btnPractice").onclick = () => { $("#report").value = cfg.practice_report; status("Practice report loaded. Press “Check every claim”."); $("#btnRun").focus(); updateGuide(); };
-$("#file").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { $("#report").value = t; status(`Loaded ${f.name}.`); updateGuide(); }); };
+// A findings .json (this app's own export, or a simple list of claims) is turned into a plain report:
+// one claim per paragraph, word for word. The normal check then runs on it exactly as on a pasted report.
+function findingsToReport(data){
+  const pick = o => typeof o === "string" ? o : o && (o.claim_text || o.claim || o.text || o.statement || o.sentence || o.summary || "");
+  if (typeof data === "string") return data;
+  if (data && !Array.isArray(data) && typeof (data.report || data.report_text || data.text) === "string") return data.report || data.report_text || data.text;
+  const list = Array.isArray(data) ? data : (data && (data.findings || data.claims || data.items)) || [];
+  const claims = list.map(pick).map(t => String(t || "").trim()).filter(Boolean);
+  if (!claims.length) return null;
+  const title = data && !Array.isArray(data) && (data.title || (data.question && !data.findings ? data.question : ""));
+  return (title ? `# ${title}\n\n` : "# Claims from a findings file\n\n") + claims.join("\n\n") + "\n";
+}
+$("#file").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => {
+  if (/\.json$/i.test(f.name) || /^\s*[\[{]/.test(t) && f.type === "application/json") {
+    let rep = null;
+    try { rep = findingsToReport(JSON.parse(t)); } catch (err) { status(`Could not read ${f.name}: it is not valid JSON.`); return; }
+    if (!rep) { status(`No claims found in ${f.name}. Expected a "findings" or "claims" list with claim_text or text.`); return; }
+    $("#report").value = rep;
+    status(`Loaded ${f.name}: ${rep.split("\n\n").length - 1} claims from the findings file.`); updateGuide(); return;
+  }
+  $("#report").value = t; status(`Loaded ${f.name}.`); updateGuide(); }); e.target.value = ""; };
 $("#btnUnseal").onclick = async () => {
   status("Unsealing the envelope (10–20 seconds)…", true);
   try {

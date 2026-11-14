@@ -1,0 +1,17 @@
+{
+  "title": "Sample findings file",
+  "claims": [
+    {
+      "id": "F1",
+      "text": "Luminal A accounts for about 50% of primary tumors with an RNA subtype call."
+    },
+    {
+      "id": "F2",
+      "text": "TP53 is mutated in about a third of primary tumors with mutation data."
+    },
+    {
+      "id": "F3",
+      "text": "The median age at diagnosis was 65 years."
+    }
+  ]
+}

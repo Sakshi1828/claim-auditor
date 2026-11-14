@@ -562,6 +562,62 @@ svg.next-ic{width:32px;height:32px;color:var(--accent)}
 svg.foot-ic{width:18px;height:18px;flex:none}
 .safety{border-left:3px solid var(--sage);padding-left:10px}
 
+/* ================= PHASE 7: sentences linked to their existing sources ================= */
+#srcView{margin-top:10px}
+.src-tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.src-text{font:17px/1.9 var(--serif);color:var(--ink);max-width:75ch;margin:0 0 12px}
+.src-sent{cursor:pointer;border-radius:4px;padding:1px 2px;transition:background-color .2s,opacity .2s,box-shadow .2s}
+.src-sent:hover{background:var(--accent-2)}
+.src-sent:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.src-sent.current{box-shadow:0 0 0 2px var(--accent)}
+.g-mark{display:none;font:700 10px var(--sans);color:var(--paper);background:var(--muted);border-radius:999px;padding:0 5px;margin-left:2px}
+/* soft colour-blind-safe group colours + numbered markers, only when "Show highlights" is on */
+#srcView.hl-on .g-mark{display:inline-block}
+#srcView.hl-on .src-sent[data-group="1"],#srcView.hl-on .src-sent[data-group="7"]{background:color-mix(in srgb,var(--chart-1) 18%,transparent)}
+#srcView.hl-on .src-sent[data-group="2"],#srcView.hl-on .src-sent[data-group="8"]{background:color-mix(in srgb,var(--chart-2) 22%,transparent)}
+#srcView.hl-on .src-sent[data-group="3"],#srcView.hl-on .src-sent[data-group="9"]{background:color-mix(in srgb,var(--chart-3) 20%,transparent)}
+#srcView.hl-on .src-sent[data-group="4"]{background:color-mix(in srgb,var(--chart-4) 20%,transparent)}
+#srcView.hl-on .src-sent[data-group="5"]{background:color-mix(in srgb,var(--chart-5) 20%,transparent)}
+#srcView.hl-on .src-sent[data-group="6"]{background:color-mix(in srgb,var(--chart-6) 24%,transparent)}
+#srcView.hl-on .src-sent[data-group="1"] .g-mark,.sw.g1,.g-pill.g1{background:var(--chart-1)}
+#srcView.hl-on .src-sent[data-group="2"] .g-mark,.sw.g2,.g-pill.g2{background:var(--chart-2)}
+#srcView.hl-on .src-sent[data-group="3"] .g-mark,.sw.g3,.g-pill.g3{background:var(--chart-3)}
+#srcView.hl-on .src-sent[data-group="4"] .g-mark,.sw.g4,.g-pill.g4{background:var(--chart-4)}
+#srcView.hl-on .src-sent[data-group="5"] .g-mark,.sw.g5,.g-pill.g5{background:var(--chart-5)}
+#srcView.hl-on .src-sent[data-group="6"] .g-mark,.sw.g6,.g-pill.g6{background:var(--chart-6)}
+.sw.g0{background:var(--line)}
+/* a chosen group (or source) stands out; the rest dims */
+#srcView.focus-on .src-sent:not(.in-group){opacity:.38}
+#srcView.focus-on .src-sent.in-group{box-shadow:inset 0 -2px 0 var(--accent)}
+.src-legend{display:flex;flex-wrap:wrap;gap:8px}
+.lgd{display:flex;gap:6px;align-items:center;font-size:var(--fs-xs);font-weight:400;padding:4px 10px;border-radius:var(--r-pill);background:var(--bg);border:1px solid var(--line);color:var(--ink-2)}
+.lgd.active{border-color:var(--accent);color:var(--ink)}
+.lgd.none{border-style:dashed}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px}
+.g-pill{color:#fff;font:700 11px var(--sans);border-radius:999px;padding:2px 8px}
+/* "Why this is said": side panel on wide screens, bottom sheet on phones */
+.why-panel{position:fixed;top:var(--stick,90px);right:16px;bottom:16px;width:min(400px,calc(100vw - 32px));overflow:auto;z-index:45;
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);padding:18px 20px;
+  animation:why-in .22s ease-out}
+.why-panel[hidden]{display:none}
+@keyframes why-in{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+.why-head{display:flex;justify-content:space-between;align-items:center}
+.why-head h3{font:600 20px var(--serif);text-transform:none;letter-spacing:0;color:var(--ink);margin:0}
+.why-quote{font:500 16px/1.5 var(--serif);border-left:3px solid var(--accent);margin:12px 0;padding-left:12px;color:var(--ink)}
+.why-badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.why-none{background:var(--status-limited-bg);color:var(--status-limited);border:1px dashed var(--status-limited);border-radius:var(--r-md);padding:10px 12px;font-weight:600}
+.why-panel h4{font-size:var(--fs-sm);margin:14px 0 4px;color:var(--ink)}
+.why-panel p{font-size:var(--fs-sm);color:var(--ink-2);margin:0 0 6px}
+.why-srcs{display:grid;gap:8px}
+.why-src{text-align:left;width:100%;font-weight:400}
+.why-src:hover{border-color:var(--accent)}
+.why-full{margin-top:14px;width:100%}
+@media (max-width:700px){
+  .why-panel{top:auto;left:0;right:0;bottom:0;width:auto;max-height:72vh;border-radius:var(--r-lg) var(--r-lg) 0 0;animation-name:sheet-in}
+  @keyframes sheet-in{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+}
+@media (prefers-reduced-motion:reduce){.why-panel{animation:none}}
+
 /* gentle motion only for people who are fine with motion */
 @media (prefers-reduced-motion:reduce){svg.hero-art,.sk,.vbar div,.bars .b,.alt .bar div,.complete span,.scale .pt,.gd-mean,.gd-med{animation:none}
   *{transition-duration:.01ms!important}}
@@ -738,6 +794,8 @@ svg.foot-ic{width:18px;height:18px;flex:none}
 <section id="s2" class="hidden" aria-labelledby="h2">
   <div class="sec-h"><svg class="sec-ic" aria-hidden="true"><use href="#ic-review"/></svg><span class="k">Step 2</span><h2 id="h2">Review each claim</h2><p>Click a sentence. Confirm or override what the tool found.</p>
     <button class="ghost backlink" onclick="go('#storyWrap','#storyHead')">↑ Back to summary</button></div>
+  <details class="acc" id="readSources"><summary>Read the report with its sources <span class="acc-help">click any sentence to see why it is said</span></summary>
+    <div id="srcView"></div></details>
   <details class="acc acc-inline"><summary>What do the coloured labels mean?</summary>
   <p class="srckey"><span class="src d" style="margin:0">From the data</span> measured in the release files ·
     <span class="src i">Interpretation</span> the tool's reasoning: check it ·
@@ -806,6 +864,7 @@ svg.foot-ic{width:18px;height:18px;flex:none}
     </div>
   </div>
   <div class="card pad next-card" id="nextStep" aria-label="Recommended next step"></div>
+  <aside class="why-panel" id="whyPanel" role="dialog" aria-modal="false" aria-labelledby="whyTitle" hidden></aside>
   <p class="foot"><svg class="foot-ic" aria-hidden="true"><use href="#ic-info"/></svg>Research Claim Auditor · Team Cache us if u can · rule-based, reproducible, no AI model or API key · research use only</p>
 </section>
 </main>
@@ -961,7 +1020,7 @@ $$("[data-filter]").forEach(b => b.onclick = () => {
   filter = b.dataset.filter; $$("[data-filter]").forEach(x => x.setAttribute("aria-pressed", x === b)); renderReader();
 });
 
-function render(){ renderStory(); renderReader(); renderDetail(); renderNav(); schedulePlan(); }
+function render(){ renderStory(); renderReader(); renderDetail(); renderNav(); schedulePlan(); renderSourceView(); }
 
 function renderNav(){
   updateGuide();
@@ -1166,6 +1225,84 @@ function renderReader(){
 }
 
 // ---------------------------------------------------------------- comparison visuals
+// ---- phase 7: each sentence linked to the evidence the checker already attached (files, fields, reason, cited evidence).
+// Nothing is matched by text or guessed: the links come only from each result's own fields.
+const srcKey = it => it.result.files.length ? [...it.result.files].sort().join(" + ") : (it.evidence_cited ? "Evidence the report cites" : "");
+function srcGroups(){
+  const keys = [];
+  audit.items.forEach(it => { const k = srcKey(it); if (k && !keys.includes(k)) keys.push(k); });
+  return keys;
+}
+function renderSourceView(){
+  const box = $("#srcView"); if (!box || !audit) return;
+  const p = $("#whyPanel"); if (p && !p.hidden && !audit.items.some(i => p.querySelector(".why-quote") && i.claim_text === p.querySelector(".why-quote").textContent)) closeWhy();
+  const keys = srcGroups(), on = box.dataset.hl === "1";
+  const span = it => {
+    const k = srcKey(it), g = keys.indexOf(k) + 1;
+    return `<span class="src-sent" tabindex="0" role="button" data-id="${it.id}" data-group="${g || 0}" data-files="${esc(it.result.files.join("|"))}"
+      aria-label="${esc(it.claim_text)}. ${g ? "Source group " + g : "No source linked"}. Press Enter to see why this is said.">${esc(it.claim_text)}${g ? `<sup class="g-mark" aria-hidden="true">${g}</sup>` : ""}</span>`;
+  };
+  box.innerHTML = `<div class="src-tools"><button type="button" class="pill-btn" id="hlToggle" aria-pressed="${on}">${on ? "Hide highlights" : "Show highlights"}</button>
+      <span class="small muted">Groups are sentences that rest on the same data. Numbers mark each group, so colour is not the only cue.</span></div>
+    <p class="src-text">${audit.items.map(span).join(" ")}</p>
+    <div class="src-legend" aria-label="Legend: source groups">${keys.map((k, i) =>
+      `<button type="button" class="lgd" data-group="${i + 1}" data-src="${esc(k)}" title="Highlight every sentence that uses this source">
+        <i class="sw g${(i % 6) + 1}"></i><b>${i + 1}</b> ${esc(k)} <span class="ev-count">${audit.items.filter(it => srcKey(it) === k).length}</span></button>`).join("")}
+      <span class="lgd none"><i class="sw g0"></i>No source linked</span></div>`;
+  box.classList.toggle("hl-on", on);
+  $("#hlToggle").onclick = () => { box.dataset.hl = on ? "" : "1"; renderSourceView(); };
+  box.querySelectorAll(".src-sent").forEach(el => {
+    el.onclick = () => openWhy(el.dataset.id, el);
+    el.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openWhy(el.dataset.id, el); } };
+  });
+  box.querySelectorAll(".lgd[data-src]").forEach(b => b.onclick = () => highlightGroup(+b.dataset.group));
+}
+function highlightGroup(g){
+  const box = $("#srcView"); box.classList.add("focus-on");
+  box.querySelectorAll(".src-sent").forEach(x => x.classList.toggle("in-group", +x.dataset.group === g && g > 0));
+  box.querySelectorAll(".lgd[data-group]").forEach(x => x.classList.toggle("active", +x.dataset.group === g));
+}
+function highlightFile(f){       // reverse: every sentence whose checker used this file
+  const box = $("#srcView"); box.classList.add("focus-on");
+  box.querySelectorAll(".src-sent").forEach(x => x.classList.toggle("in-group", x.dataset.files.split("|").includes(f)));
+  box.querySelectorAll(".lgd").forEach(x => x.classList.remove("active"));
+}
+let whyReturn = null;
+function openWhy(id, from){
+  const it = audit.items.find(i => i.id === id); if (!it) return;
+  const r = it.result, v = finalV(it), g = srcGroups().indexOf(srcKey(it)) + 1;
+  whyReturn = from || null;
+  if (g) highlightGroup(g); else { $("#srcView").classList.remove("focus-on"); $$("#srcView .in-group").forEach(x => x.classList.remove("in-group")); }
+  $$("#srcView .src-sent").forEach(x => x.classList.toggle("current", x.dataset.id === id));
+  const linked = r.files.length || it.evidence_cited;
+  const p = $("#whyPanel");
+  p.innerHTML = `<div class="why-head"><h3 id="whyTitle">Why this is said</h3>
+      <button type="button" class="ghost why-close" aria-label="Close">✕</button></div>
+    <blockquote class="why-quote">${esc(it.claim_text)}</blockquote>
+    <div class="why-badges">${badge(v)}${statusPill(it, v)}${r.files.length ? `<span class="ev-count">${r.files.length} ${plural(r.files.length, "source", "sources")}</span>` : ""}${g ? `<span class="g-pill g${((g - 1) % 6) + 1}">Group ${g}</span>` : ""}</div>
+    ${linked ? "" : `<div class="why-none">No source linked for this statement.</div>`}
+    ${r.summary ? `<h4>The checker's reason</h4><p>${esc(r.summary)}</p>` : ""}
+    ${it.evidence_cited ? `<h4>Evidence the report cites</h4><p>${esc(it.evidence_cited)}</p>` : ""}
+    ${r.files.length ? `<h4>Sources <span class="tiny muted">(click one to highlight every sentence it supports)</span></h4>
+      <div class="why-srcs">${r.files.map(f => { const x = audit.release.files.find(z => z.file === f);
+        return `<button type="button" class="src-card why-src" data-file="${esc(f)}"><svg class="src-ic" aria-hidden="true"><use href="#ic-data"/></svg><span>
+          <b>${esc(f)}</b><span>${esc(FILE_TYPE(f))} · release ${esc(audit.release.name)}</span>${x ? `<small>sha256 ${esc(x.sha256.slice(0, 16))}…</small>` : ""}</span></button>`; }).join("")}</div>
+      ${r.fields.length ? `<p class="small"><b>Fields used:</b> ${r.fields.map(esc).join(", ")}</p>` : ""}` : ""}
+    ${v !== "not_a_claim" ? `<button type="button" class="primary why-full" data-go="${id}" data-tab="how">Open the full source and calculation →</button>` : ""}`;
+  p.hidden = false;
+  p.querySelector(".why-close").onclick = closeWhy;
+  p.querySelectorAll(".why-src").forEach(b => b.onclick = () => highlightFile(b.dataset.file));
+  const full = p.querySelector(".why-full");
+  if (full) full.onclick = () => { closeWhy(); detailTab = "how"; sel = id; renderReader(); renderDetail(); go("#s2", "#accept"); };
+  p.querySelector(".why-close").focus();
+}
+function closeWhy(){
+  const p = $("#whyPanel"); if (!p || p.hidden) return;
+  p.hidden = true; $$("#srcView .src-sent.current").forEach(x => x.classList.remove("current"));
+  if (whyReturn && document.contains(whyReturn)) whyReturn.focus();
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeWhy(); });
+
 // ---- phase 6: surface what already exists (sources, status, limits, next step). Nothing new is claimed.
 const FILE_TYPE = f => /manifest/.test(f) ? "Manifest (list of samples or slides)" : /\.tsv/.test(f) ? "Data table" : "File";
 function sourceCards(r){

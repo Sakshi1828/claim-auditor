@@ -49,7 +49,9 @@ class Release:
         self.dir = pathlib.Path(release_dir).resolve()
         if not (self.dir / FILES["clinical"]).exists():
             raise FileNotFoundError(f"No clinical.tsv in {self.dir}. Run fetch.py first, or point at a release folder.")
-        self.name = name or ("A" if self.dir.name == "raw" else self.dir.parent.name)
+        # release A lives in raw/; an envelope's in opened/<name>/release/; a generated one in releases/<name>/
+        self.name = name or ("A" if self.dir.name == "raw" else
+                             self.dir.parent.name if self.dir.name == "release" else self.dir.name)
         self.is_release_a = self.dir.name == "raw"
         # A release folder that ships its own manifests (e.g. an envelope) uses them; otherwise the challenge repo's.
         own_sl, own_sm = self.dir / "slide_manifest.csv", self.dir / "sample_manifest.csv"

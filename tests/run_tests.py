@@ -36,6 +36,10 @@ EXPECT = {
         ["supported", "supported", "supported", "contradicted", "contradicted", "contradicted", "contradicted",
          "contradicted", "contradicted", "contradicted", "supported", "supported", "supported", "contradicted",
          "supported", "supported", "insufficient_evidence", "insufficient_evidence", "insufficient_evidence", "supported"],
+    # Held out: written and answered (with plain pandas) before the tool was run on it.
+    HERE / "holdout_report.md":
+        ["supported"] * 7 + ["contradicted"] + ["supported"] * 4 + ["contradicted"] + ["supported"] * 3
+        + ["contradicted"] + ["supported"] * 3,
 }
 
 # What should happen after each verdict (action, and the corrected sentence where the tool can write one)
@@ -89,5 +93,39 @@ for path, want in EXPECT.items():
         bad += 1
         print(f"FAIL {path.name}: {len(got)} sentences, expected {len(want)}")
     print(f"{'ok  ' if not bad else '    '} {path.name}: {len(got)} sentences")
+
+# ---- New data: a random release built by the organizers' make_release.py from tests/random_release.json
+# (seed 77722: 60 ER labels flipped, 40 tumors relabelled Basal, 10 mutation profiles copied, 3 swapped).
+# The tool must report that release's numbers, not release A's. Expected values computed with plain pandas.
+import json, subprocess  # noqa: E401,E402
+cfg = json.loads((HERE / "random_release.json").read_text())
+rel_dir = CH / "data/tcga-brca/releases" / cfg["name"]
+if not (rel_dir / "clinical.tsv").exists():
+    subprocess.run([sys.executable, str(CH / "data/tcga-brca/make_release.py"), "--config", str(HERE / "random_release.json")],
+                   check=True, capture_output=True)
+RAND = Release(rel_dir, CH / "data/tcga-brca/slide_manifest.csv")
+RAND_EXPECT = {   # (report, claim id): (verdict, text that must appear in the data value)
+    ("holdout_report.md", "C03"): ("contradicted", "rank 2"),               # Basal-like overtook Luminal B
+    ("holdout_report.md", "C08"): ("contradicted", "42.4% (221 of 521)"),   # PIK3CA within ER-positive
+    ("holdout_report.md", "C19"): ("supported", "68.4% (577 of 844)"),      # Luminal A + B
+    ("real_world_report.md", "C04"): ("contradicted", "72.3% (99 of 137)"), # TP53 within basal-like
+    ("real_world_report.md", "C20"): ("contradicted", "71.5% (748 of 1,046)"),  # ER-positive after relabelling
+    ("real_world_report.md", "C11"): ("contradicted", "20.9% (176 of 844)"),    # Luminal B
+}
+rb = 0
+cache = {}
+for (rep, cid), (want_v, want_txt) in RAND_EXPECT.items():
+    if rep not in cache:
+        cache[rep] = {i["id"]: i for i in run_audit((HERE / rep).read_text(encoding="utf-8"), RAND)["items"]}
+    it = cache[rep][cid]
+    obs = " | ".join(sc["observed"] for sc in it["result"]["subchecks"])
+    if it["tool_verdict"] != want_v or want_txt not in obs:
+        rb += 1
+        print(f"FAIL random release {rep} {cid}: {it['tool_verdict']} / {obs[:120]} (expected {want_v} with {want_txt})")
+if RAND.name != cfg["name"]:
+    rb += 1
+    print(f"FAIL random release is named {RAND.name!r}, expected {cfg['name']!r}")
+bad += rb
+print(f"{'ok  ' if not rb else '    '} random release (seed {cfg['seed']}): {len(RAND_EXPECT)} values against release {RAND.name}")
 print("ALL PASSED" if not bad else f"{bad} FAILURE(S)")
 sys.exit(1 if bad else 0)

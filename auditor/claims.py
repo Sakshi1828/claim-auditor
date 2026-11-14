@@ -160,6 +160,12 @@ def find_numbers(text: str) -> list[Number]:
                                cmp=_comparator(text, m.start())))
             taken.append((m.start(), m.end()))
 
+    # 2b. "nearly all", "almost all", "virtually all": at least 95%
+    for m in re.finditer(r"\b(?:nearly|almost|virtually|practically)\s+all\b", text, re.I):
+        if free(m.start(), m.end()):
+            nums.append(Number(95.0, True, True, m.start(), m.end(), m.group(0).strip(), word=True, cmp=">="))
+            taken.append((m.start(), m.end()))
+
     # 3. plain numbers
     for m in NUM_RE.finditer(text):
         if not free(m.start(), m.end()):

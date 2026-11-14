@@ -308,7 +308,8 @@ class ManifestChecker(Checker):
             return "size", after
         if re.match(r"(?:\s*(?:x|×)(?!\w))|(?:\s*-?\s*(?:times|fold)\s+(?:magnification|objective))", after):
             return "objective", after
-        if re.match(r"\s*(?:\w+\s+){0,2}?slides?\s+(?:per|for each|for every)\s+", after) or (
+        # "2.8 slides per patient", "2.8 slides are available per patient", "3 slides for each sample"
+        if re.match(r"\s*(?:\w+\s+){0,2}?slides?\s+(?:\w+\s+){0,3}?(?:per|for each|for every)\s+(?:patient|sample|case|tumou?r|woman|person)", after) or (
                 re.match(r"\s*(?:\w+\s+){0,2}?slides?\b", after)
                 and re.search(r"average\b|\bmean\b|on average\b", s.lower) and re.search(r"\b(?:each|per|every|a)\s+(?:patient|sample|case|tumou?r)", s.lower)):
             return "average", after
@@ -496,19 +497,40 @@ class SubtypeChecker(Checker):
         spans = find_spans(s.text, {k: v[0] for k, v in SUBTYPES.items()})
         mentioned = list(dict.fromkeys(k for _, k in spans))
         subs = []
+        # "Luminal A and Luminal B together account for 70%": one combined share, not two separate ones
+        together = len(mentioned) > 1 and bool(re.search(r"\btogether\b|\bcombined\b|\bbetween them\b|\bin total\b", t))
         for num in s.numbers:
-            key = nearest(num.start, spans)
-            if key is None:
-                continue
-            obs = int(counts.get(SUBTYPES[key][idx], 0))
+            if together:
+                keys = mentioned
+                obs = int(sum(counts.get(SUBTYPES[k][idx], 0) for k in keys))
+                name = " + ".join(SUBTYPE_NAMES[k] for k in keys)
+            else:
+                key = nearest(num.start, spans)
+                if key is None:
+                    continue
+                obs = int(counts.get(SUBTYPES[key][idx], 0))
+                name = SUBTYPE_NAMES[key]
             if num.is_percent:
                 ok, rule = matches(num, pct(obs, den), True)
-                subs.append(SubCheck(f"{SUBTYPE_NAMES[key]} share of {den_label}", num.text, fmt_pct(obs, den), ok, rule))
+                subs.append(SubCheck(f"{name} share of {den_label}", num.text, fmt_pct(obs, den), ok, rule))
             elif num.value <= den_all:
                 ok, rule = matches(num, obs, False)
-                subs.append(SubCheck(f"{SUBTYPE_NAMES[key]} tumors", num.text, f"{obs:,}", ok, rule))
+                subs.append(SubCheck(f"{name} tumors", num.text, f"{obs:,}", ok, rule))
         largest = counts.idxmax() if len(counts) else None
-        if mentioned and re.search(r"largest|most common|most frequent|biggest|dominant|majority", t):
+        # "the third most common", "second largest": a rank other than first
+        ORD = {"second": 2, "2nd": 2, "third": 3, "3rd": 3, "fourth": 4, "4th": 4, "fifth": 5, "5th": 5}
+        rk = re.search(r"\b(second|2nd|third|3rd|fourth|4th|fifth|5th)[- ](?:most common|most frequent|largest|biggest)", t)
+        least = re.search(r"\b(?:least common|rarest|smallest)\b", t)
+        if mentioned and (rk or least):
+            key = mentioned[0]
+            order = list(counts.sort_values(ascending=False).index)
+            lab = SUBTYPES[key][idx]
+            want = ORD[rk.group(1)] if rk else len(order)
+            got = order.index(lab) + 1 if lab in order else None
+            ranking = ", ".join(f"{k} {int(v):,}" for k, v in counts.sort_values(ascending=False).items())
+            subs.append(SubCheck(f"{SUBTYPE_NAMES[key]} rank among subtypes", f"rank {want}" + (" (least common)" if least else ""),
+                                 f"rank {got}: {ranking}", got == want, "rank by count"))
+        elif mentioned and re.search(r"largest|most common|most frequent|biggest|dominant|majority", t):
             key = mentioned[0]
             ok = SUBTYPES[key][idx] == largest
             if re.search(r"majority", t) and not re.search(r"largest|most", t):
@@ -771,6 +793,16 @@ class MutationChecker(Checker):
                                      f"rank <= {k}" if k > 1 else "rank 1",
                                      f"rank {rank}; top genes: " + ", ".join(f"{kk} {fmt_pct(int(v), den)}" for kk, v in top.head(max(3, k)).items()),
                                      rank <= k, "rank by number of mutated primary tumors"))
+        # "GATA3 is mutated more often than MAP3K1"
+        cm = re.search(r"\b(more|less)\s+(?:often|frequently|commonly)\b|\b(more|less)\s+common\b", s.lower)
+        if len(genes) >= 2 and cm and "than" in s.lower:
+            a, b = genes[0], genes[1]
+            more = (cm.group(1) or cm.group(2)) == "more"
+            fa, fb = int(freq[a]), int(freq[b])
+            subs.append(SubCheck(f"{a} mutated {'more' if more else 'less'} often than {b}{group_note}",
+                                 f"{a} {'>' if more else '<'} {b}",
+                                 f"{a} {fmt_pct(fa, den)} vs {b} {fmt_pct(fb, den)}", fa > fb if more else fa < fb,
+                                 "compare counts of mutated primary tumors"))
         v = verdict_from(subs)
         return Result(verdict=v, check=self.name,
                       summary="; ".join(f"{g}: mutated in {fmt_pct(int(freq[g]), den)} primary tumors with mutation data" for g in genes) + ".",
@@ -789,7 +821,8 @@ class AgeChecker(Checker):
     name = "age"
 
     def applies(self, s, r):
-        return bool(re.search(r"\b(median|mean|average) age\b|\baged?\b|\byears old\b|older than|younger than", s.lower)) and bool(s.numbers)
+        return bool(re.search(r"\b(median|mean|average) age\b|\baged?\b|\byears old\b|older than|younger than|"
+                              r"(?:before|after) (?:the )?age", s.lower)) and bool(s.numbers)
 
     def run(self, s, r):
         c = r.clinical_primary
@@ -799,11 +832,15 @@ class AgeChecker(Checker):
         subs = []
         for num in s.numbers:
             if num.is_percent:
-                m = re.search(r"(older than|over|above|younger than|under|below)\s+(\d+)", t)
+                m = re.search(r"(older than|over|above|after (?:the )?age(?: of)?|younger than|under|below|"
+                              r"before (?:the )?age(?: of)?)\s+(\d+)", t[num.end:]) or \
+                    re.search(r"(older than|over|above|after (?:the )?age(?: of)?|younger than|under|below|"
+                              r"before (?:the )?age(?: of)?)\s+(\d+)", t)
                 if not m:
                     continue
                 cut = float(m.group(2))
-                k = int((age > cut).sum()) if m.group(1) in ("older than", "over", "above") else int((age < cut).sum())
+                older = m.group(1).startswith(("older", "over", "above", "after"))
+                k = int((age > cut).sum()) if older else int((age < cut).sum())
                 ok, rule = matches(num, pct(k, len(age)), True)
                 subs.append(SubCheck(f"Share {m.group(1)} {m.group(2)} at diagnosis", num.text, fmt_pct(k, len(age)), ok, rule))
             elif re.search(r"median age", t) and 15 < num.value < 100:
@@ -921,6 +958,12 @@ class CohortChecker(Checker):
             layers = [k for k, pat in LAYER_PATTERNS.items() if re.search(pat, after, re.I)]
             if re.search(r"\b(?:all|every) (?:five|5|six|6) (?:data )?layers|every (?:data )?layer|all (?:data )?layers", after, re.I):
                 layers = ["survival", "mutation", "copy_number", "rna", "protein"]
+            if not layers and i == 0:
+                # "Copy number data is available for over 1,000 primary tumors": the layer is named before the number
+                lead = s.text[:num.start]
+                if re.search(r"\b(?:data|measurements?|profiles?|calls?)\b.*\b(?:available|measured|profiled|present|exists?)\b|"
+                             r"\b(?:available|measured|profiled)\b", lead, re.I):
+                    layers = [k for k, pat in LAYER_PATTERNS.items() if k != "slides" and re.search(pat, lead, re.I)]
             if entity is None and not layers:
                 continue
             ent = entity or last_entity or default

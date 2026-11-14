@@ -1,0 +1,5 @@
+{"name": "random-test", "seed": 77722, "changes": [
+  {"type": "relabel_clinical", "file": "clinical.tsv", "column": "breast_carcinoma_estrogen_receptor_status", "count": 60, "new_value": "Negative"},
+  {"type": "relabel_clinical", "file": "clinical.tsv", "column": "PAM50Call_RNAseq", "count": 40, "new_value": "Basal"},
+  {"type": "replace_with_duplicates", "file": "mutation_gene_level.tsv.gz", "count": 10, "subtype": "LumB"},
+  {"type": "swap_samples", "file": "mutation_gene_level.tsv.gz", "count": 3, "opposite_er": true}]}

@@ -10,7 +10,7 @@ Configuration (environment variables, or a .env file next to the project; see .e
     LLM_FALLBACK=groq|gemini|none     used when the primary fails (default: the other one, if it has a key)
     GEMINI_API_KEY, GROQ_API_KEY      user-supplied keys: never logged, cached or exported
     GEMINI_MODEL=gemini-2.5-flash     GROQ_MODEL=openai/gpt-oss-120b
-    LLM_TIMEOUT=30  LLM_MAX_RETRIES=3  LLM_MIN_INTERVAL=0.5  LLM_CACHE=1  LLM_CACHE_DIR=outputs/.llm_cache
+    LLM_TIMEOUT=90  LLM_MAX_RETRIES=3  LLM_MIN_INTERVAL=0.5  LLM_CACHE=1  LLM_CACHE_DIR=outputs/.llm_cache
 
 Standard library HTTP and jsonschema only (no SDKs), so nothing new to install. Not used by the verification engine yet.
 """
@@ -275,7 +275,7 @@ class LLMClient:
         primary = (e("LLM_PROVIDER") or "gemini").strip().lower()
         fb = (e("LLM_FALLBACK") or ("groq" if primary == "gemini" else "gemini")).strip().lower()
         return cls(primary=primary, fallback=None if fb in ("", "none", "off") else fb,
-                   timeout=float(e("LLM_TIMEOUT") or 30), max_retries=int(e("LLM_MAX_RETRIES") or 3),
+                   timeout=float(e("LLM_TIMEOUT") or 90), max_retries=int(e("LLM_MAX_RETRIES") or 3),
                    min_interval=float(e("LLM_MIN_INTERVAL") or 0.5),
                    cache_dir=e("LLM_CACHE_DIR") or None, use_cache=(e("LLM_CACHE") or "1") not in ("0", "false", "no"))
 

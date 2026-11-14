@@ -42,6 +42,13 @@ EXPECT = {
     HERE / "synthetic_report.txt":
         ["supported", "supported", "insufficient_evidence", "insufficient_evidence", "insufficient_evidence",
          "insufficient_evidence", "supported", "insufficient_evidence"],
+    # Clinical categories (histology, stage, nodes, metastasis, sex, menopause, margins, radiation). Answers from plain
+    # pandas on primary tumors, leaving out Stage X / NX / MX / [Discrepancy] / Indeterminate: IDC 71.5% of 1,096,
+    # ILC 18.5%, stage II 57.9% of 1,075, stage III-IV 25.1%, stage IV 1.9%, N1-N3 52.1% of 1,077, N0 47.9%, M1 2.4% of
+    # 934, female 98.9% of 1,097, postmenopausal 72.5% of 973, positive margin 7.7% of 1,029, radiation 55.4% of 1,000.
+    HERE / "clinical_report.md":
+        ["supported", "supported", "contradicted", "supported", "supported", "contradicted", "supported", "contradicted",
+         "supported", "supported", "supported", "contradicted", "supported"],
     # Held out: written and answered (with plain pandas) before the tool was run on it.
     HERE / "holdout_report.md":
         ["supported"] * 7 + ["contradicted"] + ["supported"] * 4 + ["contradicted"] + ["supported"] * 3

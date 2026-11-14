@@ -1045,6 +1045,143 @@ class CohortChecker(Checker):
                       sample_ids=sorted(prim.sample_id) if not used_layers else [])
 
 
+def _stage_group(v: str) -> str | None:
+    m = re.match(r"stage (iv|iii|ii|i)[abc]?\b", str(v).lower())    # "Stage IIA" -> II, "Stage IIIC" -> III
+    return m.group(1).upper() if m else None
+
+
+# topic -> (pattern in the sentence, column, does a recorded value belong to the category?, label, unknown values)
+_UNKNOWN = r"discrepancy|not available|unknown|^nan$"
+CLINICAL_TOPICS = {
+    "ductal": (r"\bductal\b|\bidc\b", "histological_type", lambda v: v == "Infiltrating Ductal Carcinoma",
+               "Infiltrating ductal carcinoma", _UNKNOWN),
+    "lobular": (r"\blobular\b|\bilc\b", "histological_type", lambda v: v == "Infiltrating Lobular Carcinoma",
+                "Infiltrating lobular carcinoma", _UNKNOWN),
+    "mucinous": (r"\bmucinous\b", "histological_type", lambda v: v == "Mucinous Carcinoma", "Mucinous carcinoma", _UNKNOWN),
+    "metaplastic": (r"\bmetaplastic\b", "histological_type", lambda v: v == "Metaplastic Carcinoma", "Metaplastic carcinoma", _UNKNOWN),
+    "medullary": (r"\bmedullary\b", "histological_type", lambda v: "Medullary" in v, "Medullary carcinoma", _UNKNOWN),
+    "stage_3plus": (r"stages? iii (?:or|and) (?:higher|above|iv|later)|stages? iii[-–/ ]+iv\b|(?:late|advanced)[- ]stage",
+                    "pathologic_stage", lambda v: _stage_group(v) in ("III", "IV"), "Stage III or IV", _UNKNOWN + r"|stage x"),
+    "stage_early": (r"stages? i (?:or|and) ii\b|stages? i[-–/ ]+ii\b|early[- ]stage", "pathologic_stage",
+                    lambda v: _stage_group(v) in ("I", "II"), "Stage I or II", _UNKNOWN + r"|stage x"),
+    "stage_iv": (r"\bstage iv\b", "pathologic_stage", lambda v: _stage_group(v) == "IV", "Stage IV", _UNKNOWN + r"|stage x"),
+    "stage_iii": (r"\bstage iii\b(?! ?(?:or|and|[-–/]))", "pathologic_stage", lambda v: _stage_group(v) == "III", "Stage III",
+                  _UNKNOWN + r"|stage x"),
+    "stage_ii": (r"\bstage ii\b(?! ?(?:or|and|[-–/]))", "pathologic_stage", lambda v: _stage_group(v) == "II", "Stage II",
+                 _UNKNOWN + r"|stage x"),
+    "stage_i": (r"\bstage i\b(?! ?(?:or|and|[-–/]))", "pathologic_stage", lambda v: _stage_group(v) == "I", "Stage I",
+                _UNKNOWN + r"|stage x"),
+    "node_neg": (r"node[- ]negative|no (?:lymph )?node (?:involvement|spread|metastas)|without (?:lymph )?node",
+                 "pathologic_N", lambda v: v.startswith("N0"), "Lymph-node negative (N0)", _UNKNOWN + r"|^nx$"),
+    "node_pos": (r"node[- ]positive|(?:lymph )?node (?:involvement|spread|metastas)|(?:spread|metastas\w*) to (?:the )?(?:axillary |regional )?lymph nodes?|positive (?:lymph )?nodes",
+                 "pathologic_N", lambda v: v[:2] in ("N1", "N2", "N3"), "Lymph-node positive (N1-N3)", _UNKNOWN + r"|^nx$"),
+    "distant": (r"distant metastas|\bm1\b|metastatic (?:disease |cancer )?at (?:diagnosis|presentation)",
+                "pathologic_M", lambda v: v.startswith("M1"), "Distant metastasis at diagnosis (M1)", _UNKNOWN + r"|^mx$"),
+    "female": (r"\bfemales?\b|\bwomen\b", "gender", lambda v: v == "FEMALE", "Female", _UNKNOWN),
+    "male": (r"(?<!fe)\bmales?\b|\bmen\b", "gender", lambda v: v == "MALE", "Male", _UNKNOWN),
+    "postmeno": (r"post[- ]?menopausal", "menopause_status", lambda v: v.startswith("Post"), "Postmenopausal",
+                 _UNKNOWN + r"|indeterminate"),
+    "premeno": (r"pre[- ]?menopausal", "menopause_status", lambda v: v.startswith("Pre"), "Premenopausal",
+                _UNKNOWN + r"|indeterminate"),
+    "perimeno": (r"peri[- ]?menopausal", "menopause_status", lambda v: v.startswith("Peri"), "Perimenopausal",
+                 _UNKNOWN + r"|indeterminate"),
+    "margin_pos": (r"positive (?:surgical |resection )?margins?|margins? (?:was|were) positive", "margin_status",
+                   lambda v: v == "Positive", "Positive surgical margin", _UNKNOWN),
+    "margin_neg": (r"(?:negative|clear) (?:surgical |resection )?margins?|margins? (?:was|were) (?:negative|clear)",
+                   "margin_status", lambda v: v == "Negative", "Negative surgical margin", _UNKNOWN),
+    "radiation": (r"radiation|radiotherapy", "radiation_therapy", lambda v: v == "YES", "Received radiation therapy",
+                  _UNKNOWN),
+}
+# Sentences about genes, subtypes, receptors, survival, age or omics layers belong to the other checkers.
+_CLIN_EXCLUDE = (r"mutat|\bsurviv|\bdeaths?\b|\bdied\b|deceased|\bage\b|years? old|\bmedian\b|\bmean\b|protein|rppa|copy[- ]number"
+                 r"|\brna\b|slides?\b|pam50|subtype|luminal|basal|her2|triple[- ]negative|\btnbc\b|estrogen|progesterone"
+                 r"|\ber[- ]?(?:positive|negative|\+)|\bpr[- ]?(?:positive|negative|\+)")
+_QUANT = r"\b(?:most|majority|minority|few|fewer|nearly all|almost all|virtually all)\b"
+
+
+class ClinicalCategoryChecker(Checker):
+    """Shares of primary tumors in a clinical category: histology, stage, lymph nodes, distant metastasis, sex,
+    menopause, surgical margins, radiation. `early` instances only take number-free sentences ("Most patients were
+    postmenopausal") that would otherwise be read as opinion; the late instance takes the numeric ones."""
+    name = "clinical_category"
+
+    def __init__(self, early: bool = False):
+        self.early = early
+
+    def _spans(self, s):
+        t = s.lower
+        if re.search(_CLIN_EXCLUDE, t) or re.search(r"\b[A-Z][A-Z0-9]{2,}\d\b", s.text):
+            return []
+        spans, taken = [], []
+        for key, (pat, *_rest) in CLINICAL_TOPICS.items():
+            for m in re.finditer(pat, t):
+                if any(m.start() < b and a < m.end() for a, b in taken):
+                    continue          # "lymph node metastasis" is a node claim, not a distant-metastasis claim
+                taken.append((m.start(), m.end()))
+                spans.append((m.start(), key))
+        return sorted(spans)
+
+    def applies(self, s, r):
+        if self.early and (s.numbers or not re.search(_QUANT, s.lower)):
+            return False
+        return bool(self._spans(s)) and any(CLINICAL_TOPICS[k][1] in r.clinical_primary for _, k in self._spans(s))
+
+    def _claims(self, s):
+        if s.numbers:
+            return list(s.numbers)
+        t = s.lower
+        m = re.search(_QUANT, t)
+        word = m.group(0)
+        if word in ("most", "majority"):
+            return [Number(50.0, True, False, m.start(), m.end(), word, cmp=">", word=True)]
+        if word in ("minority", "few", "fewer"):
+            return [Number(50.0, True, False, m.start(), m.end(), word, cmp="<", word=True)]
+        return [Number(95.0, True, False, m.start(), m.end(), word, cmp=">=", word=True)]   # nearly / almost all
+
+    def run(self, s, r):
+        c = r.clinical_primary
+        spans = self._spans(s)
+        subs, alts, fields = [], [], []
+        for num in self._claims(s):
+            key = nearest(num.start, spans, prefer_before=False)
+            if key is None:
+                continue
+            _, col, member, label, unknown = CLINICAL_TOPICS[key]
+            if col not in c:
+                continue
+            vals = c[col].dropna().astype(str)
+            known = vals[~vals.str.lower().str.contains(unknown, regex=True)]
+            obs = int(known.map(member).sum())
+            den = len(known)
+            if col not in fields:
+                fields.append(col)
+            if num.is_percent:
+                ok, rule = matches(num, pct(obs, den), True)
+                ok_alt = matches(num, pct(obs, len(c)), True)[0]
+                subs.append(SubCheck(f"{label}: share of primary tumors with a recorded `{col}`", num.text, fmt_pct(obs, den),
+                                     ok, rule + (f"; it would match with all {len(c):,} primary tumors as the denominator "
+                                                 f"({fmt_pct(obs, len(c))}), so ask which one the author used"
+                                                 if ok_alt and not ok else "")))
+                alts.append({"definition": f"{label}, denominator = all {len(c):,} primary tumors", "value": fmt_pct(obs, len(c))})
+            else:
+                ok, rule = matches(num, obs, False)
+                subs.append(SubCheck(f"{label}: primary tumors", num.text, f"{obs:,}", ok, rule))
+        v = verdict_from(subs)
+        return Result(verdict=v, check=self.name,
+                      summary="Counted clinical records among primary tumors: "
+                              + "; ".join(f"{sc.label}: {sc.observed}" for sc in subs) + ".",
+                      subchecks=subs, correct_value=correct_from(subs) if v == "contradicted" else None,
+                      files=[FILES["clinical"]], fields=fields, n=len(c), population="Primary tumors in clinical.tsv",
+                      limitation="Counts primary tumors with a recorded value; missing, unknown and not-assessable values "
+                                 "(e.g. Stage X, NX, MX) are left out of the main denominator. Patients and primary tumors "
+                                 "are treated as the same unit (one primary tumor per patient here)."
+                                 + (" 'Most' is read as more than 50%; 'nearly all' as at least 95%." if not s.numbers else ""),
+                      alternatives=alts,
+                      code="c = clinical[clinical.sampleID.str[13:15]=='01']\n"
+                           + "\n".join(f"c['{f}'].value_counts(dropna=False)" for f in fields),
+                      confidence="high" if s.numbers else "medium")
+
+
 class Fallback(Checker):
     name = "unrecognised"
 
@@ -1078,9 +1215,11 @@ class StatementKindChecker(Checker):
 
 # Mutation runs before subtype/receptor shares: "TP53 is mutated in 80% of basal-like tumors" is a mutation rate
 # within a subtype, not a claim about how common basal-like tumors are.
-CHECKERS: list[Checker] = [StatementKindChecker(), TreatmentChecker(), ManifestChecker(), NotAClaimChecker(), SurvivalChecker(),
-                           ProteinCompareChecker(), MutationChecker(), SubtypeChecker(), ReceptorShareChecker(), AgeChecker(),
-                           CohortChecker(), Fallback()]
+# The clinical-category checker comes last (before the fallback) so it only gets sentences no other checker takes;
+# its early copy only takes number-free "most / nearly all" sentences that would otherwise be read as opinion.
+CHECKERS: list[Checker] = [StatementKindChecker(), TreatmentChecker(), ManifestChecker(), ClinicalCategoryChecker(early=True),
+                           NotAClaimChecker(), SurvivalChecker(), ProteinCompareChecker(), MutationChecker(), SubtypeChecker(),
+                           ReceptorShareChecker(), AgeChecker(), CohortChecker(), ClinicalCategoryChecker(), Fallback()]
 
 
 def borderline(res: Result) -> bool:
@@ -1099,10 +1238,16 @@ def borderline(res: Result) -> bool:
 
 
 def check_sentence(s: Sentence, r: Release) -> Result:
+    gave_up = None
     for ch in CHECKERS:
         try:
             if ch.applies(s, r):
                 res = ch.run(s, r)
+                if res.check == "unrecognised" and not isinstance(ch, Fallback):
+                    gave_up = gave_up or res     # this checker found nothing to measure: let the later ones try
+                    continue
+                if isinstance(ch, Fallback) and gave_up:
+                    return gave_up
                 if borderline(res):
                     res.confidence = "medium"
                     res.limitation = ("Borderline: the stated number is close to the tolerance, so a reviewer should decide. "

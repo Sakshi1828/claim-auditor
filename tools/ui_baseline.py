@@ -43,7 +43,7 @@ def page_html() -> str:
     return (ROOT / "web/index.html").read_text(encoding="utf-8")
 
 
-PRESENTATION_IDS = ("ill-", "ic-", "pat-", "illustrations", "moreOpts", "s3tabs", "menuBtn", "stepsNav", "heroTitle", "segLabel")   # new ids allowed: illustrations and layout wrappers, never controls
+PRESENTATION_IDS = ("ill-", "ic-", "pat-", "illustrations", "moreOpts", "s3tabs", "menuBtn", "stepsNav", "heroTitle", "segLabel", "nextStep")   # new ids allowed: illustrations and layout wrappers, never controls
 
 
 def snapshot() -> dict:

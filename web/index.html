@@ -530,6 +530,38 @@ details.drill > summary{font-weight:600;color:var(--accent);cursor:pointer}
 .gdots[data-show=mean] .gd-mean,.gdots[data-show=median] .gd-med{box-shadow:0 0 0 4px color-mix(in srgb,var(--chart-1) 25%,transparent)}
 .gd-row:hover .gd-track{background-color:var(--accent-2)}
 
+/* ================= PHASE 6: sources, status, limitations, next step, disclaimer ================= */
+.src-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:6px 0 14px}
+.src-card{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px;background:var(--bg)}
+svg.src-ic{width:22px;height:22px;color:var(--accent);flex:none}
+.src-card b{display:block;font-size:var(--fs-sm);color:var(--ink)} .src-card span{display:block;font-size:var(--fs-xs);color:var(--ink-2)}
+.src-card small{display:block;font:11px var(--mono);color:var(--muted);margin-top:2px}
+.ev-count{display:inline-block;font:700 11px var(--sans);color:var(--accent);background:var(--accent-2);border-radius:999px;padding:2px 8px;letter-spacing:0;text-transform:none}
+.status-pill{display:inline-block;font:700 11.5px var(--sans);border-radius:999px;padding:2px 9px;border:1px solid currentColor}
+.st-strong{color:var(--status-strong);background:var(--status-strong-bg)} .st-conflict{color:var(--status-conflict);background:var(--status-conflict-bg)}
+.st-uncertain{color:var(--status-uncertain);background:var(--status-uncertain-bg)} .st-limited{color:var(--status-limited);background:var(--status-limited-bg)}
+.conf-meter{display:inline-flex;gap:2px;vertical-align:middle;margin-left:4px} .conf-meter i{width:8px;height:8px;border-radius:2px;background:var(--line)}
+.conf-meter i.on{background:var(--accent)}
+.callout.lim{background:var(--status-limited-bg);border-left:3px solid var(--status-limited)}
+.callout.lim b.h{color:var(--status-limited)}
+.callout.bad{border-left:3px solid var(--bad)} .callout.unk{border-left:3px solid var(--unk)}
+.next-card{margin-top:22px;border:1.5px solid color-mix(in srgb,var(--accent) 30%,var(--line));background:linear-gradient(180deg,var(--accent-2),var(--paper) 60%)}
+.next-card:empty{display:none}
+.next-head{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+svg.next-ic{width:32px;height:32px;color:var(--accent)}
+.next-k{font:700 12px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.next-head h3{font:600 22px var(--serif);text-transform:none;letter-spacing:0;color:var(--ink);margin:2px 0 0}
+.next-head .stamp{margin-left:auto}
+.next-why{color:var(--ink-2);max-width:72ch;margin:10px 0 14px}
+.next-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.next-grid h4{font-size:var(--fs-sm);margin:0 0 6px;color:var(--ink)} .next-grid li,.next-grid p{font-size:var(--fs-sm);color:var(--ink-2)}
+.next-grid ol,.next-grid ul{margin:0;padding-left:18px}
+@media (max-width:820px){.next-grid{grid-template-columns:1fr}}
+.foot{display:flex;gap:8px;align-items:center;justify-content:center;background:var(--status-limited-bg);color:var(--status-limited);
+  border-radius:var(--r-md);padding:10px 14px;max-width:820px;margin:32px auto 0}
+svg.foot-ic{width:18px;height:18px;flex:none}
+.safety{border-left:3px solid var(--sage);padding-left:10px}
+
 /* gentle motion only for people who are fine with motion */
 @media (prefers-reduced-motion:reduce){svg.hero-art,.sk,.vbar div,.bars .b,.alt .bar div,.complete span,.scale .pt,.gd-mean,.gd-med{animation:none}
   *{transition-duration:.01ms!important}}
@@ -773,7 +805,8 @@ details.drill > summary{font-weight:600;color:var(--accent);cursor:pointer}
         <button id="btnCorr" style="margin-top:8px">Download corrected_report.md</button></details>
     </div>
   </div>
-  <p class="foot">Research Claim Auditor · Team Cache us if u can · rule-based, reproducible, no AI model or API key · research use only</p>
+  <div class="card pad next-card" id="nextStep" aria-label="Recommended next step"></div>
+  <p class="foot"><svg class="foot-ic" aria-hidden="true"><use href="#ic-info"/></svg>Research Claim Auditor · Team Cache us if u can · rule-based, reproducible, no AI model or API key · research use only</p>
 </section>
 </main>
 
@@ -844,6 +877,7 @@ async function init(){
   layout(); updateGuide();
   wireTabs($("#s3tabs"), false);
   wireMenu();
+  $("#alsoReview").addEventListener("input", renderNextStep);   // view-only: mirrors the field into the conclusion card
   $("#report").addEventListener("input", () => { if (!audit) updateGuide(); });
   cfg = await api("/api/config");
   $("#releaseDir").value = cfg.release_dir;
@@ -1027,7 +1061,7 @@ function renderStory(){
     ${labelled}
     <div class="progress"><div class="meter"><div style="width:${n ? 100 * done / n : 0}%"></div></div>
       <span><b class="num">${done} of ${n}</b> verdicts confirmed by a person${done < n ? " · each one waits for you in step 2" : " · ready to decide"}</span></div>`;
-  $$("[data-go]").forEach(b => b.onclick = () => { sel = b.dataset.go; renderReader(); renderDetail(); go("#s2", "#accept"); });
+  $$("[data-go]").forEach(b => b.onclick = () => { if (b.dataset.tab) detailTab = b.dataset.tab; sel = b.dataset.go; renderReader(); renderDetail(); go("#s2", "#accept"); });
   wireLegend($("#story"));
   $("#btnPlain").onclick = () => { const h = $("#plain").classList.toggle("hidden"); $("#btnPlain").setAttribute("aria-expanded", !h); if (!h) go("#plain"); };
   if ($("#btnGloss")) $("#btnGloss").onclick = () => { $("#plain").classList.remove("hidden"); $("#btnPlain").setAttribute("aria-expanded", true);
@@ -1132,6 +1166,46 @@ function renderReader(){
 }
 
 // ---------------------------------------------------------------- comparison visuals
+// ---- phase 6: surface what already exists (sources, status, limits, next step). Nothing new is claimed.
+const FILE_TYPE = f => /manifest/.test(f) ? "Manifest (list of samples or slides)" : /\.tsv/.test(f) ? "Data table" : "File";
+function sourceCards(r){
+  if (!r.files.length) return "";
+  return `<h3>Sources used <span class="ev-count">${r.files.length}</span></h3><div class="src-cards">` + r.files.map(f => {
+    const x = audit.release.files.find(z => z.file === f);
+    return `<div class="src-card"><svg class="src-ic" aria-hidden="true"><use href="#ic-data"/></svg><div>
+      <b>${esc(f)}</b><span>${esc(FILE_TYPE(f))} · release ${esc(audit.release.name)}</span>
+      ${x ? `<small title="Fingerprint of the exact file used">sha256 ${esc(x.sha256.slice(0, 16))}…</small>` : ""}</div></div>`;
+  }).join("") + `</div>`;
+}
+// status pill: only from what the result already says (verdict, the tool's confidence, missing data)
+function statusPill(it, v){
+  const r = it.result, missing = /no \w[\w ]* file|can't count|not in this release/i.test(r.needed + " " + r.summary + " " +
+    r.subchecks.map(x => x.observed).join(" "));
+  const borderline = /^Borderline/.test(r.limitation || "");
+  const [label, cls] = v === "contradicted" ? ["Conflicting findings", "conflict"]
+    : v === "insufficient_evidence" ? (missing ? ["Limited data", "limited"] : ["Uncertain", "uncertain"])
+    : v === "supported" ? (r.confidence === "high" && !borderline ? ["Strong evidence", "strong"] : ["Uncertain", "uncertain"])
+    : [null];
+  return label ? `<span class="status-pill st-${cls}" title="From this result's verdict${v === "supported" ? " and the tool's confidence (" + esc(r.confidence) + ")" : ""}">${label}</span>` : "";
+}
+function confMeter(c){
+  const n = {high: 3, medium: 2, low: 1}[c];
+  return n ? `<span class="conf-meter" role="img" aria-label="Tool confidence: ${esc(c)}" title="Tool confidence: ${esc(c)}">${[1, 2, 3].map(i => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</span>` : "";
+}
+// the page's conclusion: the plan's decision, its reasons, the first steps, the key limits, and who must also review
+function renderNextStep(){
+  const box = $("#nextStep"); if (!box || !plan) return;
+  const steps = plan.steps.slice(0, 3), limits = plan.cant_tell.slice(0, 3);
+  box.innerHTML = `<div class="next-head"><svg class="next-ic" aria-hidden="true"><use href="#ic-next"/></svg>
+      <div><span class="next-k">Recommended next step</span><h3>${esc(plan.decision)}</h3></div>${stamp(plan.decision)}</div>
+    <p class="next-why">${esc(plan.why)}</p>
+    <div class="next-grid">
+      <div><h4>First steps</h4>${steps.length ? `<ol>${steps.map(x => `<li><b>${esc(x.do)}</b> (${esc(x.id)})</li>`).join("")}</ol>` : `<p>Nothing to fix.</p>`}</div>
+      <div><h4>Key limitations</h4><ul>${limits.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
+      <div><h4>Who should review it</h4><p>${esc($("#alsoReview").value || "")}</p><p class="tiny muted">From “Also needs review by” above. A person confirms every verdict.</p></div>
+    </div>`;
+}
+
 // ---- phase 5: view-only interactions
 // Plain explanations of the app's own result words (how the tool uses them; not medical statements)
 const VERDICT_HELP = {supported: "The data agrees with the report's number, within the allowed margin.",
@@ -1167,7 +1241,9 @@ function drillItem(it){
       ${r.subchecks.length ? `<ul>${r.subchecks.map(sc => `<li><b>${esc(sc.label)}:</b> report ${esc(sc.claimed)} · data ${esc(sc.observed)}</li>`).join("")}</ul>` : ""}
       ${v === "contradicted" && cv ? `<p><b>What the data shows instead:</b> ${esc(cv)}</p>` : ""}
       ${r.needed ? `<p><b>Data that would be needed:</b> ${esc(r.needed)}</p>` : ""}
-      <button type="button" class="ghost" data-go="${it.id}">Open the full details →</button></div></details>`;
+      <button type="button" class="ghost" data-go="${it.id}">Open the full details →</button>
+      <button type="button" class="ghost" data-go="${it.id}" data-tab="how">See evidence (${r.files.length} ${plural(r.files.length, "source", "sources")}) →</button>
+      ${statusPill(it, v)}</div></details>`;
 }
 // legend: hover/focus highlights a result in the bar; click dims or restores it (proportions never change)
 function wireLegend(root){
@@ -1361,7 +1437,8 @@ function renderDetail(){
   const imp = (plan && plan.impacts && plan.impacts[it.id]) || it.impact;
   const pp = (plan && plan.plain) || audit.plain, pt = pp && pp.points.find(x => x.id === (it.label || it.id));
   let h = `<div class="d-head">${badge(v)}${tip(LABEL[v], VERDICT_HELP[v])}<span class="id">${it.id}${it.label ? ` · report's ${esc(it.label)}` : ""}</span>
-      <span class="small muted">confidence ${esc(r.confidence)}${it.review && v !== tv ? ` · tool said ${LABEL[tv]}` : ""}</span>
+      ${statusPill(it, v)}<span class="small muted">confidence ${esc(r.confidence)}${it.review && v !== tv ? ` · tool said ${LABEL[tv]}` : ""}</span>${confMeter(r.confidence)}
+      ${r.files.length ? `<span class="ev-count" title="Data files this result was computed from">${r.files.length} ${plural(r.files.length, "source", "sources")}</span>` : ""}
       <button class="ghost backlink" id="backSum" style="margin-left:auto">↑ Back to summary</button></div>
     ${it.title ? `<div class="small muted" style="margin-top:6px">The report's own label: ${esc(it.title)} <span class="tiny">(not used to decide the verdict)</span></div>` : ""}
     <p class="quote">${withTerms(it.claim_text)}</p>
@@ -1378,6 +1455,7 @@ function renderDetail(){
     if (v === "contradicted" && cv) tNum += `<div class="callout bad"><b class="h">${otherData() ? "What the report's own numbers give" : "What the data shows instead"} ${srcTag("d")}</b><span class="big-val num">${esc(cv)}</span></div>`;
     if (r.needed) tNum += `<div class="callout unk"><b class="h">Data that would be needed ${srcTag("i")}</b>${esc(r.needed)}</div>`;
     if (imp) {
+      if (r.limitation) tTodo += `<div class="callout lim"><b class="h">Limitation ${srcTag("i")}</b>${esc(r.limitation)}</div>`;
       tTodo += `<div class="after">
         <div class="aft"><span class="ic">${SVG.why}</span><h4>Why it matters ${srcTag("i")}</h4><p>${esc(imp.why_it_matters)}</p></div>
         <div class="aft"><span class="ic">${SVG.next}</span><h4>What to do next ${srcTag("i")}</h4><p>${esc(imp.next_step)}</p>
@@ -1394,6 +1472,7 @@ function renderDetail(){
     tHow += `<details class="ev" ${view === "researcher" ? "open" : ""}><summary>Show the evidence: files, fields, calculation</summary>`;
     if (context.length) tHow += `<h3>Context from the data</h3><table><tbody>` +
       context.map(s => `<tr><td>${esc(s.label)}</td><td class="num">${esc(s.observed)}<div class="tiny muted">${esc(s.rule)}</div></td></tr>`).join("") + `</tbody></table>`;
+    tHow += sourceCards(r);
     tHow += `<h3>Source</h3><table><tbody>
       <tr><th>Release</th><td><span title="${esc(audit.release.dir)}">release ${esc(audit.release.name)}</span></td></tr>
       <tr><th>Files</th><td>${r.files.map(f => { const x = audit.release.files.find(z => z.file === f);
@@ -1493,6 +1572,7 @@ function renderPlan(){
   $("#reviewCount").textContent = left ? `${left} ${plural(left, "claim", "claims")} not yet confirmed: exported as needing human review.` : "Every claim confirmed by a person.";
   renderNav();
   clampLists();
+  renderNextStep();
 }
 
 // ---- view-only: long lists show their first items, with "Show all (N)" to reveal the rest
